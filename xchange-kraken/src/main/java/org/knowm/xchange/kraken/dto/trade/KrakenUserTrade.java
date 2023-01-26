@@ -2,6 +2,7 @@ package org.knowm.xchange.kraken.dto.trade;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
@@ -32,7 +33,8 @@ public class KrakenUserTrade extends UserTrade {
         orderId,
         feeAmount,
         feeCurrency,
-        "");
+        "",
+        null);
     this.cost = cost;
   }
 

@@ -1,17 +1,20 @@
 package org.knowm.xchange.dto.trade;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 /** Data object representing a user trade */
 @JsonDeserialize(builder = UserTrade.Builder.class)
@@ -30,6 +33,9 @@ public class UserTrade extends Trade {
 
   /** The order reference id which has been added by the user on the order creation */
   private final String orderUserReference;
+  
+  /** Maker or taker. */
+  private final MarketParticipant liquidityRole;
 
   /**
    * This constructor is called to construct user's trade objects (in {@link
@@ -45,6 +51,8 @@ public class UserTrade extends Trade {
    * @param feeAmount The fee that was charged by the exchange for this trade
    * @param feeCurrency The symbol of the currency in which the fee was charged
    * @param orderUserReference The id that the user has insert to the trade
+   * @param liquidityRole The maker or taker side
+
    */
   public UserTrade(
       OrderType type,
@@ -56,7 +64,8 @@ public class UserTrade extends Trade {
       String orderId,
       BigDecimal feeAmount,
       Currency feeCurrency,
-      String orderUserReference) {
+      String orderUserReference,
+      MarketParticipant liquidityRole) {
 
     super(type, originalAmount, instrument, price, timestamp, id, null, null);
 
@@ -64,6 +73,7 @@ public class UserTrade extends Trade {
     this.feeAmount = feeAmount;
     this.feeCurrency = feeCurrency;
     this.orderUserReference = orderUserReference;
+	this.liquidityRole = liquidityRole;
   }
 
   public static UserTrade.Builder builder() {
@@ -71,22 +81,23 @@ public class UserTrade extends Trade {
   }
 
   public String getOrderId() {
-
     return orderId;
   }
 
   public BigDecimal getFeeAmount() {
-
     return feeAmount;
   }
 
   public Currency getFeeCurrency() {
-
     return feeCurrency;
   }
 
   public String getOrderUserReference() {
     return orderUserReference;
+  }
+
+  public MarketParticipant getLiquidity() {
+    return liquidityRole;
   }
 
   @Override
@@ -114,6 +125,9 @@ public class UserTrade extends Trade {
         + ", orderUserReference='"
         + orderUserReference
         + '\''
+        + ", liquidity='"
+        + liquidityRole
+        + '\''
         + "]";
   }
 
@@ -140,6 +154,7 @@ public class UserTrade extends Trade {
     protected BigDecimal feeAmount;
     protected Currency feeCurrency;
     protected String orderUserReference;
+    protected MarketParticipant liquidity;
 
     public static Builder from(UserTrade trade) {
       return new Builder()
@@ -151,7 +166,8 @@ public class UserTrade extends Trade {
           .id(trade.getId())
           .orderId(trade.getOrderId())
           .feeAmount(trade.getFeeAmount())
-          .feeCurrency(trade.getFeeCurrency());
+          .feeCurrency(trade.getFeeCurrency())
+          .liquidityRole(trade.getLiquidity());
     }
 
     @Override
@@ -208,6 +224,11 @@ public class UserTrade extends Trade {
       this.orderUserReference = orderUserReference;
       return this;
     }
+    
+    public Builder liquidityRole(MarketParticipant liquidity) {
+      this.liquidity = liquidity;
+      return this;
+    }
 
     @Override
     public UserTrade build() {
@@ -221,7 +242,8 @@ public class UserTrade extends Trade {
           orderId,
           feeAmount,
           feeCurrency,
-          orderUserReference);
+          orderUserReference,
+          liquidity);
     }
   }
 }
