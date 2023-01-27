@@ -1,14 +1,17 @@
 package org.knowm.xchange.binance;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
 public class AbstractResilienceTest {
 
-  @Rule public WireMockRule wireMockRule = new WireMockRule();
+  private static int counter = 8080;
+
+  @Rule public WireMockRule wireMockRule = new WireMockRule(counter++);
 
   public static int READ_TIMEOUT_MS = 1000;
 
