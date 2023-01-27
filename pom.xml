@@ -403,6 +403,25 @@
   </dependencies>
 
   <profiles>
+	<profile>
+		<id>Distribution-Artifactory</id>
+		<distributionManagement>
+			<repository>
+				<id>artifactory-release-repository</id>
+				<name>Artifactory Release Repository</name>
+				<url>https://baxter.jfrog.io/baxter/baxter-releases</url>
+			</repository>
+			<snapshotRepository>
+				<id>artifactory-snapshot-repository</id>
+				<name>Artifactory Snapshot Repository</name>
+				<url>https://baxter.jfrog.io/baxter/baxter-snapshots</url>
+			</snapshotRepository>
+			<site>
+				<id>artifactory-sites-repository</id>
+				<url>dav:https://baxter.jfrog.io/baxter/sites/parent/</url>
+			</site>
+		</distributionManagement>
+	</profile>
     <profile>
       <id>release-sign-artifacts</id>
       <activation>
