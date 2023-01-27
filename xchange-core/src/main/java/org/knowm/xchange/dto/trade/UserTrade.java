@@ -35,7 +35,7 @@ public class UserTrade extends Trade {
   private final String orderUserReference;
   
   /** Maker or taker. */
-  private final MarketParticipant liquidityRole;
+  private final MarketParticipant marketParticipant;
 
   /**
    * This constructor is called to construct user's trade objects (in {@link
@@ -51,7 +51,7 @@ public class UserTrade extends Trade {
    * @param feeAmount The fee that was charged by the exchange for this trade
    * @param feeCurrency The symbol of the currency in which the fee was charged
    * @param orderUserReference The id that the user has insert to the trade
-   * @param liquidityRole The maker or taker side
+   * @param marketParticipant The maker or taker side
 
    */
   public UserTrade(
@@ -65,7 +65,7 @@ public class UserTrade extends Trade {
       BigDecimal feeAmount,
       Currency feeCurrency,
       String orderUserReference,
-      MarketParticipant liquidityRole) {
+      MarketParticipant marketParticipant) {
 
     super(type, originalAmount, instrument, price, timestamp, id, null, null);
 
@@ -73,7 +73,7 @@ public class UserTrade extends Trade {
     this.feeAmount = feeAmount;
     this.feeCurrency = feeCurrency;
     this.orderUserReference = orderUserReference;
-	this.liquidityRole = liquidityRole;
+	this.marketParticipant = marketParticipant;
   }
 
   public static UserTrade.Builder builder() {
@@ -96,8 +96,8 @@ public class UserTrade extends Trade {
     return orderUserReference;
   }
 
-  public MarketParticipant getLiquidity() {
-    return liquidityRole;
+  public MarketParticipant getMarketParticipant() {
+    return marketParticipant;
   }
 
   @Override
@@ -126,7 +126,7 @@ public class UserTrade extends Trade {
         + orderUserReference
         + '\''
         + ", liquidity='"
-        + liquidityRole
+        + marketParticipant
         + '\''
         + "]";
   }
@@ -154,7 +154,7 @@ public class UserTrade extends Trade {
     protected BigDecimal feeAmount;
     protected Currency feeCurrency;
     protected String orderUserReference;
-    protected MarketParticipant liquidity;
+    protected MarketParticipant marketParticipant;
 
     public static Builder from(UserTrade trade) {
       return new Builder()
@@ -167,7 +167,7 @@ public class UserTrade extends Trade {
           .orderId(trade.getOrderId())
           .feeAmount(trade.getFeeAmount())
           .feeCurrency(trade.getFeeCurrency())
-          .liquidityRole(trade.getLiquidity());
+          .marketParticipant(trade.getMarketParticipant());
     }
 
     @Override
@@ -225,8 +225,22 @@ public class UserTrade extends Trade {
       return this;
     }
     
-    public Builder liquidityRole(MarketParticipant liquidity) {
-      this.liquidity = liquidity;
+    public Builder marketParticipant(MarketParticipant marketParticipant) {
+      this.marketParticipant = marketParticipant;
+      return this;
+    }
+    
+    public Builder marketParticipant(String marketParticipant) {    
+      switch (marketParticipant.toLowerCase().trim()) {
+      case "taker":
+        this.marketParticipant = MarketParticipant.TAKER;
+        break;
+      case "maker":
+        this.marketParticipant = MarketParticipant.MAKER;
+        break;
+      default:
+        throw new IllegalArgumentException("Not valid market participant provided. " + marketParticipant + " was provided.");
+      }
       return this;
     }
 
@@ -243,7 +257,7 @@ public class UserTrade extends Trade {
           feeAmount,
           feeCurrency,
           orderUserReference,
-          liquidity);
+          marketParticipant);
     }
   }
 }

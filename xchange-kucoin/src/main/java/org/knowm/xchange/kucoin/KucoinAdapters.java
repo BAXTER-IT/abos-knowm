@@ -11,8 +11,6 @@ import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.HIDDEN;
 import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.ICEBERG;
 import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.POST_ONLY;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Ordering;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -25,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -41,7 +40,11 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
-import org.knowm.xchange.dto.meta.*;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
+import org.knowm.xchange.dto.meta.ExchangeMetaData;
+import org.knowm.xchange.dto.meta.FeeTier;
+import org.knowm.xchange.dto.meta.InstrumentMetaData;
+import org.knowm.xchange.dto.meta.WalletHealth;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.StopOrder;
@@ -63,6 +66,9 @@ import org.knowm.xchange.kucoin.dto.response.TradeFeeResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeHistoryResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeResponse;
 import org.knowm.xchange.kucoin.dto.response.WithdrawalResponse;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Ordering;
 
 public class KucoinAdapters {
 
@@ -335,7 +341,7 @@ public class KucoinAdapters {
         .price(trade.getPrice())
         .timestamp(trade.getTradeCreatedAt())
         .type(adaptSide(trade.getSide()))
-        .liquidityRole(trade.getLiquidity())
+        .marketParticipant(trade.getLiquidity())
         .build();
   }
 

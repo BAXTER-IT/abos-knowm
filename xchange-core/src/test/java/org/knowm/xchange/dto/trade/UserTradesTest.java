@@ -1,16 +1,20 @@
 package org.knowm.xchange.dto.trade;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.dto.marketdata.Trades;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.junit.Test;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.marketdata.Trades;
+import org.knowm.xchange.enums.MarketParticipant;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserTradesTest {
 
@@ -24,6 +28,7 @@ public class UserTradesTest {
             .currencyPair(CurrencyPair.BTC_USD)
             .price(BigDecimal.ONE)
             .originalAmount(BigDecimal.ONE)
+            .marketParticipant(MarketParticipant.MAKER)
             .build());
     userTradeList.add(
         new UserTrade.Builder()
@@ -32,6 +37,7 @@ public class UserTradesTest {
             .id("id")
             .price(BigDecimal.ONE)
             .originalAmount(BigDecimal.ONE)
+            .marketParticipant(MarketParticipant.TAKER)
             .build());
     userTradeList.add(
         new UserTrade.Builder()
@@ -41,6 +47,7 @@ public class UserTradesTest {
             .instrument(CurrencyPair.BTC_USD)
             .price(BigDecimal.ONE)
             .originalAmount(BigDecimal.ONE)
+            .marketParticipant("taker")
             .build());
 
     UserTrades userTrades = new UserTrades(userTradeList, Trades.TradeSortType.SortByTimestamp);
