@@ -1,20 +1,26 @@
 package org.knowm.xchange.blockchain.service;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.knowm.xchange.blockchain.service.utils.BlockchainConstants.APPLICATION;
+import static org.knowm.xchange.blockchain.service.utils.BlockchainConstants.CONTENT_TYPE;
+
 import org.junit.ClassRule;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.blockchain.BlockchainExchange;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static org.knowm.xchange.blockchain.service.utils.BlockchainConstants.APPLICATION;
-import static org.knowm.xchange.blockchain.service.utils.BlockchainConstants.CONTENT_TYPE;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class BlockchainBaseTest {
 
-    @ClassRule
-    public static WireMockRule wireMockRule = new WireMockRule();
+    private static int counter = 8080;
+
+    @ClassRule public static WireMockRule wireMockRule = new WireMockRule(++counter);
 
     protected static BlockchainExchange createExchange() {
         BlockchainExchange exchange =

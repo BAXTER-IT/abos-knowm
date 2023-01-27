@@ -11,7 +11,7 @@ public class AbstractResilienceTest {
 
   private static int counter = 8080;
 
-  @Rule public WireMockRule wireMockRule = new WireMockRule(counter++);
+  @Rule public WireMockRule wireMockRule = new WireMockRule(++counter);
 
   public static int READ_TIMEOUT_MS = 1000;
 
