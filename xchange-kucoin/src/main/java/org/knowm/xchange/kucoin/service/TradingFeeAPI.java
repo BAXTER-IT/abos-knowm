@@ -2,14 +2,18 @@ package org.knowm.xchange.kucoin.service;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import org.knowm.xchange.kucoin.dto.response.KucoinResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeFeeResponse;
+
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.SynchronizedValueFactory;
 
@@ -38,6 +42,6 @@ public interface TradingFeeAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
-      @QueryParam("symbols") String symbols)
+      @Encoded @QueryParam("symbols") String symbols)
       throws IOException;
 }
