@@ -1,8 +1,13 @@
 package info.bitrich.xchangestream.kucoin;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import info.bitrich.xchangestream.kucoin.dto.KucoinWebSocketUnsubscribeMessage;
+
 import info.bitrich.xchangestream.kucoin.dto.KucoinWebSocketSubscribeMessage;
+import info.bitrich.xchangestream.kucoin.dto.KucoinWebSocketUnsubscribeMessage;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
 import info.bitrich.xchangestream.service.netty.WebSocketClientHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,10 +16,6 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 class KucoinStreamingService extends JsonNettyStreamingService {
 
@@ -47,6 +48,13 @@ class KucoinStreamingService extends JsonNettyStreamingService {
                         completable.onError(e);
                       }
                     });
+  }
+
+  @Override
+  public Completable disconnect()
+  {
+    pingPongSubscription.dispose();
+    return super.disconnect();
   }
 
   @Override
