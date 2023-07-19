@@ -13,6 +13,8 @@ import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
+import org.knowm.xchange.kucoin.dto.response.Pagination;
+import org.knowm.xchange.kucoin.dto.response.SubAccountsResponse;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.HistoryParamsFundingType;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrency;
@@ -42,6 +44,20 @@ public class KucoinAccountService extends KucoinAccountServiceRaw implements Acc
                         .id(type)
                         .build())
             .collect(toList()));
+  }
+
+  public List<SubAccountsResponse> getSubAccountsInfo() throws IOException {
+    List<SubAccountsResponse> subAccounts = new ArrayList<>();
+    Integer pageSize = 100;
+    Integer currentPage = 1;
+    Pagination<SubAccountsResponse> kucoinSubAccounts = getKucoinSubAccounts(pageSize, currentPage);
+    Integer totalPage = kucoinSubAccounts.getTotalPage();
+    while (currentPage <= totalPage) {
+      currentPage++;
+      subAccounts.addAll(kucoinSubAccounts.getItems());
+      kucoinSubAccounts = getKucoinSubAccounts(pageSize, currentPage);
+    }
+    return subAccounts;
   }
 
   public TradeHistoryParams createFundingHistoryParams() {

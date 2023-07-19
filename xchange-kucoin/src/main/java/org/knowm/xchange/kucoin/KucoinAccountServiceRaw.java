@@ -9,14 +9,7 @@ import org.knowm.xchange.client.ResilienceRegistries;
 import org.knowm.xchange.kucoin.dto.request.ApplyWithdrawApiRequest;
 import org.knowm.xchange.kucoin.dto.request.CreateAccountRequest;
 import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
-import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
-import org.knowm.xchange.kucoin.dto.response.AccountLedgersResponse;
-import org.knowm.xchange.kucoin.dto.response.ApplyWithdrawResponse;
-import org.knowm.xchange.kucoin.dto.response.DepositAddressResponse;
-import org.knowm.xchange.kucoin.dto.response.DepositResponse;
-import org.knowm.xchange.kucoin.dto.response.InternalTransferResponse;
-import org.knowm.xchange.kucoin.dto.response.Pagination;
-import org.knowm.xchange.kucoin.dto.response.WithdrawalResponse;
+import org.knowm.xchange.kucoin.dto.response.*;
 
 public class KucoinAccountServiceRaw extends KucoinBaseService {
 
@@ -36,6 +29,19 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
                 .withRetry(retry("accountList"))
                 .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
                 .call());
+  }
+
+  public Pagination<SubAccountsResponse> getKucoinSubAccounts(Integer pageSize, Integer currentPage) throws IOException {
+    checkAuthenticated();
+    return classifyingExceptions(
+            () ->
+                    decorateApiCall(
+                            () ->
+                                    accountApi.getSubAccounts(
+                                            apiKey, digest, nonceFactory, passphrase, "2", pageSize, currentPage))
+                            .withRetry(retry("subAccounts"))
+                            .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+                            .call());
   }
 
   public Void createKucoinAccount(String currency, String type) throws IOException {
