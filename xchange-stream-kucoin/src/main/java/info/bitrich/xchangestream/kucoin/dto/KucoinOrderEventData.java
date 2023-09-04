@@ -1,5 +1,7 @@
 package info.bitrich.xchangestream.kucoin.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.ToString;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.kucoin.KucoinAdapters;
 
@@ -44,6 +46,12 @@ public class KucoinOrderEventData {
     @JsonProperty("price")
     public String price;
 
+    @JsonProperty("clientOid")
+    public String clientOid;
+
+    @JsonProperty("remainSize")
+    public String remainSize;
+
     @JsonProperty("matchPrice")
     public String matchPrice;
 
@@ -53,12 +61,6 @@ public class KucoinOrderEventData {
     @JsonProperty("tradeId")
     public String tradeId;
 
-    @JsonProperty("clientOid")
-    public String clientOid;
-    
-    @JsonProperty("remainSize")
-    public String remainSize;
-    
     @JsonProperty("status")
     public String status;
 

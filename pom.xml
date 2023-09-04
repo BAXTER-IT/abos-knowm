@@ -31,19 +31,19 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <version.java>1.8</version.java>
-    <version.assertj>3.23.1</version.assertj>
+    <version.assertj>3.24.2</version.assertj>
     <version.commons.lang3>3.12.0</version.commons.lang3>
     <version.fasterxml>2.14.1</version.fasterxml>
-    <version.github.mmazi>2.1.0</version.github.mmazi>
+    <version.github.mmazi>3.0</version.github.mmazi>
     <version.resilience4j>1.7.0</version.resilience4j>
-    <version.junit>4.13.2</version.junit>
-    <version.lombok>1.18.22</version.lombok>
+    <version.junit>5.9.3</version.junit>
+    <version.lombok>1.18.26</version.lombok>
     <version.knowm.xchart>3.8.2</version.knowm.xchart>
     <version.qos.logback>1.3.5</version.qos.logback>
     <version.reflections>0.10.2</version.reflections>
     <version.slf4j>2.0.6</version.slf4j>
     <version.crypto>5.0.0</version.crypto>
-    <version.java-jwt>3.19.2</version.java-jwt>
+    <version.java-jwt>4.4.0</version.java-jwt>
 
     <skipIntegrationTests>true</skipIntegrationTests>
   </properties>
@@ -132,7 +132,7 @@
     <module>xchange-coinmarketcap</module>
     <module>xchange-coinmate</module>
     <module>xchange-core</module>
-    <module>xchange-cryptofacilities</module>
+    <module>xchange-krakenfutures</module>
     <module>xchange-cryptowatch</module>
     <module>xchange-deribit</module>
     <module>xchange-dvchain</module>
@@ -210,6 +210,7 @@
     <module>xchange-stream-service-netty</module>
     <module>xchange-stream-service-pubnub</module>
     <module>xchange-stream-coincheck</module>
+    <module>xchange-stream-krakenfutures</module>
   </modules>
 
   <ciManagement>
@@ -247,7 +248,13 @@
 
       <dependency>
         <groupId>io.github.resilience4j</groupId>
-        <artifactId>resilience4j-all</artifactId>
+        <artifactId>resilience4j-ratelimiter</artifactId>
+        <version>${version.resilience4j}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-retry</artifactId>
         <version>${version.resilience4j}</version>
       </dependency>
 
@@ -326,14 +333,6 @@
         <version>${version.qos.logback}</version>
       </dependency>
 
-      <!-- Lombok for boilerplate -->
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${version.lombok}</version>
-        <scope>provided</scope>
-      </dependency>
-
       <!-- jwt for auth -->
       <dependency>
         <groupId>com.auth0</groupId>
@@ -356,7 +355,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.86.Final</version>
+            <version>4.1.96.Final</version>
         </dependency>
 
     </dependencies>
@@ -388,16 +387,25 @@
 
     <!-- JUnit for testing -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
       <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>${version.assertj}</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- Lombok for boilerplate -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${version.lombok}</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
@@ -473,7 +481,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.4.1</version>
+            <version>3.5.0</version>
             <executions>
               <execution>
                 <id>attach-javadocs</id>
@@ -511,7 +519,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
+        <version>3.0.1</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
@@ -533,7 +541,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -551,13 +559,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M7</version>
+        <version>3.1.2</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0-M7</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <goals>
@@ -594,4 +602,3 @@
   </build>
 
 </project>
-
