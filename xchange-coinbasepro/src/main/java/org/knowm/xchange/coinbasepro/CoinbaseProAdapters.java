@@ -17,6 +17,7 @@ import org.knowm.xchange.coinbasepro.dto.CoinbaseProTransfer;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProAccount;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProCurrency;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProduct;
+import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProduct.CoinbaseProProductStatus;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductBook;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductBookEntry;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductStats;
@@ -24,6 +25,7 @@ import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductTicker;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProStats;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProTrade;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProFill;
+import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProFill.Side;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProOrder;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProOrderFlags;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProPlaceLimitOrder;
@@ -186,7 +188,7 @@ public class CoinbaseProAdapters {
               coinbaseProAccount.getHold()));
     }
 
-    return Wallet.Builder.from(balances).id(coinbaseProAccounts[0].getProfile_id()).build();
+    return Wallet.Builder.from(balances).id(coinbaseProAccounts[0].getProfileId()).build();
   }
 
   @SuppressWarnings("unchecked")
@@ -194,7 +196,7 @@ public class CoinbaseProAdapters {
     final Map<Boolean, List<Order>> twoTypes =
         Arrays.stream(coinbaseExOpenOrders)
             .map(CoinbaseProAdapters::adaptOrder)
-            .collect(Collectors.partitioningBy(t -> t instanceof LimitOrder));
+            .collect(Collectors.partitioningBy(LimitOrder.class::isInstance));
     @SuppressWarnings("rawtypes")
     List limitOrders = twoTypes.get(true);
     return new OpenOrders(limitOrders, twoTypes.get(false));
@@ -310,7 +312,7 @@ public class CoinbaseProAdapters {
 
       trades.add(
           new UserTrade.Builder()
-              .type("buy".equals(fill.getSide()) ? OrderType.BID : OrderType.ASK)
+              .type(fill.getSide().equals(Side.buy) ? OrderType.BID : OrderType.ASK)
               .originalAmount(fill.getSize())
               .currencyPair(currencyPair)
               .price(fill.getPrice())
@@ -348,10 +350,10 @@ public class CoinbaseProAdapters {
   }
 
   public static CurrencyPair adaptCurrencyPair(CoinbaseProProduct product) {
-    return new CurrencyPair(product.getBaseCurrency(), product.getTargetCurrency());
+    return new CurrencyPair(product.getBaseCurrency(), product.getQuoteCurrency());
   }
 
-  private static Currency adaptCurrency(CoinbaseProCurrency currency) {
+  public static Currency adaptCurrency(CoinbaseProCurrency currency) {
     return new Currency(currency.getId());
   }
 
@@ -372,7 +374,7 @@ public class CoinbaseProAdapters {
         exchangeMetaData == null ? new HashMap<>() : exchangeMetaData.getCurrencies();
 
     for (CoinbaseProProduct product : products) {
-      if (!"online".equals(product.getStatus())) {
+      if (!product.getStatus().equals(CoinbaseProProductStatus.online)) {
         continue;
       }
       CurrencyPair pair = adaptCurrencyPair(product);
@@ -386,12 +388,9 @@ public class CoinbaseProAdapters {
           pair,
           new InstrumentMetaData.Builder()
                   .tradingFee(new BigDecimal("0.50"))
-                  .minimumAmount(product.getBaseMinSize())
-                  .maximumAmount(product.getBaseMaxSize())
                   .volumeScale(baseScale)
                   .priceScale(priceScale)
                   .counterMinimumAmount(product.getMinMarketFunds())
-                  .counterMaximumAmount(product.getMaxMarketFunds())
                   .feeTiers(staticMetaData != null ? staticMetaData.getFeeTiers() : null)
                   .tradingFeeCurrency(pair.counter)
                   .marketOrderEnabled(marketOrderAllowed)
@@ -423,6 +422,12 @@ public class CoinbaseProAdapters {
     return currencyPair == null
         ? null
         : currencyPair.base.getCurrencyCode() + "-" + currencyPair.counter.getCurrencyCode();
+  }
+
+  public static String adaptProductID(Instrument instrument) {
+    return instrument == null
+        ? null
+        : instrument.getBase().getCurrencyCode() + "-" + instrument.getCounter().getCurrencyCode();
   }
 
   public static CoinbaseProPlaceOrder.Side adaptSide(OrderType orderType) {
@@ -504,12 +509,11 @@ public class CoinbaseProAdapters {
         .build();
   }
 
-  public static FundingRecord adaptFundingRecord(
-      Currency currency, CoinbaseProTransfer coinbaseProTransfer) {
+  public static FundingRecord adaptFundingRecord(CoinbaseProTransfer coinbaseProTransfer) {
     FundingRecord.Status status = FundingRecord.Status.PROCESSING;
 
-    Date processedAt = coinbaseProTransfer.processedAt();
-    Date canceledAt = coinbaseProTransfer.canceledAt();
+    Date processedAt = coinbaseProTransfer.getProcessedAt();
+    Date canceledAt = coinbaseProTransfer.getCanceledAt();
 
     if (canceledAt != null) status = FundingRecord.Status.CANCELLED;
     else if (processedAt != null) status = FundingRecord.Status.COMPLETE;
@@ -518,17 +522,17 @@ public class CoinbaseProAdapters {
     if (address == null) address = coinbaseProTransfer.getDetails().getSentToAddress();
 
     String cryptoTransactionHash = coinbaseProTransfer.getDetails().getCryptoTransactionHash();
-    String transactionHash = adaptTransactionHash(currency.getSymbol(), cryptoTransactionHash);
+    String transactionHash = adaptTransactionHash(coinbaseProTransfer.getCurrency(), cryptoTransactionHash);
 
     return new FundingRecord(
         address,
         coinbaseProTransfer.getDetails().getDestinationTag(),
-        coinbaseProTransfer.createdAt(),
-        currency,
-        coinbaseProTransfer.amount(),
+        coinbaseProTransfer.getCreatedAt(),
+        new Currency(coinbaseProTransfer.getCurrency()),
+        coinbaseProTransfer.getAmount(),
         coinbaseProTransfer.getId(),
         transactionHash,
-        coinbaseProTransfer.type(),
+        coinbaseProTransfer.getType(),
         status,
         null,
         null,
