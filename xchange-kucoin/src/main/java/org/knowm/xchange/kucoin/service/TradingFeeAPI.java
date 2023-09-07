@@ -3,7 +3,6 @@ package org.knowm.xchange.kucoin.service;
 import java.io.IOException;
 import java.util.List;
 
-import javax.ws.rs.Encoded;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;

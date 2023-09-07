@@ -6,6 +6,7 @@ import lombok.Value;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 
 @Value
@@ -32,7 +33,7 @@ public class GateioUserTrade extends UserTrade {
       BigDecimal feeAmount, Currency feeCurrency,
       String orderUserReference, Role role) {
     super(type, originalAmount, instrument, price, timestamp, id, orderId, feeAmount, feeCurrency,
-        orderUserReference);
+        orderUserReference, MarketParticipant.valueOf(role.getValue().toUpperCase()));
     this.role = role;
   }
 
