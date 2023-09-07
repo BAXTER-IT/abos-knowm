@@ -41,6 +41,7 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @QueryParam("currency") String currency,
       @QueryParam("type") String type)
       throws IOException;
@@ -74,6 +75,7 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @PathParam("accountId") String accountId,
       @QueryParam("startAt") Long startAt,
       @QueryParam("endAt") Long endAt,
@@ -88,6 +90,7 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @QueryParam("currency") String currency,
       @QueryParam("direction") String direction,
       @QueryParam("bizType") String bizType,
@@ -104,6 +107,7 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @PathParam("accountId") String accountId)
       throws IOException;
 

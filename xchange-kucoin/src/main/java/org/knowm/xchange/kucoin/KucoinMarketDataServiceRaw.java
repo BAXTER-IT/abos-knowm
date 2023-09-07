@@ -72,7 +72,7 @@ public class KucoinMarketDataServiceRaw extends KucoinBaseService {
     return classifyingExceptions(
         () ->
             decorateApiCall(
-                () -> tradingFeeAPI.getBaseFee(apiKey, digest, nonceFactory, passphrase))
+                () -> tradingFeeAPI.getBaseFee(apiKey, digest, nonceFactory, passphrase, "2"))
                 .withRetry(retry("baseFee"))
                 .withRateLimiter(rateLimiter(PUBLIC_REST_ENDPOINT_RATE_LIMITER))
                 .call());
@@ -85,7 +85,7 @@ public class KucoinMarketDataServiceRaw extends KucoinBaseService {
             decorateApiCall(
                 () ->
                     tradingFeeAPI.getTradeFee(
-                        apiKey, digest, nonceFactory, passphrase, symbols))
+                        apiKey, digest, nonceFactory, passphrase, "2", symbols))
                 .withRetry(retry("tradeFee"))
                 .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
                 .call());
@@ -165,7 +165,7 @@ public class KucoinMarketDataServiceRaw extends KucoinBaseService {
                         apiKey,
                         digest,
                         nonceFactory,
-                        passphrase))
+                        passphrase, "2"))
                 .withRetry(retry("fullOrderBook"))
                 .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
                 .call());

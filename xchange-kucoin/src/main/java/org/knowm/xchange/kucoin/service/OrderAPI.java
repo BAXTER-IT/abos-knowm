@@ -47,6 +47,7 @@ public interface OrderAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       OrderCreateApiRequest opsRequest)
       throws IOException;
 
@@ -65,6 +66,7 @@ public interface OrderAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @PathParam("orderId") String orderId)
       throws IOException;
 
@@ -80,6 +82,7 @@ public interface OrderAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @QueryParam("symbol") String symbol)
       throws IOException;
 
@@ -96,6 +99,7 @@ public interface OrderAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @PathParam("orderId") String orderId)
       throws IOException;
 
@@ -121,6 +125,7 @@ public interface OrderAPI {
       @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @QueryParam("symbol") String symbol,
       @QueryParam("side") String side,
       @QueryParam("type") String type,
