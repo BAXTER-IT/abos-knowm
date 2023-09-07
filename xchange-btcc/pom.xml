@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-parent</artifactId>
-        <version>ABOS-5.1.2</version>
+        <version>5.1.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>xchange-btcc</artifactId>
