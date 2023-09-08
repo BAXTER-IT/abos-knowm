@@ -9,7 +9,7 @@
     <parent>
         <artifactId>xchange-parent</artifactId>
         <groupId>org.knowm.xchange</groupId>
-        <version>git status</version>
+        <version>5.1.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>
