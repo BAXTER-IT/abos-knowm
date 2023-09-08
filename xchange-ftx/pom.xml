@@ -6,7 +6,7 @@
     <parent>
         <artifactId>xchange-parent</artifactId>
         <groupId>org.knowm.xchange</groupId>
-        <version>ABOS-5.1.4</version>
+        <version>ABOS-5.1.5</version>
     </parent>
 
     <artifactId>xchange-ftx</artifactId>
