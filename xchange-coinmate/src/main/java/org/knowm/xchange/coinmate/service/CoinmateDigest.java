@@ -25,7 +25,7 @@ package org.knowm.xchange.coinmate.service;
 
 import java.math.BigInteger;
 import javax.crypto.Mac;
-import jakarta.ws.rs.FormParam;
+import javax.ws.rs.FormParam;
 import org.knowm.xchange.service.BaseParamsDigest;
 import si.mazi.rescu.RestInvocation;
 
