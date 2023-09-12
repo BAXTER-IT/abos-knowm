@@ -45,8 +45,8 @@ public interface DepositAPI {
       @QueryParam("status") String status,
       @QueryParam("startAt") Long startAt,
       @QueryParam("endAt") Long endAt,
-      @QueryParam("currentPage") Integer currentPage,
-      @QueryParam("pageSize") Integer pageSize)
+      @QueryParam("pageSize") Integer pageSize,
+      @QueryParam("currentPage") Integer currentPage)
       throws IOException;
 
   @POST
