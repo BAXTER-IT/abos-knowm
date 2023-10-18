@@ -2,7 +2,7 @@ package org.knowm.xchange.gemini.v1.dto.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
-import jakarta.ws.rs.PathParam;
+import javax.ws.rs.PathParam;
 
 public class GeminiWithdrawalRequest {
 

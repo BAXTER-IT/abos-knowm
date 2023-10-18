@@ -2,7 +2,7 @@ package org.knowm.xchange.bybit.service;
 
 import static org.knowm.xchange.utils.DigestUtils.bytesToHex;
 
-import jakarta.ws.rs.HeaderParam;
+import javax.ws.rs.HeaderParam;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javax.crypto.Mac;
