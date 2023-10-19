@@ -493,10 +493,11 @@ public class KrakenAdapters {
                 FundingRecord.builder()
                     .date(timestamp)
                     .currency(currency)
-                    .amount(krakenLedger.getTransactionAmount())
+                    .amount(krakenLedger.getTransactionAmount().abs())
                     .internalId(internalId)
                     .type(FundingRecord.Type.fromString(krakenLedger.getLedgerType().name()))
                     .status(Status.COMPLETE)
+                    .balance(krakenLedger.getBalance())
                     .fee(krakenLedger.getFee())
                     .build();
             fundingRecords.add(fundingRecordEntry);

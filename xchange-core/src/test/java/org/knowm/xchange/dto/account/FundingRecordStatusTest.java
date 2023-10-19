@@ -12,22 +12,22 @@ public class FundingRecordStatusTest {
 
   @Test
   public void shouldProcessStatusDescriptionNormal() throws Exception {
-    testStatusDesc("PROCESSING", "foo", FundingRecord.Status.PROCESSING, "foo");
+    testStatusDesc("PROCESSING", "foo", Status.PROCESSING, "foo");
   }
 
   @Test
   public void shouldProcessStatusToUpercase() throws Exception {
-    testStatusDesc("Complete", "bar", FundingRecord.Status.COMPLETE, "bar");
+    testStatusDesc("Complete", "bar", Status.COMPLETE, "bar");
   }
 
   @Test
   public void shouldProcessNullDescription() throws Exception {
-    testStatusDesc("COMPLETE", null, FundingRecord.Status.COMPLETE, null);
+    testStatusDesc("COMPLETE", null, Status.COMPLETE, null);
   }
 
   @Test
   public void shouldProcessStatusAsDescriptionWhenDescInputNull() throws Exception {
-    testStatusDesc("Unknown", null, null, null);
+    testStatusDesc("Unknown", null, Status.FAILED, null);
   }
 
   private void testStatusDesc(

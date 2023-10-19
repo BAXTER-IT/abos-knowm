@@ -15,6 +15,7 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trades;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 
@@ -97,12 +98,12 @@ public class CoinMarketCapMarketDataService extends CoinMarketCapMarketDataServi
     throw new NotAvailableFromExchangeException();
   }
 
-  public List<Currency> getCurrencies() {
-    List<Currency> currencies = new ArrayList<>();
+  public Map<Currency, CurrencyMetaData> getCurrencies() {
+    Map<Currency, CurrencyMetaData> currencies = new HashMap<>();
     List<CoinMarketCapCurrency> cmcCurrencies = getCoinMarketCapCurrencies();
 
     for (CoinMarketCapCurrency cmcCurrency : cmcCurrencies) {
-      currencies.add(cmcCurrency.getCurrency());
+      currencies.put(cmcCurrency.getCurrency(), null);
     }
 
     return currencies;

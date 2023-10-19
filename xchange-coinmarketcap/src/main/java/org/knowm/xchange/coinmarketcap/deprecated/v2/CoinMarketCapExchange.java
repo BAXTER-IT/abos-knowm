@@ -3,12 +3,14 @@ package org.knowm.xchange.coinmarketcap.deprecated.v2;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.coinmarketcap.deprecated.v2.service.CoinMarketCapMarketDataService;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.instrument.Instrument;
@@ -83,10 +85,10 @@ public class CoinMarketCapExchange extends BaseExchange implements Exchange {
 
   @Override
   public List<Instrument> getExchangeInstruments() {
-    List<Currency> currencies = marketDataService.getCurrencies();
+    Map<Currency, CurrencyMetaData> currencies = marketDataService.getCurrencies();
 
     List<Instrument> pairs = new ArrayList<>();
-    for (Currency currency : currencies) {
+    for (Currency currency : currencies.keySet()) {
       pairs.add(new CurrencyPair(currency, Currency.USD));
       pairs.add(new CurrencyPair(currency, Currency.BTC));
     }

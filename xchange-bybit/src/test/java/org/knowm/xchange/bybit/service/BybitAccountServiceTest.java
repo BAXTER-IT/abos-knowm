@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import javax.ws.rs.core.Response.Status;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.bybit.dto.account.walletbalance.BybitAccountType;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 
@@ -19,7 +20,8 @@ public class BybitAccountServiceTest extends BaseWiremockTest {
   @Test
   public void testGetWalletBalances() throws IOException {
     Exchange bybitExchange = createExchange();
-    BybitAccountService bybitAccountService = new BybitAccountService(bybitExchange);
+    BybitAccountService bybitAccountService = new BybitAccountService(bybitExchange,
+        BybitAccountType.UNIFIED);
 
     String walletBalanceDetails = "{\n" +
         "   \"ret_code\":0,\n" +
@@ -27,29 +29,27 @@ public class BybitAccountServiceTest extends BaseWiremockTest {
         "   \"ext_code\":null,\n" +
         "   \"ext_info\":null,\n" +
         "   \"result\":{\n" +
-        "      \"balances\":[\n" +
-        "         {\n" +
-        "            \"coin\":\"COIN\",\n" +
-        "            \"coinId\":\"COIN\",\n" +
-        "            \"coinName\":\"COIN\",\n" +
-        "            \"total\":\"66419.616666666666666666\",\n" +
-        "            \"free\":\"56583.326666666666666666\",\n" +
-        "            \"locked\":\"9836.29\"\n" +
-        "         },\n" +
-        "         {\n" +
-        "            \"coin\":\"USDT\",\n" +
-        "            \"coinId\":\"USDT\",\n" +
-        "            \"coinName\":\"USDT\",\n" +
-        "            \"total\":\"61.50059688096\",\n" +
-        "            \"free\":\"61.50059688096\",\n" +
-        "            \"locked\":\"0\"\n" +
-        "         }\n" +
-        "      ]\n" +
-        "   }\n" +
+        "    \"memberId\": \"1234\",\n" +
+        "    \"accountType\": \"FUND\",\n" +
+        "    \"balance\": [\n" +
+        "        {\n" +
+        "            \"coin\": \"COIN\",\n" +
+        "            \"transferBalance\": \"56583.326666666666666666\",\n" +
+        "            \"walletBalance\": \"66419.616666666666666666\",\n" +
+        "            \"bonus\": \"\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"coin\": \"USDT\",\n" +
+        "            \"transferBalance\": \"61.50059688096\",\n" +
+        "            \"walletBalance\": \"61.50059688096\",\n" +
+        "            \"bonus\": \"\"\n" +
+        "        }\n" +
+        "    ]\n" +
+        "}" +
         "}";
 
     stubFor(
-        get(urlPathEqualTo("/spot/v1/account"))
+        get(urlPathEqualTo("/v5/asset/transfer/query-account-coins-balance"))
             .willReturn(
                 aResponse()
                     .withStatus(Status.OK.getStatusCode())

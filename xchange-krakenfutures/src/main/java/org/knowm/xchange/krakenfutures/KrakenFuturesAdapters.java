@@ -34,7 +34,7 @@ import org.knowm.xchange.krakenfutures.dto.trade.KrakenFuturesOrderStatus;
 /** @author Jean-Christophe Laruelle */
 public class KrakenFuturesAdapters {
 
-  private static final String MULTI_COLLATERAL_PRODUCTS = "pf_";
+  private static final String MULTI_COLLATERAL_PRODUCTS = "PI_";
   private static final String ACCOUNT_TYPE = "multiCollateralMarginAccount";
 
   public static Ticker adaptTicker(
@@ -183,7 +183,7 @@ public class KrakenFuturesAdapters {
     Map<Currency, CurrencyMetaData> currencies = new HashMap<>();
 
     for (KrakenFuturesInstrument instrument : krakenFuturesInstruments.getInstruments()) {
-      if(instrument.getSymbol().contains("pf")){
+      if(instrument.getSymbol().contains("PI_")){
         instruments.put(adaptInstrument(instrument.getSymbol()),new InstrumentMetaData.Builder()
                         .volumeScale(instrument.getVolumeScale())
                         .priceScale(instrument.getTickSize().scale())

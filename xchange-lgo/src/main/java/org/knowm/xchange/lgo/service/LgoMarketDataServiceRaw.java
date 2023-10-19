@@ -17,12 +17,12 @@ public class LgoMarketDataServiceRaw extends LgoBaseService {
     super(exchange);
   }
 
-  public LgoProducts getProducts() throws IOException {
+  public LgoProducts getLgoProducts() throws IOException {
     return this.proxy.getProducts(
         exchange.getNonceFactory().createValue(), exchange.getSignatureService());
   }
 
-  public LgoCurrencies getCurrencies() throws IOException {
+  public LgoCurrencies getLgoCurrencies() throws IOException {
     return this.proxy.getCurrencies(
         exchange.getNonceFactory().createValue(), exchange.getSignatureService());
   }

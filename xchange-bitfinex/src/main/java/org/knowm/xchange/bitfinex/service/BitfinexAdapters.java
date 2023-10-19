@@ -809,7 +809,7 @@ public final class BitfinexAdapters {
       FundingRecord fundingRecordEntry =
           FundingRecord.builder()
               .address(movement.getDestinationAddress())
-              .date(movement.getMtsStarted())
+              .date(movement.getMtsUpdated())
               .currency(currency)
               .amount(amount)
               .internalId(movement.getId())

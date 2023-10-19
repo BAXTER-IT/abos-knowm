@@ -29,8 +29,8 @@ public class LgoExchange extends BaseExchange {
   @Override
   public void remoteInit() throws IOException {
     try {
-      products = getMarketDataService().getProducts();
-      currencies = getMarketDataService().getCurrencies();
+      products = getMarketDataService().getLgoProducts();
+      currencies = getMarketDataService().getLgoCurrencies();
     } catch (LgoException e) {
       throw LgoErrorAdapter.adapt(e);
     }

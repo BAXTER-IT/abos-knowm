@@ -466,8 +466,7 @@ public class CoinbaseProAdapters {
         .build();
   }
 
-  public static FundingRecord adaptFundingRecord(
-      Currency currency, CoinbaseProTransfer coinbaseProTransfer) {
+  public static FundingRecord adaptFundingRecord(CoinbaseProTransfer coinbaseProTransfer) {
     FundingRecord.Status status = FundingRecord.Status.PROCESSING;
 
     Date processedAt = coinbaseProTransfer.getProcessedAt();

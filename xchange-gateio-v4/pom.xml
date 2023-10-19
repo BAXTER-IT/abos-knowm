@@ -15,8 +15,8 @@
     <description>XChange implementation for the Gate.io Exchange</description>
 
     <properties>
-        <version.mockito>5.3.1</version.mockito>
-        <version.sortpom-maven-plugin>3.2.0</version.sortpom-maven-plugin>
+        <version.mockito>4.11.0</version.mockito>
+        <version.sortpom-maven-plugin>3.0.1</version.sortpom-maven-plugin>
     </properties>
 
     <dependencies>

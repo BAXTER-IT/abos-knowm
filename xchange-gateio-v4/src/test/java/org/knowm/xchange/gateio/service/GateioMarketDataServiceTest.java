@@ -8,12 +8,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.gateio.GateioExchangeWiremock;
 
@@ -86,9 +88,9 @@ public class GateioMarketDataServiceTest extends GateioExchangeWiremock {
 
   @Test
   void getCurrencies_valid() throws IOException {
-    List<Currency> actual = gateioMarketDataService.getCurrencies();
+    Map<Currency, CurrencyMetaData> actual = gateioMarketDataService.getCurrencies();
 
-    assertThat(actual).containsOnly(Currency.BTC, Currency.ETH);
+    assertThat(actual.keySet()).containsOnly(Currency.BTC, Currency.ETH);
   }
 
 

@@ -1,6 +1,7 @@
 package org.knowm.xchange.gateio.service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.gateio.GateioAdapters;
 import org.knowm.xchange.gateio.GateioErrorAdapter;
@@ -74,15 +76,19 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
   }
 
 
-  public List<Currency> getCurrencies() throws IOException {
+  public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
+    // TODO fill CurrencyMetaData
+    Map<Currency, CurrencyMetaData> currencies = new HashMap<>();
     try {
       List<GateioCurrencyInfo> currencyInfos = getGateioCurrencyInfos();
       return currencyInfos.stream()
           .filter(gateioCurrencyInfo -> !gateioCurrencyInfo.getDelisted())
           .map(o -> StringUtils.removeEnd(o.getCurrencyWithChain(), "_" + o.getChain()))
           .distinct()
-          .map(Currency::getInstance)
-          .collect(Collectors.toList());
+          .collect(Collectors.toMap(
+              Currency::getInstance,
+              currency -> new CurrencyMetaData(0, null)
+          ));
     } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
