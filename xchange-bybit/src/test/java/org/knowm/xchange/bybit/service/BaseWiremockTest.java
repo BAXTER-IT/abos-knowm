@@ -18,7 +18,7 @@ import org.knowm.xchange.bybit.BybitExchange;
 
 public class BaseWiremockTest {
 
-  @Rule public WireMockRule wireMockRule = new WireMockRule();
+  @Rule public WireMockRule wireMockRule = new WireMockRule(8765);
 
   public Exchange createExchange() throws IOException {
     Exchange exchange =
