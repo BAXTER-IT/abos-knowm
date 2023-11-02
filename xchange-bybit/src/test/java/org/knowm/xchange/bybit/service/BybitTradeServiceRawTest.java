@@ -1,6 +1,7 @@
 package org.knowm.xchange.bybit.service;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -8,11 +9,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import javax.ws.rs.core.Response.Status;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import javax.ws.rs.core.Response.Status;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
@@ -22,10 +22,12 @@ import org.knowm.xchange.bybit.dto.trade.BybitOrderResponse;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderStatus;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderType;
 import org.knowm.xchange.bybit.dto.trade.BybitSide;
+import org.knowm.xchange.bybit.dto.trade.BybitTradeHistoryResponse;
 import org.knowm.xchange.bybit.dto.trade.details.BybitOrderDetail;
 import org.knowm.xchange.bybit.dto.trade.details.BybitOrderDetails;
 import org.knowm.xchange.bybit.dto.trade.details.linear.BybitLinearOrderDetail;
 import org.knowm.xchange.bybit.dto.trade.details.spot.BybitSpotOrderDetail;
+import org.knowm.xchange.currency.CurrencyPair;
 
 public class BybitTradeServiceRawTest extends BaseWiremockTest {
 
@@ -269,5 +271,36 @@ public class BybitTradeServiceRawTest extends BaseWiremockTest {
         .isEqualTo(orderRequestResult.getOrderId());
 
     System.out.println(order);
+  }
+
+  @Test
+  public void testGetTradeHistory() throws IOException {
+    Exchange bybitExchange = createExchange();
+    BybitTradeServiceRaw bybitTradeServiceRaw = new BybitTradeServiceRaw(bybitExchange);
+
+    String response =
+        "{\"retCode\":0,\"retMsg\":\"OK\",\"result\":{\"nextPageCursor\":\"192403%3A0%2C192403%3A0\",\"category\":\"spot\",\"list\":[{\"symbol\":\"BTCUSDT\",\"orderType\":\"Market\",\"underlyingPrice\":\"\",\"orderLinkId\":\"1697019377463\",\"orderId\":\"1529103804224771584\",\"stopOrderType\":\"\",\"execTime\":\"1697019378151\",\"feeRate\":\"0.001\",\"tradeIv\":\"\",\"blockTradeId\":\"\",\"markPrice\":\"\",\"execPrice\":\"27225.94\",\"markIv\":\"\",\"orderQty\":\"0\",\"orderPrice\":\"999999\",\"execValue\":\"4.98234702\",\"closedSize\":\"\",\"execType\":\"Trade\",\"seq\":14929103869,\"side\":\"Buy\",\"indexPrice\":\"\",\"leavesQty\":\"0\",\"isMaker\":false,\"execFee\":\"0.000000183\",\"execId\":\"2290000000072777536\",\"execQty\":\"0.000183\"}]},\"retExtInfo\":{},\"time\":1698938012431}";
+
+    stubFor(
+        get(urlPathEqualTo("/v5/execution/list"))
+            .willReturn(
+                aResponse()
+                    .withStatus(Status.OK.getStatusCode())
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(response)));
+
+    BybitResult<BybitTradeHistoryResponse> bybitTradeHistory = bybitTradeServiceRaw.getBybitTradeHistory(
+        BybitCategory.SPOT,
+        new CurrencyPair("BTC", "USDT"),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null);
+
+
   }
 }
