@@ -301,6 +301,6 @@ public class BybitTradeServiceRawTest extends BaseWiremockTest {
         null,
         null);
 
-
+    System.out.println(bybitTradeHistory);
   }
 }

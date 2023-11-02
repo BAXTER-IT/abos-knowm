@@ -18,6 +18,6 @@ public enum BybitExecType {
   DELIVERY("Delivery"),
 
   BLOCK_TRADE("BlockTrade");
-  @JsonValue
-  private final String value;
+
+  @JsonValue private final String value;
 }

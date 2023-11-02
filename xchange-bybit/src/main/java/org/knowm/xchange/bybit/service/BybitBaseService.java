@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.bybit.Bybit;
 import org.knowm.xchange.bybit.BybitAuthenticated;
+import org.knowm.xchange.bybit.config.BybitJacksonObjectMapperFactory;
 import org.knowm.xchange.client.ExchangeRestProxyBuilder;
 import org.knowm.xchange.client.ProxyConfig;
 import org.knowm.xchange.service.BaseService;

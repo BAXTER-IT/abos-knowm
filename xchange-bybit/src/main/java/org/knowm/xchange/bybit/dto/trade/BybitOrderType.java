@@ -1,5 +1,6 @@
 package org.knowm.xchange.bybit.dto.trade;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,7 @@ public enum BybitOrderType {
 
   LIMIT("Limit"),
 
+  @JsonEnumDefaultValue
   UNKNOWN("UNKNOWN"),
 
   STOP_LOSS("StopLoss"),
