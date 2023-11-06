@@ -3,6 +3,9 @@ package org.knowm.xchange.bybit.config;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import si.mazi.rescu.serialization.jackson.DefaultJacksonObjectMapperFactory;
 
 public class BybitJacksonObjectMapperFactory extends DefaultJacksonObjectMapperFactory {
@@ -17,6 +20,8 @@ public class BybitJacksonObjectMapperFactory extends DefaultJacksonObjectMapperF
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
     objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+    objectMapper.coercionConfigFor(LogicalType.Enum).setCoercion(CoercionInputShape.EmptyString,
+        CoercionAction.AsNull);
 
   }
 }
