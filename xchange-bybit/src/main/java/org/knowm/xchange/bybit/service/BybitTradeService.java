@@ -74,7 +74,7 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
           "Params must be instance of " + TradeHistoryParamInstrument.class.getSimpleName());
     }
 
-    if(((TradeHistoryParamInstrument) params).getInstrument() == null){
+    if (((TradeHistoryParamInstrument) params).getInstrument() == null) {
       throw new IllegalArgumentException("Instrument must not be null.");
     }
 
@@ -86,59 +86,46 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
     Date endTime = null;
     Integer limit = 100;
 
-    if(params instanceof TradeHistoryParamId) {
+    if (params instanceof TradeHistoryParamId) {
       orderId = ((TradeHistoryParamId) params).getId();
     }
 
-    if(params instanceof TradeHistoryParamUserReference){
+    if (params instanceof TradeHistoryParamUserReference) {
       userReference = ((TradeHistoryParamUserReference) params).getUserReference();
     }
 
-    if(params instanceof TradeHistoryParamsTimeSpan){
+    if (params instanceof TradeHistoryParamsTimeSpan) {
       startTime = ((TradeHistoryParamsTimeSpan) params).getStartTime();
       endTime = ((TradeHistoryParamsTimeSpan) params).getEndTime();
     }
 
-    if(params instanceof TradeHistoryParamLimit) {
+    if (params instanceof TradeHistoryParamLimit) {
       limit = ((TradeHistoryParamLimit) params).getLimit();
     }
 
-    BybitTradeHistoryResponse res = getBybitTradeHistory(
-        category,
-        instrument,
-        orderId,
-        userReference,
-        null,
-        startTime,
-        endTime,
-        null,
-        limit,
-        null).getResult();
-
-    String nextPageCursor = res.getNextPageCursor();
+    String nextPageCursor = null;
 
     List<UserTrade> userTradeList = new ArrayList<>();
 
-    while (nextPageCursor != null) {
+    do {
+      BybitTradeHistoryResponse res =
+          getBybitTradeHistory(
+                  category,
+                  instrument,
+                  orderId,
+                  userReference,
+                  null,
+                  startTime,
+                  endTime,
+                  null,
+                  limit,
+                  nextPageCursor)
+              .getResult();
+
       userTradeList.addAll(BybitAdapters.adaptUserTrades(res));
-
-      res = getBybitTradeHistory(
-          category,
-          instrument,
-          orderId,
-          userReference,
-          null,
-          startTime,
-          endTime,
-          null,
-          limit,
-          nextPageCursor).getResult();
-
       nextPageCursor = res.getNextPageCursor();
-      if(nextPageCursor.isEmpty()){
-        break;
-      }
-    }
+
+    } while (nextPageCursor != null && !nextPageCursor.isEmpty());
 
     return new UserTrades(userTradeList, TradeSortType.SortByTimestamp);
   }

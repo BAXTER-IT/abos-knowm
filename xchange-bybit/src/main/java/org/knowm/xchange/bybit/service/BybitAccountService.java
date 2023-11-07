@@ -15,10 +15,12 @@ import org.knowm.xchange.bybit.dto.BybitCategory;
 import org.knowm.xchange.bybit.dto.account.BybitDepositRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.BybitInternalDepositRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse;
+import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse.BybitTransactionLog;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse.BybitWithdrawRecord.BybitWithdrawType;
 import org.knowm.xchange.bybit.dto.account.walletbalance.BybitAccountType;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.Wallet;
@@ -28,9 +30,9 @@ import org.knowm.xchange.service.account.AccountService;
 
 public class BybitAccountService extends BybitAccountServiceRaw implements AccountService {
 
-  private final BybitAccountType accountType;
-
+  public static final int SEVEN_DAYS_IN_MILLIS = 7 * 24 * 60 * 60 * 1000;
   private static final Integer MAX_PAGINATION_LIMIT = 50;
+  private final BybitAccountType accountType;
 
   public BybitAccountService(Exchange exchange, BybitAccountType accountType) {
     super(exchange);
@@ -289,46 +291,52 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
 
   @Override
   public List<FundingRecord> getLedger(FundingRecordParamAll params) throws IOException {
-    List<FundingRecord> fundingRecordList = new ArrayList<>();
+    List<BybitTransactionLog> transactionLogs = new ArrayList<>();
+    Long fromMillis = params.getStartTime() == null ? null : params.getStartTime().getTime();
+    Long toMillis = params.getEndTime() == null ? null : params.getEndTime().getTime();
 
-    BybitTransactionLogResponse res = getBybitLedger(
-        accountType,
-        params.getAccountCategory() == null ? null : BybitCategory.valueOf(params.getAccountCategory()),
-        params.getCurrency(),
-        null,
-        null,
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(),
-        null
-    ).getResult();
+    if (fromMillis != null && toMillis != null) {
+      if (fromMillis > toMillis) {
+        Long temp = fromMillis;
+        fromMillis = toMillis;
+        toMillis = temp;
+      }
+      double sevenDaySpans = Math.ceil((double) (toMillis - fromMillis) / SEVEN_DAYS_IN_MILLIS);
+      for (int i = 0; i < sevenDaySpans; i++) {
+        long newFrom = fromMillis + ((long) i * SEVEN_DAYS_IN_MILLIS);
+        long newTo = Math.min(toMillis, newFrom + SEVEN_DAYS_IN_MILLIS);
+        transactionLogs.addAll(
+            getPaginatedLedger(params.getCurrency(), newFrom, newTo, params.getLimit()));
+      }
+    } else {
+      transactionLogs.addAll(
+          getPaginatedLedger(params.getCurrency(), fromMillis, toMillis, params.getLimit()));
+    }
 
-    fundingRecordList.addAll(BybitAdapters.adaptBybitLedger(res.getList()));
+    return BybitAdapters.adaptBybitLedger(transactionLogs);
+  }
 
-    if(params.isUsePagination()){
-      String nextPageCursor = res.getNextPageCursor();
+  private List<BybitTransactionLog> getPaginatedLedger(
+      Currency currency, Long from, Long to, int limit) throws IOException {
+    List<BybitTransactionLog> transactionLogs = new ArrayList<>();
+    List<BybitTransactionLog> chunk;
+    String nextPageCursor = null;
 
-      while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
-        res = getBybitLedger(
-            accountType,
-            null,
-            params.getCurrency(),
-            null,
-            null,
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(),
-            res.getNextPageCursor()
-        ).getResult();
+    do {
+      BybitTransactionLogResponse result =
+          getBybitLedger(accountType, null, currency, null, null, from, to, limit, nextPageCursor)
+              .getResult();
 
-        fundingRecordList.addAll(BybitAdapters.adaptBybitLedger(res.getList()));
+      chunk = result.getList();
+      transactionLogs.addAll(chunk);
 
-        nextPageCursor = res.getNextPageCursor();
+      if (chunk.size() < limit) {
+        break;
       }
 
-      return fundingRecordList;
-    } else {
-      return BybitAdapters.adaptBybitLedger(res.getList());
-    }
+      nextPageCursor = result.getNextPageCursor();
+    } while (nextPageCursor != null && !nextPageCursor.isEmpty());
+
+    return transactionLogs;
   }
 }

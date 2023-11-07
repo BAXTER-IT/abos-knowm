@@ -145,8 +145,8 @@ public class BybitAccountServiceRaw extends BybitBaseService {
       Currency currency,
       Currency baseCoin,
       BybitTransactionLogType type,
-      Date startTime,
-      Date endTime,
+      Long startTime,
+      Long endTime,
       Integer limit,
       String cursor)
       throws IOException {
@@ -160,8 +160,8 @@ public class BybitAccountServiceRaw extends BybitBaseService {
             (currency == null) ? null : currency.toString(),
             (baseCoin == null) ? null : baseCoin.toString(),
             (type == null) ? null : type.name(),
-            (startTime == null) ? null : startTime.toInstant().toEpochMilli(),
-            (endTime == null) ? null : endTime.toInstant().toEpochMilli(),
+            startTime,
+            endTime,
             limit,
             cursor);
     if (!ledger.isSuccess()) {
