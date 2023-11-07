@@ -38,6 +38,7 @@ public class GateioAccountBookRecord {
 
 
   public FundingRecord.Type getType() {
+    // TODO map more types
     switch (typeDescription) {
       case "withdraw":
         return Type.WITHDRAWAL;

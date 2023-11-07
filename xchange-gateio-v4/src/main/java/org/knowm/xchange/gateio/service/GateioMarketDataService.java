@@ -75,10 +75,8 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
     return GateioAdapters.toOrderBook(gateioOrderBook, instrument);
   }
 
-
+  @Override
   public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
-    // TODO fill CurrencyMetaData
-    Map<Currency, CurrencyMetaData> currencies = new HashMap<>();
     try {
       List<GateioCurrencyInfo> currencyInfos = getGateioCurrencyInfos();
       return currencyInfos.stream()
@@ -94,21 +92,15 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
     }
   }
 
-
-  public List<CurrencyPair> getCurrencyPairs() throws IOException {
+  @Override
+  public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
     try {
-      List<GateioCurrencyPairDetails> metadata = getCurrencyPairDetails();
-
-      return metadata.stream()
-          .filter(details -> "tradable".equals(details.getTradeStatus()))
-          .map(details -> new CurrencyPair(details.getAsset(), details.getQuote()))
-          .collect(Collectors.toList());
+      return GateioAdapters.toInstruments(getCurrencyPairDetails());
     }
     catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
   }
-
 
   public Map<Instrument, InstrumentMetaData> getMetaDataByInstrument() throws IOException {
     try {
