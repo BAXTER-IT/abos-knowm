@@ -295,6 +295,11 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
     Long fromMillis = params.getStartTime() == null ? null : params.getStartTime().getTime();
     Long toMillis = params.getEndTime() == null ? null : params.getEndTime().getTime();
     Integer limit = params.getLimit() == null ? MAX_PAGINATION_LIMIT : params.getLimit();
+    BybitCategory category =
+        params.getAccountCategory() == null
+            ? null
+            : BybitCategory.valueOf(params.getAccountCategory().toUpperCase());
+    
     if (fromMillis != null && toMillis != null) {
       if (fromMillis > toMillis) {
         Long temp = fromMillis;
@@ -306,25 +311,25 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
         long newFrom = fromMillis + ((long) i * SEVEN_DAYS_IN_MILLIS);
         long newTo = Math.min(toMillis, newFrom + SEVEN_DAYS_IN_MILLIS);
         transactionLogs.addAll(
-            getPaginatedLedger(params.getCurrency(), newFrom, newTo, limit));
+            getPaginatedLedger(params.getCurrency(), category, newFrom, newTo, limit));
       }
     } else {
       transactionLogs.addAll(
-          getPaginatedLedger(params.getCurrency(), fromMillis, toMillis, limit));
+          getPaginatedLedger(params.getCurrency(), category, fromMillis, toMillis, limit));
     }
 
     return BybitAdapters.adaptBybitLedger(transactionLogs);
   }
 
   private List<BybitTransactionLog> getPaginatedLedger(
-      Currency currency, Long from, Long to, int limit) throws IOException {
+      Currency currency, BybitCategory category, Long from, Long to, int limit) throws IOException {
     List<BybitTransactionLog> transactionLogs = new ArrayList<>();
     List<BybitTransactionLog> chunk;
     String nextPageCursor = null;
 
     do {
       BybitTransactionLogResponse result =
-          getBybitLedger(accountType, null, currency, null, null, from, to, limit, nextPageCursor)
+          getBybitLedger(accountType, category, currency, null, null, from, to, limit, nextPageCursor)
               .getResult();
 
       chunk = result.getList();

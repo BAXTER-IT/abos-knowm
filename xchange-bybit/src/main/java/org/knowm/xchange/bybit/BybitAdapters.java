@@ -336,7 +336,10 @@ public class BybitAdapters {
     return instrument;
   }
 
-  public static BybitCategory getBybitCategoryFromInstrument(Instrument instrument) {
+  public static BybitCategory getBybitCategoryFromInstrument(Instrument instrument, BybitCategory defaultCategory) {
+    if (instrument == null) {
+      return defaultCategory;
+    }
     int count = StringUtils.countMatches(instrument.toString(), "/");
     if(count == 1){
       return BybitCategory.SPOT;

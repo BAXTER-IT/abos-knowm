@@ -74,12 +74,8 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
           "Params must be instance of " + TradeHistoryParamInstrument.class.getSimpleName());
     }
 
-    if (((TradeHistoryParamInstrument) params).getInstrument() == null) {
-      throw new IllegalArgumentException("Instrument must not be null.");
-    }
-
     Instrument instrument = ((TradeHistoryParamInstrument) params).getInstrument();
-    BybitCategory category = BybitAdapters.getBybitCategoryFromInstrument(instrument);
+    BybitCategory category = BybitAdapters.getBybitCategoryFromInstrument(instrument, BybitCategory.SPOT);
     String orderId = null;
     String userReference = null;
     Date startTime = null;
