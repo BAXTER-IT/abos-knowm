@@ -65,8 +65,8 @@ public class BybitTradeServiceRaw extends BybitBaseService {
       String orderId,
       String userReferenceId,
       Currency baseCoin,
-      Date startTime,
-      Date endTime,
+      Long startTime,
+      Long endTime,
       BybitExecType execType,
       Integer limit,
       String cursor)
@@ -81,8 +81,8 @@ public class BybitTradeServiceRaw extends BybitBaseService {
             orderId,
             userReferenceId,
             baseCoin == null ? null : baseCoin.getCurrencyCode(),
-            startTime == null ? null : startTime.toInstant().toEpochMilli(),
-            endTime == null ? null : endTime.toInstant().toEpochMilli(),
+            startTime,
+            endTime,
             execType == null ? null : execType.getValue(),
             limit,
             cursor);

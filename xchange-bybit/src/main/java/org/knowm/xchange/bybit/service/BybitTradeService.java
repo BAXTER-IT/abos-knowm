@@ -16,6 +16,7 @@ import org.knowm.xchange.bybit.dto.BybitResult;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderResponse;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderType;
 import org.knowm.xchange.bybit.dto.trade.BybitTradeHistoryResponse;
+import org.knowm.xchange.bybit.dto.trade.BybitUserTradeDto;
 import org.knowm.xchange.bybit.dto.trade.details.BybitOrderDetail;
 import org.knowm.xchange.bybit.dto.trade.details.BybitOrderDetails;
 import org.knowm.xchange.dto.Order;
@@ -33,6 +34,9 @@ import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsTimeSpan;
 
 public class BybitTradeService extends BybitTradeServiceRaw implements TradeService {
+
+  private static final int MAX_PAGINATION_LIMIT = 100;
+  private static final long SEVEN_DAYS_IN_MILLIS = 7 * 24 * 60 * 60 * 1000;
 
   public BybitTradeService(Exchange exchange) {
     super(exchange);
@@ -75,12 +79,13 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
     }
 
     Instrument instrument = ((TradeHistoryParamInstrument) params).getInstrument();
-    BybitCategory category = BybitAdapters.getBybitCategoryFromInstrument(instrument, BybitCategory.SPOT);
+    BybitCategory category =
+        BybitAdapters.getBybitCategoryFromInstrument(instrument, BybitCategory.SPOT);
     String orderId = null;
     String userReference = null;
     Date startTime = null;
     Date endTime = null;
-    Integer limit = 100;
+    Integer limit = null;
 
     if (params instanceof TradeHistoryParamId) {
       orderId = ((TradeHistoryParamId) params).getId();
@@ -98,6 +103,45 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
     if (params instanceof TradeHistoryParamLimit) {
       limit = ((TradeHistoryParamLimit) params).getLimit();
     }
+
+    Long fromMillis = startTime == null ? null : startTime.getTime();
+    Long toMillis = endTime == null ? null : endTime.getTime();
+    limit = limit == null ? MAX_PAGINATION_LIMIT : Math.min(limit, MAX_PAGINATION_LIMIT);
+
+    List<UserTrade> userTrades = new ArrayList<>();
+
+    if (fromMillis != null && toMillis != null) {
+      if (fromMillis > toMillis) {
+        Long temp = fromMillis;
+        fromMillis = toMillis;
+        toMillis = temp;
+      }
+      double sevenDaySpans = Math.ceil((double) (toMillis - fromMillis) / SEVEN_DAYS_IN_MILLIS);
+      for (int i = 0; i < sevenDaySpans; i++) {
+        long newFrom = fromMillis + ((long) i * SEVEN_DAYS_IN_MILLIS);
+        long newTo = Math.min(toMillis, newFrom + SEVEN_DAYS_IN_MILLIS);
+        userTrades.addAll(
+            getPaginatedTradeHistory(
+                category, instrument, orderId, userReference, newFrom, newTo, limit));
+      }
+    } else {
+      userTrades.addAll(
+          getPaginatedTradeHistory(
+              category, instrument, orderId, userReference, fromMillis, toMillis, limit));
+    }
+
+    return new UserTrades(userTrades, TradeSortType.SortByTimestamp);
+  }
+
+  private List<UserTrade> getPaginatedTradeHistory(
+      BybitCategory category,
+      Instrument instrument,
+      String orderId,
+      String userReference,
+      Long startTime,
+      Long endTime,
+      int limit)
+      throws IOException {
 
     String nextPageCursor = null;
 
@@ -119,10 +163,15 @@ public class BybitTradeService extends BybitTradeServiceRaw implements TradeServ
               .getResult();
 
       userTradeList.addAll(BybitAdapters.adaptUserTrades(res));
+
+      if (res.getTradeHistoryList().size() < limit) {
+        break;
+      }
+
       nextPageCursor = res.getNextPageCursor();
 
     } while (nextPageCursor != null && !nextPageCursor.isEmpty());
 
-    return new UserTrades(userTradeList, TradeSortType.SortByTimestamp);
+    return userTradeList;
   }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.bybit.dto.BybitCategory;
@@ -353,11 +354,9 @@ public class BybitAdapters {
   }
 
   public static List<UserTrade> adaptUserTrades(BybitTradeHistoryResponse result) {
-    List<UserTrade> userTrades = new ArrayList<>();
-
-    result.getTradeHistoryList().forEach(bybitUserTradeDto -> userTrades.add(adaptUserTrade(bybitUserTradeDto, result.getCategory())));
-
-    return userTrades;
+    return result.getTradeHistoryList().stream()
+        .map(bybitUserTradeDto -> adaptUserTrade(bybitUserTradeDto, result.getCategory()))
+        .collect(Collectors.toList());
   }
 
   public static UserTrade adaptUserTrade(BybitUserTradeDto bybitUserTradeDto, BybitCategory bybitCategory) {
