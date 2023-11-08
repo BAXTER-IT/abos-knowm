@@ -376,6 +376,9 @@ public class BybitAdapters {
   }
 
   public static String adaptBybitSymbol(Instrument instrument) {
+    if (instrument == null) {
+      return null;
+    }
     if(instrument instanceof CurrencyPair){
       return instrument.toString().replace("/","");
     } else if(instrument instanceof OptionsContract){
