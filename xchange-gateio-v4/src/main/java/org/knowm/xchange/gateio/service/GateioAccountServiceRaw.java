@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
+import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.gateio.GateioErrorAdapter;
 import org.knowm.xchange.gateio.GateioExchange;
 import org.knowm.xchange.gateio.dto.GateioException;
@@ -197,22 +198,26 @@ public class GateioAccountServiceRaw extends GateioBaseService {
   public List<GateioAccountBookRecord> getAccountBookRecords(FundingRecordParamAll params)
       throws IOException {
     Currency currency = params.getCurrency();
-    Long from = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
-    Long to = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
+    Long fromSec = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
+    Long toSec = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
     int pageLength = params.getLimit() != null ? params.getLimit() : PAGINATION_LIMIT_MAX;
     String type = params.getType().toString();
     List<GateioAccountBookRecord> result = new ArrayList<>();
 
-    if (from != null && to != null) {
-      int numberOfThirtyDayPeriods = (int) Math.ceil((to - from) / (double) THIRTY_DAYS_IN_SECONDS);
-      long spanTo = from + THIRTY_DAYS_IN_SECONDS;
-      for (int i = 0; i < numberOfThirtyDayPeriods; i += THIRTY_DAYS_IN_SECONDS) {
-        result.addAll(
-            getPaginatedAccountBookRecords(
-                currency, from + i, Math.min(to, spanTo + i), pageLength, type));
+    if (fromSec != null && toSec != null) {
+      if (fromSec > toSec) {
+        Long temp = fromSec;
+        fromSec = toSec;
+        toSec = temp;
+      }
+      int thirtyDaySpans = (int) Math.ceil((toSec - fromSec) / (double) THIRTY_DAYS_IN_SECONDS);
+      for (int i = 0; i < thirtyDaySpans; i++) {
+        long newFrom = fromSec + ((long) i * THIRTY_DAYS_IN_SECONDS);
+        long newTo = Math.min(toSec, newFrom + THIRTY_DAYS_IN_SECONDS);
+        result.addAll(getPaginatedAccountBookRecords(currency, newFrom, newTo, pageLength, type));
       }
     } else {
-      result.addAll(getPaginatedAccountBookRecords(currency, from, to, pageLength, type));
+      result.addAll(getPaginatedAccountBookRecords(currency, fromSec, toSec, pageLength, type));
     }
 
     return result;
@@ -244,12 +249,31 @@ public class GateioAccountServiceRaw extends GateioBaseService {
 
   public List<GateioSubAccountTransfer> getSubAccountTransfers(FundingRecordParamAll params)
       throws IOException {
-    // TODO implement thirty day period pagination
-    Long from = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
-    Long to = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
+    Long fromSec = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
+    Long toSec = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
     int pageLength = params.getLimit() != null ? params.getLimit() : PAGINATION_LIMIT_MAX;
 
-    return getPaginatedSubAccountTransfers(params.getSubAccountId(), from, to, pageLength);
+    List<GateioSubAccountTransfer> result = new ArrayList<>();
+
+    if (fromSec != null && toSec != null) {
+      if (fromSec > toSec) {
+        Long temp = fromSec;
+        fromSec = toSec;
+        toSec = temp;
+      }
+      int thirtyDaySpans = (int) Math.ceil((toSec - fromSec) / (double) THIRTY_DAYS_IN_SECONDS);
+      for (int i = 0; i < thirtyDaySpans; i++) {
+        long newFrom = fromSec + ((long) i * THIRTY_DAYS_IN_SECONDS);
+        long newTo = Math.min(toSec, newFrom + THIRTY_DAYS_IN_SECONDS);
+        result.addAll(
+            getPaginatedSubAccountTransfers(params.getSubAccountId(), newFrom, newTo, pageLength));
+      }
+    } else {
+      result.addAll(
+          getPaginatedSubAccountTransfers(params.getSubAccountId(), fromSec, toSec, pageLength));
+    }
+
+    return result;
   }
 
   private List<GateioSubAccountTransfer> getPaginatedSubAccountTransfers(
