@@ -294,7 +294,7 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
     List<BybitTransactionLog> transactionLogs = new ArrayList<>();
     Long fromMillis = params.getStartTime() == null ? null : params.getStartTime().getTime();
     Long toMillis = params.getEndTime() == null ? null : params.getEndTime().getTime();
-
+    Integer limit = params.getLimit() == null ? MAX_PAGINATION_LIMIT : params.getLimit();
     if (fromMillis != null && toMillis != null) {
       if (fromMillis > toMillis) {
         Long temp = fromMillis;
@@ -306,11 +306,11 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
         long newFrom = fromMillis + ((long) i * SEVEN_DAYS_IN_MILLIS);
         long newTo = Math.min(toMillis, newFrom + SEVEN_DAYS_IN_MILLIS);
         transactionLogs.addAll(
-            getPaginatedLedger(params.getCurrency(), newFrom, newTo, params.getLimit()));
+            getPaginatedLedger(params.getCurrency(), newFrom, newTo, limit));
       }
     } else {
       transactionLogs.addAll(
-          getPaginatedLedger(params.getCurrency(), fromMillis, toMillis, params.getLimit()));
+          getPaginatedLedger(params.getCurrency(), fromMillis, toMillis, limit));
     }
 
     return BybitAdapters.adaptBybitLedger(transactionLogs);
