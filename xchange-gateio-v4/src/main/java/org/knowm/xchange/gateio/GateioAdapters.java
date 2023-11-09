@@ -334,4 +334,19 @@ public class GateioAdapters {
                         .counterMinimumAmount(detail.getMinQuoteAmount())
                         .build()));
   }
+
+  public static String adaptFundingRecordType(Type type) {
+    switch (type) {
+      case DEPOSIT:
+        return "deposit";
+      case WITHDRAWAL:
+        return "withdraw";
+      case INTERNAL_SUB_ACCOUNT_TRANSFER:
+        return "internal_transfer";
+      case ORDER_FEE:
+        return "order_fee";
+      default:
+        throw new IllegalArgumentException("Can't map " + type);
+    }
+  }
 }

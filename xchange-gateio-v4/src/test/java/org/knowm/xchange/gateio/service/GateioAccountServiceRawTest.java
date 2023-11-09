@@ -6,11 +6,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
 import org.knowm.xchange.exceptions.ExchangeSecurityException;
 import org.knowm.xchange.exceptions.InstrumentNotValidException;
 import org.knowm.xchange.exceptions.InternalServerException;
@@ -127,7 +129,8 @@ public class GateioAccountServiceRawTest extends GateioExchangeWiremock {
 
   @Test
   void withdrawal_records() throws IOException {
-    List<GateioWithdrawalRecord> actual = gateioAccountServiceRaw.getWithdrawals(GateioWithdrawalsParams.builder().build());
+    List<GateioWithdrawalRecord> actual = gateioAccountServiceRaw.getWithdrawals(
+        FundingRecordParamAll.builder().usePagination(false).build());
 
     GateioWithdrawalRecord expected = GateioWithdrawalRecord.builder()
         .id("w35874123")
@@ -150,10 +153,13 @@ public class GateioAccountServiceRawTest extends GateioExchangeWiremock {
 
   @Test
   void deposit_records() throws IOException {
-    List<GateioDepositRecord> actual = gateioAccountServiceRaw.getDeposits(GateioDepositsParams.builder()
-        .startTime(Instant.ofEpochSecond(1685833987))
-        .endTime(Instant.ofEpochSecond(1688339587))
-        .build());
+    List<GateioDepositRecord> actual =
+        gateioAccountServiceRaw.getDeposits(
+            FundingRecordParamAll.builder()
+                .startTime(Date.from(Instant.ofEpochSecond(1685833987)))
+                .endTime(Date.from(Instant.ofEpochSecond(1688339587)))
+                .usePagination(false)
+                .build());
 
     GateioDepositRecord expected = GateioDepositRecord.builder()
         .id("d95198946")
@@ -223,7 +229,7 @@ public class GateioAccountServiceRawTest extends GateioExchangeWiremock {
   void sub_account_transfers() throws IOException {
 
     List<GateioSubAccountTransfer> actual = gateioAccountServiceRaw.getSubAccountTransfers(
-        GateioSubAccountTransfersParams.builder().build());
+        FundingRecordParamAll.builder().usePagination(false).build());
 
     GateioSubAccountTransfer expected = GateioSubAccountTransfer.builder()
         .mainAccountId(10001)

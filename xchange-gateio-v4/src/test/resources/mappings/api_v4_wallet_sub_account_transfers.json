@@ -2,7 +2,7 @@
   "id" : "0fa9195b-5201-4082-9876-cd2285cc96c2",
   "name" : "api_v4_wallet_sub_account_transfers",
   "request" : {
-    "url" : "/api/v4/wallet/sub_account_transfers",
+    "url" : "/api/v4/wallet/sub_account_transfers?limit=1000&offset=0",
     "method" : "GET"
   },
   "response" : {

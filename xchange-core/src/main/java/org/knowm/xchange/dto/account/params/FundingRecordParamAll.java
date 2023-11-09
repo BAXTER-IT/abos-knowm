@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.FundingRecord;
+import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
 
 @Getter
@@ -19,7 +20,7 @@ public class FundingRecordParamAll {
   private String transferId;
   private String subAccountId;
   private Currency currency;
-  private FundingRecord.Status status;
+  private Status status;
   private Date startTime;
   private Date endTime;
   private Integer limit;

@@ -16,8 +16,10 @@ import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
+import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.gateio.GateioExchangeWiremock;
+import org.knowm.xchange.instrument.Instrument;
 
 public class GateioMarketDataServiceTest extends GateioExchangeWiremock {
 
@@ -96,9 +98,9 @@ public class GateioMarketDataServiceTest extends GateioExchangeWiremock {
 
   @Test
   void getCurrencyPairs_valid() throws IOException {
-    List<CurrencyPair> actual = gateioMarketDataService.getCurrencyPairs();
+    Map<Instrument, InstrumentMetaData> actual = gateioMarketDataService.getInstruments();
 
-    assertThat(actual).containsOnly(CurrencyPair.BTC_USDT, CurrencyPair.ETH_USDT, new CurrencyPair("CHZ/USDT"));
+    assertThat(actual).containsOnlyKeys(CurrencyPair.BTC_USDT, CurrencyPair.ETH_USDT, new CurrencyPair("CHZ/USDT"));
   }
 
 

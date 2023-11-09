@@ -2,7 +2,7 @@
   "id" : "ace4cfb1-40e9-42ca-b7c9-eb6b97d70351",
   "name" : "api_v4_wallet_deposits",
   "request" : {
-    "url" : "/api/v4/wallet/deposits?from=1685833987&to=1688339587",
+    "url" : "/api/v4/wallet/deposits?from=1685833987&to=1688339587&limit=1000&offset=0",
     "method" : "GET"
   },
   "response" : {

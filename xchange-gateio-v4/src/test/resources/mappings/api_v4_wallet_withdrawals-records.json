@@ -2,7 +2,7 @@
   "id" : "27c5026f-0655-4b5a-a621-04dbc34684e5",
   "name" : "api_v4_wallet_withdrawals",
   "request" : {
-    "url" : "/api/v4/wallet/withdrawals",
+    "url" : "/api/v4/wallet/withdrawals?limit=1000&offset=0",
     "method" : "GET"
   },
   "response" : {

@@ -109,7 +109,9 @@ public class FundingRecord implements Serializable {
     /** Used for realised profits from derivatives */
     REALISED_PROFIT(true),
 
-    TRADE(false);
+    TRADE(false),
+
+    ORDER_FEE(false);
 
     private static final Map<String, Type> fromString = new HashMap<>();
 

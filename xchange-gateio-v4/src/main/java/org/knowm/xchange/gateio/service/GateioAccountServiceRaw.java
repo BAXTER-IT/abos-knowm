@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.gateio.GateioAdapters;
 import org.knowm.xchange.gateio.GateioErrorAdapter;
 import org.knowm.xchange.gateio.GateioExchange;
 import org.knowm.xchange.gateio.dto.GateioException;
@@ -78,8 +79,19 @@ public class GateioAccountServiceRaw extends GateioBaseService {
     Long from = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
     Long to = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
     int pageLength = params.getLimit() != null ? params.getLimit() : PAGINATION_LIMIT_MAX;
-
-    return getPaginatedWithdrawals(currency, from, to, pageLength);
+    if (params.isUsePagination()) {
+      return getPaginatedWithdrawals(currency, from, to, pageLength);
+    } else {
+      return gateioV4Authenticated.getWithdrawals(
+          apiKey,
+          exchange.getNonceFactory(),
+          gateioV4ParamsDigest,
+          currency,
+          from,
+          to,
+          pageLength,
+          0);
+    }
   }
 
   private List<GateioWithdrawalRecord> getPaginatedWithdrawals(
@@ -101,7 +113,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
 
       result.addAll(records);
       pageOffset += pageLength;
-    } while (records.size() < pageLength);
+    } while (records.size() == pageLength);
 
     return result;
   }
@@ -111,8 +123,19 @@ public class GateioAccountServiceRaw extends GateioBaseService {
     Long from = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
     Long to = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
     int pageLength = params.getLimit() != null ? params.getLimit() : PAGINATION_LIMIT_MAX;
-
-    return getPaginatedDeposits(currency, from, to, pageLength);
+    if (params.isUsePagination()) {
+      return getPaginatedDeposits(currency, from, to, pageLength);
+    } else {
+      return gateioV4Authenticated.getDeposits(
+          apiKey,
+          exchange.getNonceFactory(),
+          gateioV4ParamsDigest,
+          currency,
+          from,
+          to,
+          pageLength,
+          0);
+    }
   }
 
   private List<GateioDepositRecord> getPaginatedDeposits(
@@ -134,7 +157,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
 
       result.addAll(records);
       pageOffset += pageLength;
-    } while (records.size() < pageLength);
+    } while (records.size() == pageLength);
 
     return result;
   }
@@ -201,7 +224,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
     Long fromSec = params.getStartTime() != null ? params.getStartTime().getTime() / 1000 : null;
     Long toSec = params.getEndTime() != null ? params.getEndTime().getTime() / 1000 : null;
     int pageLength = params.getLimit() != null ? params.getLimit() : PAGINATION_LIMIT_MAX;
-    String type = params.getType().toString();
+    String type = GateioAdapters.adaptFundingRecordType(params.getType());
     List<GateioAccountBookRecord> result = new ArrayList<>();
 
     if (fromSec != null && toSec != null) {
@@ -214,10 +237,41 @@ public class GateioAccountServiceRaw extends GateioBaseService {
       for (int i = 0; i < thirtyDaySpans; i++) {
         long newFrom = fromSec + ((long) i * THIRTY_DAYS_IN_SECONDS);
         long newTo = Math.min(toSec, newFrom + THIRTY_DAYS_IN_SECONDS);
-        result.addAll(getPaginatedAccountBookRecords(currency, newFrom, newTo, pageLength, type));
+        if (params.isUsePagination()) {
+          result.addAll(
+              getPaginatedAccountBookRecords(currency, newFrom, newTo, pageLength, type));
+        } else {
+          result.addAll(
+              gateioV4Authenticated.getAccountBookRecords(
+                  apiKey,
+                  exchange.getNonceFactory(),
+                  gateioV4ParamsDigest,
+                  currency.toString(),
+                  newFrom,
+                  newTo,
+                  pageLength,
+                  1,
+                  type));
+          break;
+        }
       }
     } else {
-      result.addAll(getPaginatedAccountBookRecords(currency, fromSec, toSec, pageLength, type));
+      if (params.isUsePagination()) {
+        result.addAll(
+            getPaginatedAccountBookRecords(currency, fromSec, toSec, pageLength, type));
+      } else {
+        result.addAll(
+            gateioV4Authenticated.getAccountBookRecords(
+                apiKey,
+                exchange.getNonceFactory(),
+                gateioV4ParamsDigest,
+                currency.toString(),
+                fromSec,
+                toSec,
+                pageLength,
+                1,
+                type));
+      }
     }
 
     return result;
@@ -242,7 +296,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
               type);
 
       result.addAll(ledgerResponse);
-    } while (ledgerResponse.size() < pageLength);
+    } while (ledgerResponse.size() == pageLength);
 
     return result;
   }
@@ -265,12 +319,40 @@ public class GateioAccountServiceRaw extends GateioBaseService {
       for (int i = 0; i < thirtyDaySpans; i++) {
         long newFrom = fromSec + ((long) i * THIRTY_DAYS_IN_SECONDS);
         long newTo = Math.min(toSec, newFrom + THIRTY_DAYS_IN_SECONDS);
-        result.addAll(
-            getPaginatedSubAccountTransfers(params.getSubAccountId(), newFrom, newTo, pageLength));
+        if (params.isUsePagination()) {
+          result.addAll(
+              getPaginatedSubAccountTransfers(
+                  params.getSubAccountId(), newFrom, newTo, pageLength));
+        } else {
+          result.addAll(
+              gateioV4Authenticated.getSubAccountTransfers(
+                  apiKey,
+                  exchange.getNonceFactory(),
+                  gateioV4ParamsDigest,
+                  params.getSubAccountId(),
+                  newFrom,
+                  newTo,
+                  pageLength,
+                  0));
+          break;
+        }
       }
     } else {
-      result.addAll(
-          getPaginatedSubAccountTransfers(params.getSubAccountId(), fromSec, toSec, pageLength));
+      if (params.isUsePagination()) {
+        result.addAll(
+            getPaginatedSubAccountTransfers(params.getSubAccountId(), fromSec, toSec, pageLength));
+      } else {
+        result.addAll(
+            gateioV4Authenticated.getSubAccountTransfers(
+                apiKey,
+                exchange.getNonceFactory(),
+                gateioV4ParamsDigest,
+                params.getSubAccountId(),
+                fromSec,
+                toSec,
+                pageLength,
+                0));
+      }
     }
 
     return result;
@@ -295,7 +377,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
 
       result.addAll(subAccountTransfers);
       pageOffset += pageLength;
-    } while (subAccountTransfers.size() < pageLength);
+    } while (subAccountTransfers.size() == pageLength);
 
     return result;
   }

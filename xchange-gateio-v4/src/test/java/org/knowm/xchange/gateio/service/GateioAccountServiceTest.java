@@ -14,6 +14,7 @@ import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
+import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
 import org.knowm.xchange.exceptions.OrderAmountUnderMinimumException;
 import org.knowm.xchange.exceptions.OrderNotValidException;
 import org.knowm.xchange.exceptions.RateLimitExceededException;
@@ -109,31 +110,31 @@ class GateioAccountServiceTest extends GateioExchangeWiremock {
         .isThrownBy(() -> gateioAccountService.withdrawFunds(params));
   }
 
-
   @Test
   void funding_history() throws IOException {
-    List<FundingRecord> actual = gateioAccountService.getFundingHistory(GateioFundingHistoryParams.builder()
-        .currency(Currency.USDT)
-        .startTime(Date.from(Instant.ofEpochSecond(1691447482)))
-        .endTime(Date.from(Instant.ofEpochSecond(1691533882)))
-        .pageLength(2)
-        .pageNumber(1)
-        .type("order_fee")
-        .build());
+    List<FundingRecord> actual =
+        gateioAccountService.getLedger(
+            FundingRecordParamAll.builder()
+                .currency(Currency.USDT)
+                .startTime(Date.from(Instant.ofEpochSecond(1691447482)))
+                .endTime(Date.from(Instant.ofEpochSecond(1691533882)))
+                .limit(2)
+                .type(Type.ORDER_FEE)
+                .usePagination(false)
+                .build());
 
-    FundingRecord expected = FundingRecord.builder()
-        .internalId("40558668441")
-        .date(Date.from(Instant.ofEpochMilli(1691510538067L)))
-        .currency(Currency.USDT)
-        .balance(new BigDecimal("16.00283141582979715942"))
-        .type(Type.OTHER_OUTFLOW)
-        .amount(new BigDecimal("0.0113918056"))
-        .description("order_fee")
-        .build();
+    FundingRecord expected =
+        FundingRecord.builder()
+            .internalId("40558668441")
+            .date(Date.from(Instant.ofEpochMilli(1691510538067L)))
+            .currency(Currency.USDT)
+            .balance(new BigDecimal("16.00283141582979715942"))
+            .type(Type.OTHER_OUTFLOW)
+            .amount(new BigDecimal("0.0113918056"))
+            .description("order_fee")
+            .build();
 
     assertThat(actual).hasSize(2);
     assertThat(actual).first().usingRecursiveComparison().isEqualTo(expected);
   }
-
-
 }
