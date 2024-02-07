@@ -1,0 +1,38 @@
+{
+  "topic": "execution",
+  "id": "31621811-22009-21892600150",
+  "creationTime": 1705932292645,
+  "data": [
+    {
+      "category": "spot",
+      "symbol": "BTCUSDT",
+      "closedSize": "",
+      "execFee": "0.02243359656",
+      "execId": "2290000000100205466",
+      "execPrice": "40937.22",
+      "execQty": "0.000548",
+      "execType": "Trade",
+      "execValue": "22.43359656",
+      "feeRate": "0.001",
+      "tradeIv": "",
+      "markIv": "",
+      "blockTradeId": "",
+      "markPrice": "",
+      "indexPrice": "",
+      "underlyingPrice": "",
+      "leavesQty": "0.000000",
+      "orderId": "1603870750027290112",
+      "orderLinkId": "1705932291624",
+      "orderPrice": "0",
+      "orderQty": "0.000548",
+      "orderType": "Market",
+      "stopOrderType": "",
+      "side": "Sell",
+      "execTime": "1705932292642",
+      "isLeverage": "0",
+      "isMaker": false,
+      "seq": 21892600150,
+      "marketUnit": "baseCoin"
+    }
+  ]
+}

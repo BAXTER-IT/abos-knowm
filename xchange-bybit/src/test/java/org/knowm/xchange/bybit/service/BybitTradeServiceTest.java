@@ -6,11 +6,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
-import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import javax.ws.rs.core.Response.Status;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
@@ -19,6 +20,10 @@ import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderStatus;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.enums.MarketParticipant;
+import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 
 public class BybitTradeServiceTest extends BaseWiremockTest {
 
@@ -133,5 +138,29 @@ public class BybitTradeServiceTest extends BaseWiremockTest {
             new MarketOrder(OrderType.ASK, new BigDecimal("0.1"), new CurrencyPair("BTC", "USDT")));
 
     assertThat(orderId).isEqualTo("1321003749386327552");
+  }
+
+  @Test
+  public void testGetTradeHistory() throws IOException {
+    Exchange bybitExchange = createExchange();
+    BybitTradeService bybitTradeService = new BybitTradeService(bybitExchange);
+    initGetStub("/v5/execution/list", "/getExecution.json");
+    TradeHistoryParamsAll params = new TradeHistoryParamsAll();
+    UserTrades tradeHistory = bybitTradeService.getTradeHistory(params);
+    assertThat(tradeHistory.getUserTrades().size()).isEqualTo(3);
+
+    // First trade by timestamp, so the last one in the response json
+    UserTrade userTrade = tradeHistory.getUserTrades().get(0);
+
+    assertEquals(OrderType.BID, userTrade.getType());
+    assertEquals(new BigDecimal("0.000366"), userTrade.getOriginalAmount());
+    assertEquals("BTC/USDT", userTrade.getInstrument().toString());
+    assertEquals(new BigDecimal("40943"), userTrade.getPrice());
+    assertEquals(new Date(1705931452698L), userTrade.getTimestamp());
+    assertEquals("2290000000100204227", userTrade.getId());
+    assertEquals("1603863704074720768", userTrade.getOrderId());
+    assertEquals(new BigDecimal("0.000000366"), userTrade.getFeeAmount());
+    assertEquals("1705931451897", userTrade.getOrderUserReference());
+    assertEquals(MarketParticipant.TAKER, userTrade.getMarketParticipant());
   }
 }

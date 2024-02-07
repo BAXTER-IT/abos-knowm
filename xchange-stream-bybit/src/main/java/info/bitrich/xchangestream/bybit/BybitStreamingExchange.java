@@ -10,15 +10,18 @@ import org.knowm.xchange.bybit.BybitExchange;
 
 public class BybitStreamingExchange extends BybitExchange implements StreamingExchange {
 
-  private enum MarketType {
-    SPOT,
-    LINEAR,
-    INVERSE,
-    OPTION
-  }
-  private BybitStreamingService streamingService;
-
+  BybitStreamingService streamingService;
   private BybitStreamingTradeService streamingTradeService;
+
+  @Override
+  protected void initServices() {
+    super.initServices();
+    streamingService =
+        new BybitStreamingService(
+            getBybitURI(useSandbox(exchangeSpecification), true, ""), exchangeSpecification);
+
+    streamingTradeService = new BybitStreamingTradeService(streamingService);
+  }
 
   @Override
   public Completable connect(ProductSubscription... args) {
@@ -44,7 +47,7 @@ public class BybitStreamingExchange extends BybitExchange implements StreamingEx
   }
 
   @Override
-  public StreamingTradeService getStreamingTradeService() {
+  public BybitStreamingTradeService getStreamingTradeService() {
     return streamingTradeService;
   }
 
@@ -82,5 +85,12 @@ public class BybitStreamingExchange extends BybitExchange implements StreamingEx
   @Override
   public void resubscribeChannels() {
     streamingService.resubscribeChannels();
+  }
+
+  private enum MarketType {
+    SPOT,
+    LINEAR,
+    INVERSE,
+    OPTION
   }
 }

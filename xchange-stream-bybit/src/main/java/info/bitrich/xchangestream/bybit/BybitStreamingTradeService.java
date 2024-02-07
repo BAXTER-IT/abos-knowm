@@ -5,14 +5,15 @@ import info.bitrich.xchangestream.bybit.dto.BybitUserTradeResponseDto;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
+import lombok.Setter;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.instrument.Instrument;
 
 public class BybitStreamingTradeService implements StreamingTradeService {
 
-  private static final String EXECUTION_CHANNEL = "execution";
-  private final BybitStreamingService streamingService;
+  static final String EXECUTION_CHANNEL = "execution";
+  BybitStreamingService streamingService;
 
   private final ObjectMapper objectMapper = StreamingObjectMapperHelper.getObjectMapper();
 

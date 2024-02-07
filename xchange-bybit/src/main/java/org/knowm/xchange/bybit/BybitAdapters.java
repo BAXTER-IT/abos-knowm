@@ -59,6 +59,7 @@ import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 
 public class BybitAdapters {
@@ -372,6 +373,7 @@ public class BybitAdapters {
         .price(bybitUserTradeDto.getExecPrice())
         .timestamp(bybitUserTradeDto.getExecTime())
         .feeCurrency((instrument == null) ? null : BybitAdapters.getFeeCurrency(bybitUserTradeDto.getIsMaker(), bybitUserTradeDto.getFeeRate(), instrument , bybitUserTradeDto.getSide()))
+        .marketParticipant(bybitUserTradeDto.getIsMaker() ? MarketParticipant.MAKER : MarketParticipant.TAKER)
         .build();
   }
 

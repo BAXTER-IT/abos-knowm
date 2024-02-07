@@ -5,13 +5,15 @@ import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.jackson.Jacksonized;
 import org.knowm.xchange.bybit.dto.BybitCategory;
 
 @Getter
+@Setter
 @ToString
-@Builder
+//@Builder
 @Jacksonized
 public class BybitUserTradeDto {
 
