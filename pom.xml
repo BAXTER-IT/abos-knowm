@@ -139,6 +139,7 @@
     <module>xchange-dydx</module>
     <module>xchange-exmo</module>
     <module>xchange-examples</module>
+    <module>xchange-finery-markets</module>
     <module>xchange-ftx</module>
     <module>xchange-gateio</module>
     <module>xchange-gateio-v4</module>
