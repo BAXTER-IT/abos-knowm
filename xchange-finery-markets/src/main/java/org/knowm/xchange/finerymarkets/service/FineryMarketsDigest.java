@@ -1,6 +1,5 @@
 package org.knowm.xchange.finerymarkets.service;
 
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import javax.crypto.Mac;

@@ -3,11 +3,11 @@ package org.knowm.xchange.finerymarkets;
 import java.io.IOException;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.ExchangeSpecification;
+import org.knowm.xchange.dto.meta.ExchangeMetaData;
+import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.finerymarkets.service.FineryMarketsAccountService;
 import org.knowm.xchange.finerymarkets.service.FineryMarketsMarketDataService;
 import org.knowm.xchange.finerymarkets.service.FineryMarketsTradeService;
-import org.knowm.xchange.dto.meta.ExchangeMetaData;
-import org.knowm.xchange.exceptions.ExchangeException;
 
 public class FineryMarketsExchange extends BaseExchange {
 
@@ -15,13 +15,12 @@ public class FineryMarketsExchange extends BaseExchange {
   protected void initServices() {
     marketDataService = new FineryMarketsMarketDataService(this);
     tradeService = new FineryMarketsTradeService(this);
-    accountService =
-        new FineryMarketsAccountService(this);
+    accountService = new FineryMarketsAccountService(this);
   }
+
   @Override
   public ExchangeSpecification getDefaultExchangeSpecification() {
-    ExchangeSpecification exchangeSpecification =
-        new ExchangeSpecification(this.getClass());
+    ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass());
     exchangeSpecification.setSslUri("https://trade.finerymarkets.com");
     exchangeSpecification.setHost("trade.finerymarkets.com");
     exchangeSpecification.setPort(80);
@@ -34,7 +33,7 @@ public class FineryMarketsExchange extends BaseExchange {
 
   @Override
   public void applySpecification(ExchangeSpecification exchangeSpecification) {
-    if(useSandbox(exchangeSpecification)){
+    if (useSandbox(exchangeSpecification)) {
       exchangeSpecification.setSslUri("https://test.finerymarkets.com");
     }
     super.applySpecification(exchangeSpecification);
@@ -43,16 +42,17 @@ public class FineryMarketsExchange extends BaseExchange {
   @Override
   public void remoteInit() throws IOException, ExchangeException {
     // initialize currency pairs & currencies
-    exchangeMetaData = new ExchangeMetaData(
-        marketDataService.getInstruments(),
-        marketDataService.getCurrencies(),
-        null,
-        null,
-        true);
+    exchangeMetaData =
+        new ExchangeMetaData(
+            marketDataService.getInstruments(),
+            marketDataService.getCurrencies(),
+            null,
+            null,
+            true);
   }
 
-  protected boolean useSandbox(ExchangeSpecification exchangeSpecification){
-      return Boolean.TRUE.equals(
-          exchangeSpecification.getExchangeSpecificParametersItem(USE_SANDBOX));
+  protected boolean useSandbox(ExchangeSpecification exchangeSpecification) {
+    return Boolean.TRUE.equals(
+        exchangeSpecification.getExchangeSpecificParametersItem(USE_SANDBOX));
   }
 }

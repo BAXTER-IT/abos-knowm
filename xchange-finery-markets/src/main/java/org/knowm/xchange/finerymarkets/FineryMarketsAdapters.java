@@ -13,8 +13,7 @@ import org.knowm.xchange.instrument.Instrument;
 
 public class FineryMarketsAdapters {
 
-  private FineryMarketsAdapters() {
-  }
+  private FineryMarketsAdapters() {}
 
   public static Map<Currency, CurrencyMetaData> adaptCurrencies(
       FineryMarketsInstrumentsResponse input) {

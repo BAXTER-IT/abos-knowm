@@ -3,7 +3,6 @@ package org.knowm.xchange.finerymarkets;
 import static org.knowm.xchange.finerymarkets.service.FineryMarketsDigest.EFX_KEY;
 import static org.knowm.xchange.finerymarkets.service.FineryMarketsDigest.EFX_SIGN;
 
-import java.util.Map;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -22,6 +21,6 @@ public interface FineryMarketsAuthenticated {
   FineryMarketsInstrumentsResponse getInstruments(
       @HeaderParam(EFX_KEY) String apiKey,
       @HeaderParam(EFX_SIGN) ParamsDigest signature,
-      FineryMarketsPayload payload
-  ) throws FineryMarketsException;
+      FineryMarketsPayload payload)
+      throws FineryMarketsException;
 }
