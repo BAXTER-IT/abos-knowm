@@ -28,16 +28,16 @@ public class FineryMarketsDecoratedPayload implements FineryMarketsPayload {
    *
    * @param timestamp in milliseconds
    */
-  private void setNonceAndTimestamp(long timestamp) {
+  void setNonceAndTimestamp(long timestamp) {
     setNonceAndTimestamp(timestamp, timestamp);
   }
 
-  private void setNonceAndTimestamp(long nonce, long timestamp) {
+  void setNonceAndTimestamp(long nonce, long timestamp) {
     data.put("nonce", nonce);
     data.put("timestamp", timestamp);
   }
 
-  private Map<String, Object> convert(FineryMarketsRequest input) {
+  Map<String, Object> convert(FineryMarketsRequest input) {
     JavaType type =
         objectMapper
             .getTypeFactory()
@@ -45,9 +45,13 @@ public class FineryMarketsDecoratedPayload implements FineryMarketsPayload {
     return objectMapper.convertValue(input, type);
   }
 
+  long getCurrentTime() {
+    return System.currentTimeMillis();
+  }
+
   @Override
   public String getPayloadString() {
-    setNonceAndTimestamp(System.currentTimeMillis());
+    setNonceAndTimestamp(getCurrentTime());
     try {
       return objectMapper.writeValueAsString(data);
     } catch (JsonProcessingException e) {
