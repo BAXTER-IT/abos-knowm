@@ -1,14 +1,17 @@
 package info.bitrich.xchangestream.bybit.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 import lombok.Data;
 
 @Data
+@JsonPropertyOrder(value = {"op", "args"})
 public class BybitStreamingDto {
 
-  private Op op;
-
   List<Object> args;
+  private Op op;
 
   public BybitStreamingDto(Op op, List<Object> args) {
     this.op = op;
@@ -16,8 +19,20 @@ public class BybitStreamingDto {
   }
 
   public enum Op {
-    auth,
-    subscribe,
-    unsubscribe
+    PING("ping"),
+    AUTH("auth"),
+    SUBSCRIBE("subscribe"),
+    UNSUBSCRIBE("unsubscribe");
+
+    private final String value;
+
+    Op(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
   }
 }

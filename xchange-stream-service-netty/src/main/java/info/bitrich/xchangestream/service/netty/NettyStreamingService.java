@@ -434,6 +434,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
     for (Entry<String, Subscription> entry : channels.entrySet()) {
       try {
         Subscription subscription = entry.getValue();
+        LOG.info("Resubscribing to channel {}", subscription.channelName);
         sendMessage(getSubscribeMessage(subscription.channelName, subscription.args));
       } catch (IOException e) {
         LOG.error("Failed to reconnect channel: {}", entry.getKey());
