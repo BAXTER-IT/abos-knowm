@@ -45,23 +45,31 @@ public class BybitStreamingService extends JsonNettyStreamingService {
   public Completable connect() {
     Completable conn = super.connect();
     return conn.andThen(
-        (CompletableSource)
-            (completable) -> {
-              try {
-                if(exchangeSpecification.getApiKey() != null){
-                  login();
-                }
+            (CompletableSource)
+                completable -> {
+                  try {
+                    if (exchangeSpecification.getApiKey() != null) {
+                      login();
+                    }
 
-                if (pingPongSubscription != null && !pingPongSubscription.isDisposed()) {
-                  pingPongSubscription.dispose();
-                }
+                    if (pingPongSubscription != null && !pingPongSubscription.isDisposed()) {
+                      pingPongSubscription.dispose();
+                    }
 
-                pingPongSubscription = pingPongSrc.subscribe(o ->this.sendMessage("{ \"op\": \"ping\" }"));
-                completable.onComplete();
-              } catch (Exception e) {
-                completable.onError(e);
-              }
-            });
+                    pingPongSubscription =
+                        pingPongSrc.subscribe(o -> this.sendMessage(getPingMessage()));
+
+                    completable.onComplete();
+                  } catch (Exception e) {
+                    completable.onError(e);
+                  }
+                })
+        .andThen(
+            (CompletableSource)
+                completable -> {
+                  resubscribeChannels();
+                  completable.onComplete();
+                });
   }
 
   public void login() throws JsonProcessingException {
@@ -69,17 +77,21 @@ public class BybitStreamingService extends JsonNettyStreamingService {
     try {
       mac = Mac.getInstance(BaseParamsDigest.HMAC_SHA_256);
       final SecretKey secretKey =
-          new SecretKeySpec(exchangeSpecification.getSecretKey().getBytes(StandardCharsets.UTF_8), BaseParamsDigest.HMAC_SHA_256);
+          new SecretKeySpec(
+              exchangeSpecification.getSecretKey().getBytes(StandardCharsets.UTF_8),
+              BaseParamsDigest.HMAC_SHA_256);
       mac.init(secretKey);
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {
       throw new ExchangeException("Invalid API secret", e);
     }
 
     long expires = Instant.now().plus(20, ChronoUnit.MINUTES).toEpochMilli();
-    mac.update(("GET/realtime"+expires).getBytes(StandardCharsets.UTF_8));
+    mac.update(("GET/realtime" + expires).getBytes(StandardCharsets.UTF_8));
     String signature = bytesToHex(mac.doFinal());
 
-    BybitStreamingDto message = new BybitStreamingDto(Op.auth, Arrays.asList(exchangeSpecification.getApiKey(), expires, signature));
+    BybitStreamingDto message =
+        new BybitStreamingDto(
+            Op.AUTH, Arrays.asList(exchangeSpecification.getApiKey(), expires, signature));
 
     this.sendMessage(objectMapper.writeValueAsString(message));
   }
@@ -93,21 +105,27 @@ public class BybitStreamingService extends JsonNettyStreamingService {
   protected String getChannelNameFromMessage(JsonNode message) throws IOException {
     String channelName = "";
 
-    if(message.has("topic")){
+    if (message.has("topic")) {
       channelName = message.get("topic").asText();
     }
 
     return channelName;
   }
 
+  private String getPingMessage() throws JsonProcessingException {
+    return objectMapper.writeValueAsString(new BybitStreamingDto(Op.PING, null));
+  }
+
   @Override
   public String getSubscribeMessage(String channelName, Object... args) throws IOException {
-    return objectMapper.writeValueAsString(new BybitStreamingDto(Op.subscribe, Collections.singletonList(channelName)));
+    return objectMapper.writeValueAsString(
+        new BybitStreamingDto(Op.SUBSCRIBE, Collections.singletonList(channelName)));
   }
 
   @Override
   public String getUnsubscribeMessage(String channelName, Object... args) throws IOException {
-    return objectMapper.writeValueAsString(new BybitStreamingDto(Op.unsubscribe, Collections.singletonList(channelName)));
+    return objectMapper.writeValueAsString(
+        new BybitStreamingDto(Op.UNSUBSCRIBE, Collections.singletonList(channelName)));
   }
 
   public void pingPongDisconnectIfConnected() {
