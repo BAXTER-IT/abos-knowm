@@ -40,7 +40,7 @@ public class FineryMarketsAdapters {
   }
 
   private static InstrumentMetaData adaptInstrumentMetaData(FineryMarketsInstrument input) {
-    return new InstrumentMetaData.Builder().build();
+    return new InstrumentMetaData.Builder().rawJson(input.getRawData()).build();
   }
 
   private static Currency adaptCurrency(FineryMarketsCurrency input) {
@@ -48,6 +48,9 @@ public class FineryMarketsAdapters {
   }
 
   private static CurrencyMetaData adaptCurrencyMetaData(FineryMarketsCurrency input) {
-    return CurrencyMetaData.builder().scale(input.getBalanceSize()).build();
+    return CurrencyMetaData.builder()
+        .scale(input.getBalanceStep())
+        .rawJson(input.getRawData())
+        .build();
   }
 }

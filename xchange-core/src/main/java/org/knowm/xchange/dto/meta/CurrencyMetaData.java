@@ -25,45 +25,38 @@ public class CurrencyMetaData implements Serializable {
   @JsonProperty("min_withdrawal_amount")
   private final BigDecimal minWithdrawalAmount;
 
+  @JsonProperty("raw_json")
+  private final String rawJson;
   /** Wallet health */
   @JsonProperty("wallet_health")
   private WalletHealth walletHealth;
 
-  /**
-   * Constructor
-   *
-   * @param scale
-   * @param withdrawalFee
-   */
   public CurrencyMetaData(Integer scale, BigDecimal withdrawalFee) {
     this(scale, withdrawalFee, null);
   }
 
-  /**
-   * Constructor
-   *
-   * @param scale
-   * @param withdrawalFee
-   * @param minWithdrawalAmount
-   */
   public CurrencyMetaData(Integer scale, BigDecimal withdrawalFee, BigDecimal minWithdrawalAmount) {
     this(scale, withdrawalFee, minWithdrawalAmount, WalletHealth.UNKNOWN);
   }
 
-  /**
-   * Constructor
-   *
-   * @param scale
-   */
   public CurrencyMetaData(
-      @JsonProperty("scale") Integer scale,
-      @JsonProperty("withdrawal_fee") BigDecimal withdrawalFee,
-      @JsonProperty("min_withdrawal_amount") BigDecimal minWithdrawalAmount,
-      @JsonProperty("wallet_health") WalletHealth walletHealth) {
+      Integer scale,
+      BigDecimal withdrawalFee,
+      BigDecimal minWithdrawalAmount,
+      WalletHealth walletHealth) {
+    this(scale, withdrawalFee, minWithdrawalAmount, null, walletHealth);
+  }
+
+  public CurrencyMetaData(
+      Integer scale,
+      BigDecimal withdrawalFee,
+      BigDecimal minWithdrawalAmount,
+      String rawJson,
+      WalletHealth walletHealth) {
     this.scale = scale;
     this.withdrawalFee = withdrawalFee;
     this.minWithdrawalAmount = minWithdrawalAmount;
+    this.rawJson = rawJson;
     this.walletHealth = walletHealth;
   }
-
 }

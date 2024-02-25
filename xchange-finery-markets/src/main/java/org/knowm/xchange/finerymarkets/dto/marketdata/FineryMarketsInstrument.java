@@ -1,29 +1,31 @@
 package org.knowm.xchange.finerymarkets.dto.marketdata;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Objects;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.knowm.xchange.finerymarkets.utils.FineryMarketsInstrumentResponseDeserializer;
 
 @Getter
 @Setter
+@Builder
+@JsonDeserialize(using = FineryMarketsInstrumentResponseDeserializer.class)
 public class FineryMarketsInstrument {
 
   /** Instrument Name */
-  @JsonProperty(index = 0)
   private String name;
 
   /** Instrument Id (used only in WebSocket Feed B as feedId) */
-  @JsonProperty(index = 1)
-  private int id;
+  private long id;
 
   /** Asset Currency Name */
-  @JsonProperty(index = 2)
   private String assetCurrencyName;
 
   /** Balance Currency Name */
-  @JsonProperty(index = 3)
   private String balanceCurrencyName;
+
+  private String rawData;
 
   @Override
   public boolean equals(Object o) {

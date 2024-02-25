@@ -1,18 +1,41 @@
 package org.knowm.xchange.finerymarkets.dto.marketdata;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.Objects;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.knowm.xchange.finerymarkets.utils.FineryMarketsNetworkResponseDeserializer;
 
+@Getter
+@Setter
+@Builder
+@JsonDeserialize(using = FineryMarketsNetworkResponseDeserializer.class)
 public class FineryMarketsNetwork {
 
   /** Network name */
-  @JsonProperty(index = 0)
   private String name;
 
   /** Network description */
-  @JsonProperty(index = 1)
   private String description;
 
   /** Network ID */
-  @JsonProperty(index = 2)
   private int id;
+
+  private String rawData;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    FineryMarketsNetwork that = (FineryMarketsNetwork) o;
+    return Objects.equals(name, that.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name);
+  }
 }
