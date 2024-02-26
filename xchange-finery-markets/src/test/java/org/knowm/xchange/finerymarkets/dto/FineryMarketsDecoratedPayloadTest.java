@@ -21,6 +21,7 @@ public class FineryMarketsDecoratedPayloadTest {
 
   @Test
   public void getPayloadString() {
+    payload.setNonceAndTimestamp();
     assertEquals("{\"nonce\":12345678,\"timestamp\":12345678}", payload.getPayloadString());
   }
 }

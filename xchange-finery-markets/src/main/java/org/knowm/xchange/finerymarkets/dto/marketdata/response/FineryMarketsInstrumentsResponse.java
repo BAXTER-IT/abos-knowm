@@ -17,4 +17,16 @@ public class FineryMarketsInstrumentsResponse {
   private List<FineryMarketsCurrency> currencies;
   private List<FineryMarketsInstrument> instruments;
   private List<FineryMarketsNetwork> networks;
+
+  @Override
+  public String toString() {
+    return "FineryMarketsInstrumentsResponse{"
+        + "currencies="
+        + currencies
+        + ", instruments="
+        + instruments
+        + ", networks="
+        + networks
+        + '}';
+  }
 }

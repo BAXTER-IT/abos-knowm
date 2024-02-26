@@ -5,7 +5,6 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.knowm.xchange.finerymarkets.dto.FineryMarketsPayload;
 import org.knowm.xchange.service.BaseParamsDigest;
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.RestInvocation;
@@ -29,12 +28,9 @@ public class FineryMarketsDigest extends BaseParamsDigest {
   @Override
   public String digestParams(RestInvocation restInvocation) {
     String method = restInvocation.getMethodPath();
-    String payload =
-        ((FineryMarketsPayload) restInvocation.getUnannanotatedParams().get(0)).getPayloadString();
-    log.info("FineryMarkets payload: {}", payload);
-    log.info("FineryMarkets method: {}", method);
+    String payload = restInvocation.getRequestBody();
     String toSign = method + payload;
-
+    log.info("FineryMarkets toSign: {}", toSign);
     Mac mac = getMac();
     mac.update(toSign.getBytes(StandardCharsets.UTF_8));
     return Base64.getEncoder().encodeToString(mac.doFinal());

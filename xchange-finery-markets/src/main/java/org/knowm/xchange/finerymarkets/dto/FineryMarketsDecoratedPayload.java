@@ -1,19 +1,22 @@
 package org.knowm.xchange.finerymarkets.dto;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.finerymarkets.dto.marketdata.request.FineryMarketsRequest;
 
 @Slf4j
-public class FineryMarketsDecoratedPayload implements FineryMarketsPayload {
+@Getter
+public class FineryMarketsDecoratedPayload {
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
-  private final Map<String, Object> data;
+  @JsonValue private final Map<String, Object> data;
 
   public FineryMarketsDecoratedPayload(FineryMarketsRequest data) {
     this.data = convert(data);
@@ -21,6 +24,11 @@ public class FineryMarketsDecoratedPayload implements FineryMarketsPayload {
 
   public FineryMarketsDecoratedPayload() {
     this.data = new HashMap<>();
+  }
+
+  /** Set nonce and timestamp to the same value based on current time */
+  public void setNonceAndTimestamp() {
+    setNonceAndTimestamp(getCurrentTime());
   }
 
   /**
@@ -32,6 +40,12 @@ public class FineryMarketsDecoratedPayload implements FineryMarketsPayload {
     setNonceAndTimestamp(timestamp, timestamp);
   }
 
+  /**
+   * Set nonce and timestamp to the provided values
+   *
+   * @param nonce ever-increasing number
+   * @param timestamp in milliseconds
+   */
   void setNonceAndTimestamp(long nonce, long timestamp) {
     data.put("nonce", nonce);
     data.put("timestamp", timestamp);
@@ -49,14 +63,17 @@ public class FineryMarketsDecoratedPayload implements FineryMarketsPayload {
     return System.currentTimeMillis();
   }
 
-  @Override
   public String getPayloadString() {
-    setNonceAndTimestamp(getCurrentTime());
     try {
       return objectMapper.writeValueAsString(data);
     } catch (JsonProcessingException e) {
       log.error("Error converting payload to string", e);
       return "";
     }
+  }
+
+  @Override
+  public String toString() {
+    return "FineryMarketsDecoratedPayload{" + "data=" + data + '}';
   }
 }
