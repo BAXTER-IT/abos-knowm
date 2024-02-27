@@ -1,6 +1,7 @@
 package org.knowm.xchange.dto.meta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import lombok.ToString;
 @ToString
 @Builder
 @Getter
+@JsonDeserialize(builder = CurrencyMetaData.CurrencyMetaDataBuilder.class)
 public class CurrencyMetaData implements Serializable {
 
   private static final long serialVersionUID = -247899067657358542L;
