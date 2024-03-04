@@ -5,13 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FineryMarketsDecoratedPayloadTest {
+public class DecoratedPayloadTest {
 
-  FineryMarketsDecoratedPayload payload;
+  DecoratedPayload payload;
 
   @Before
   public void setUp() throws Exception {
-    payload = new FineryMarketsDecoratedPayload() {
+    payload = new DecoratedPayload() {
       @Override
       long getCurrentTime() {
         return 12345678;

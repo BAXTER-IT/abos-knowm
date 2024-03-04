@@ -9,20 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.knowm.xchange.finerymarkets.dto.marketdata.request.FineryMarketsRequest;
 
 @Slf4j
 @Getter
-public class FineryMarketsDecoratedPayload {
+public class DecoratedPayload {
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
   @JsonValue private final Map<String, Object> data;
 
-  public FineryMarketsDecoratedPayload(FineryMarketsRequest data) {
+  public DecoratedPayload(FineryMarketsRequest data) {
     this.data = convert(data);
   }
 
-  public FineryMarketsDecoratedPayload() {
+  public DecoratedPayload() {
     this.data = new HashMap<>();
   }
 

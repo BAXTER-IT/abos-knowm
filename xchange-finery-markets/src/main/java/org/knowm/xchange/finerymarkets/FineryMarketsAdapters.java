@@ -8,7 +8,7 @@ import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsCurrency;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsInstrument;
-import org.knowm.xchange.finerymarkets.dto.marketdata.response.FineryMarketsInstrumentsResponse;
+import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
 import org.knowm.xchange.instrument.Instrument;
 
 public class FineryMarketsAdapters {
@@ -16,7 +16,7 @@ public class FineryMarketsAdapters {
   private FineryMarketsAdapters() {}
 
   public static Map<Currency, CurrencyMetaData> adaptCurrencies(
-      FineryMarketsInstrumentsResponse input) {
+      InstrumentsResponse input) {
     return input.getCurrencies().stream()
         .distinct()
         .collect(
@@ -26,7 +26,7 @@ public class FineryMarketsAdapters {
   }
 
   public static Map<Instrument, InstrumentMetaData> adaptInstruments(
-      FineryMarketsInstrumentsResponse input) {
+      InstrumentsResponse input) {
     return input.getInstruments().stream()
         .distinct()
         .collect(

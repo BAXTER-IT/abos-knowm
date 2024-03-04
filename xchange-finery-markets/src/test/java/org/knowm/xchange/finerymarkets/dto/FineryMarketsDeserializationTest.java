@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsCurrency;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsInstrument;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsNetwork;
-import org.knowm.xchange.finerymarkets.dto.marketdata.response.FineryMarketsInstrumentsResponse;
+import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
 
 public class FineryMarketsDeserializationTest {
 
@@ -30,8 +30,8 @@ public class FineryMarketsDeserializationTest {
     String response =
         IOUtils.resourceToString("/instruments_20240216.json", StandardCharsets.UTF_8);
 
-    FineryMarketsInstrumentsResponse instrumentsResponse =
-        mapper.readValue(response, FineryMarketsInstrumentsResponse.class);
+    InstrumentsResponse instrumentsResponse =
+        mapper.readValue(response, InstrumentsResponse.class);
 
     FineryMarketsCurrency firstCurrency = instrumentsResponse.getCurrencies().get(0);
     FineryMarketsInstrument firstInstrument = instrumentsResponse.getInstruments().get(0);
@@ -68,8 +68,8 @@ public class FineryMarketsDeserializationTest {
     String response =
         IOUtils.resourceToString("/instruments_20240216_no_networks.json", StandardCharsets.UTF_8);
 
-    FineryMarketsInstrumentsResponse instrumentsResponse =
-        mapper.readValue(response, FineryMarketsInstrumentsResponse.class);
+    InstrumentsResponse instrumentsResponse =
+        mapper.readValue(response, InstrumentsResponse.class);
 
     assertNotNull(instrumentsResponse.getNetworks());
     assertTrue(instrumentsResponse.getNetworks().isEmpty());

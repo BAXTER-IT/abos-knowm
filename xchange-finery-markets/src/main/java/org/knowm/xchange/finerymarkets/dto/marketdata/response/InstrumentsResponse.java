@@ -12,7 +12,7 @@ import org.knowm.xchange.finerymarkets.utils.FineryMarketsInstrumentsResponseDes
 @Getter
 @Setter
 @JsonDeserialize(using = FineryMarketsInstrumentsResponseDeserializer.class)
-public class FineryMarketsInstrumentsResponse {
+public class InstrumentsResponse {
 
   private List<FineryMarketsCurrency> currencies;
   private List<FineryMarketsInstrument> instruments;

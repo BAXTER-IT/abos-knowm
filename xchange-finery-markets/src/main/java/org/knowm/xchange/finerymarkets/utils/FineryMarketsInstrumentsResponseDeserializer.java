@@ -12,17 +12,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsCurrency;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsInstrument;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsNetwork;
-import org.knowm.xchange.finerymarkets.dto.marketdata.response.FineryMarketsInstrumentsResponse;
+import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
 
 @Slf4j
 public class FineryMarketsInstrumentsResponseDeserializer
-    extends JsonDeserializer<FineryMarketsInstrumentsResponse> {
+    extends JsonDeserializer<InstrumentsResponse> {
 
   @Override
-  public FineryMarketsInstrumentsResponse deserialize(JsonParser p, DeserializationContext ctxt)
+  public InstrumentsResponse deserialize(JsonParser p, DeserializationContext ctxt)
       throws IOException {
     JsonNode node = p.getCodec().readTree(p);
-    FineryMarketsInstrumentsResponse response = new FineryMarketsInstrumentsResponse();
+    InstrumentsResponse response = new InstrumentsResponse();
 
     ObjectMapper mapper = new ObjectMapper();
     if (!node.isArray()) {

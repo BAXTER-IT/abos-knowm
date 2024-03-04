@@ -3,7 +3,7 @@ package org.knowm.xchange.finerymarkets.utils;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.knowm.xchange.finerymarkets.dto.FineryMarketsDecoratedPayload;
+import org.knowm.xchange.finerymarkets.dto.DecoratedPayload;
 import si.mazi.rescu.Interceptor;
 
 @Slf4j
@@ -15,8 +15,8 @@ public class FineryMarketsDigestInterceptor implements Interceptor {
       throws Throwable {
 
     for (Object object : objects) {
-      if (object.getClass() == FineryMarketsDecoratedPayload.class) {
-        FineryMarketsDecoratedPayload payload = (FineryMarketsDecoratedPayload) object;
+      if (object.getClass() == DecoratedPayload.class) {
+        DecoratedPayload payload = (DecoratedPayload) object;
         payload.setNonceAndTimestamp();
       }
     }

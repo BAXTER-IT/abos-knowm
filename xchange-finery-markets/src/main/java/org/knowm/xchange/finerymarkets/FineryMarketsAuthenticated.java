@@ -9,8 +9,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.knowm.xchange.finerymarkets.dto.FineryMarketsDecoratedPayload;
-import org.knowm.xchange.finerymarkets.dto.marketdata.response.FineryMarketsInstrumentsResponse;
+import org.knowm.xchange.finerymarkets.dto.DecoratedPayload;
+import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
 import si.mazi.rescu.ParamsDigest;
 
 @Path("/api")
@@ -20,9 +20,9 @@ public interface FineryMarketsAuthenticated {
 
   @POST()
   @Path("instruments")
-  FineryMarketsInstrumentsResponse getInstruments(
+  InstrumentsResponse getInstruments(
       @HeaderParam(EFX_KEY) String apiKey,
       @HeaderParam(EFX_SIGN) ParamsDigest signature,
-      FineryMarketsDecoratedPayload payload)
+      DecoratedPayload payload)
       throws FineryMarketsException;
 }
