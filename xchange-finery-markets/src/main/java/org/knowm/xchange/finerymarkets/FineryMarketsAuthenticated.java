@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.knowm.xchange.finerymarkets.dto.DecoratedPayload;
 import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
+import org.knowm.xchange.finerymarkets.dto.trade.response.DealHistoryResponse;
 import si.mazi.rescu.ParamsDigest;
 
 @Path("/api")
@@ -21,6 +22,14 @@ public interface FineryMarketsAuthenticated {
   @POST()
   @Path("instruments")
   InstrumentsResponse getInstruments(
+      @HeaderParam(EFX_KEY) String apiKey,
+      @HeaderParam(EFX_SIGN) ParamsDigest signature,
+      DecoratedPayload payload)
+      throws FineryMarketsException;
+
+  @POST()
+  @Path("dealHistory")
+  DealHistoryResponse getDealHistory(
       @HeaderParam(EFX_KEY) String apiKey,
       @HeaderParam(EFX_SIGN) ParamsDigest signature,
       DecoratedPayload payload)

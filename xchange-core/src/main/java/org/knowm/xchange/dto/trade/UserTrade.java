@@ -1,9 +1,10 @@
 package org.knowm.xchange.dto.trade;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
-
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
@@ -12,9 +13,6 @@ import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 /** Data object representing a user trade */
 @JsonDeserialize(builder = UserTrade.Builder.class)
@@ -33,7 +31,7 @@ public class UserTrade extends Trade {
 
   /** The order reference id which has been added by the user on the order creation */
   private final String orderUserReference;
-  
+
   /** Maker or taker. */
   private final MarketParticipant marketParticipant;
 
@@ -52,7 +50,6 @@ public class UserTrade extends Trade {
    * @param feeCurrency The symbol of the currency in which the fee was charged
    * @param orderUserReference The id that the user has insert to the trade
    * @param marketParticipant The maker or taker side
-
    */
   public UserTrade(
       OrderType type,
@@ -65,15 +62,16 @@ public class UserTrade extends Trade {
       BigDecimal feeAmount,
       Currency feeCurrency,
       String orderUserReference,
-      MarketParticipant marketParticipant) {
+      MarketParticipant marketParticipant,
+      String rawJson) {
 
-    super(type, originalAmount, instrument, price, timestamp, id, null, null);
+    super(type, originalAmount, instrument, price, timestamp, id, null, null, rawJson);
 
     this.orderId = orderId;
     this.feeAmount = feeAmount;
     this.feeCurrency = feeCurrency;
     this.orderUserReference = orderUserReference;
-	this.marketParticipant = marketParticipant;
+    this.marketParticipant = marketParticipant;
   }
 
   public static UserTrade.Builder builder() {
@@ -224,22 +222,23 @@ public class UserTrade extends Trade {
       this.orderUserReference = orderUserReference;
       return this;
     }
-    
+
     public Builder marketParticipant(MarketParticipant marketParticipant) {
       this.marketParticipant = marketParticipant;
       return this;
     }
-    
-    public Builder marketParticipant(String marketParticipant) {    
+
+    public Builder marketParticipant(String marketParticipant) {
       switch (marketParticipant.toLowerCase().trim()) {
-      case "taker":
-        this.marketParticipant = MarketParticipant.TAKER;
-        break;
-      case "maker":
-        this.marketParticipant = MarketParticipant.MAKER;
-        break;
-      default:
-        throw new IllegalArgumentException("Not valid market participant provided. " + marketParticipant + " was provided.");
+        case "taker":
+          this.marketParticipant = MarketParticipant.TAKER;
+          break;
+        case "maker":
+          this.marketParticipant = MarketParticipant.MAKER;
+          break;
+        default:
+          throw new IllegalArgumentException(
+              "Not valid market participant provided. " + marketParticipant + " was provided.");
       }
       return this;
     }
@@ -257,7 +256,8 @@ public class UserTrade extends Trade {
           feeAmount,
           feeCurrency,
           orderUserReference,
-          marketParticipant);
+          marketParticipant,
+          rawJson);
     }
   }
 }

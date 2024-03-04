@@ -79,10 +79,10 @@ public class Trades implements Serializable {
 
     switch (tradeSortType) {
       case SortByTimestamp:
-        Collections.sort(this.trades, TRADE_TIMESTAMP_COMPARATOR);
+        this.trades.sort(TRADE_TIMESTAMP_COMPARATOR);
         break;
       case SortByID:
-        Collections.sort(this.trades, TRADE_ID_COMPARATOR);
+        this.trades.sort(TRADE_ID_COMPARATOR);
         break;
 
       default:

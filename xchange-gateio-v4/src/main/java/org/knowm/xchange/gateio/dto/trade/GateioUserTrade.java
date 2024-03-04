@@ -33,7 +33,7 @@ public class GateioUserTrade extends UserTrade {
       BigDecimal feeAmount, Currency feeCurrency,
       String orderUserReference, Role role) {
     super(type, originalAmount, instrument, price, timestamp, id, orderId, feeAmount, feeCurrency,
-        orderUserReference, MarketParticipant.valueOf(role.getValue().toUpperCase()));
+        orderUserReference, MarketParticipant.valueOf(role.getValue().toUpperCase()), null);
     this.role = role;
   }
 

@@ -41,6 +41,7 @@ public class RippleUserTrade extends UserTrade {
         feeAmount,
         feeCurrency,
         "",
+        null,
         null);
     this.baseCounterparty = baseCounterparty;
     this.counterCounterparty = counterCounterparty;

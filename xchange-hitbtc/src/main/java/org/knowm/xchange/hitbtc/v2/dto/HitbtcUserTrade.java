@@ -34,6 +34,7 @@ public class HitbtcUserTrade extends UserTrade {
         feeAmount,
         feeCurrency,
         "",
+        null,
         null);
     this.clientOrderId = clientOrderId;
   }

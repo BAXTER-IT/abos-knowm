@@ -7,12 +7,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
+import lombok.Getter;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 
 /** Data object representing a Trade */
+@Getter
 @JsonDeserialize(builder = Trade.Builder.class)
 public class Trade implements Serializable {
 
@@ -40,6 +42,8 @@ public class Trade implements Serializable {
 
   protected final String takerOrderId;
 
+  protected String rawJson;
+
   /**
    * This constructor is called to create a public Trade object in {@link
    * MarketDataService#getTrades(org.knowm.xchange.currency.CurrencyPair, Object...)}
@@ -62,7 +66,8 @@ public class Trade implements Serializable {
       Date timestamp,
       String id,
       String makerOrderId,
-      String takerOrderId) {
+      String takerOrderId,
+      String rawJson) {
 
     this.type = type;
     this.originalAmount = originalAmount;
@@ -72,21 +77,7 @@ public class Trade implements Serializable {
     this.id = id;
     this.makerOrderId = makerOrderId;
     this.takerOrderId = takerOrderId;
-  }
-
-  public OrderType getType() {
-
-    return type;
-  }
-
-  public BigDecimal getOriginalAmount() {
-
-    return originalAmount;
-  }
-
-  public Instrument getInstrument() {
-
-    return instrument;
+    this.rawJson = rawJson;
   }
 
   /**
@@ -105,29 +96,6 @@ public class Trade implements Serializable {
           "The instrument of this order is not a currency pair: " + instrument);
     }
     return (CurrencyPair) instrument;
-  }
-
-  public BigDecimal getPrice() {
-
-    return price;
-  }
-
-  public Date getTimestamp() {
-
-    return timestamp;
-  }
-
-  public String getId() {
-
-    return id;
-  }
-
-  public String getMakerOrderId() {
-    return makerOrderId;
-  }
-
-  public String getTakerOrderId() {
-    return takerOrderId;
   }
 
   @Override
@@ -184,6 +152,7 @@ public class Trade implements Serializable {
     protected String id;
     protected String makerOrderId;
     protected String takerOrderId;
+    protected String rawJson;
 
     public static Builder from(Trade trade) {
       return new Builder()
@@ -192,7 +161,10 @@ public class Trade implements Serializable {
           .instrument(trade.getInstrument())
           .price(trade.getPrice())
           .timestamp(trade.getTimestamp())
-          .id(trade.getId());
+          .id(trade.getId())
+          .makerOrderId(trade.getMakerOrderId())
+          .takerOrderId(trade.getTakerOrderId())
+          .rawJson(trade.getRawJson());
     }
 
     public Builder type(OrderType type) {
@@ -254,10 +226,23 @@ public class Trade implements Serializable {
       return this;
     }
 
+    public Builder rawJson(String rawJson) {
+      this.rawJson = rawJson;
+      return this;
+    }
+
     public Trade build() {
 
       return new Trade(
-          type, originalAmount, instrument, price, timestamp, id, makerOrderId, takerOrderId);
+          type,
+          originalAmount,
+          instrument,
+          price,
+          timestamp,
+          id,
+          makerOrderId,
+          takerOrderId,
+          rawJson);
     }
   }
 }

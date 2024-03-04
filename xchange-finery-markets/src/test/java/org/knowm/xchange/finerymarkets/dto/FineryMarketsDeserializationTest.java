@@ -15,6 +15,9 @@ import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsCurrency;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsInstrument;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsNetwork;
 import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
+import org.knowm.xchange.finerymarkets.dto.trade.DealHistory;
+import org.knowm.xchange.finerymarkets.dto.trade.OrderCreatedBy;
+import org.knowm.xchange.finerymarkets.dto.trade.response.DealHistoryResponse;
 
 public class FineryMarketsDeserializationTest {
 
@@ -30,8 +33,7 @@ public class FineryMarketsDeserializationTest {
     String response =
         IOUtils.resourceToString("/instruments_20240216.json", StandardCharsets.UTF_8);
 
-    InstrumentsResponse instrumentsResponse =
-        mapper.readValue(response, InstrumentsResponse.class);
+    InstrumentsResponse instrumentsResponse = mapper.readValue(response, InstrumentsResponse.class);
 
     FineryMarketsCurrency firstCurrency = instrumentsResponse.getCurrencies().get(0);
     FineryMarketsInstrument firstInstrument = instrumentsResponse.getInstruments().get(0);
@@ -68,10 +70,48 @@ public class FineryMarketsDeserializationTest {
     String response =
         IOUtils.resourceToString("/instruments_20240216_no_networks.json", StandardCharsets.UTF_8);
 
-    InstrumentsResponse instrumentsResponse =
-        mapper.readValue(response, InstrumentsResponse.class);
+    InstrumentsResponse instrumentsResponse = mapper.readValue(response, InstrumentsResponse.class);
 
     assertNotNull(instrumentsResponse.getNetworks());
     assertTrue(instrumentsResponse.getNetworks().isEmpty());
+  }
+
+  @Test
+  public void testDealHistoryResponse() throws IOException {
+    String response = IOUtils.resourceToString("/dealHistory_test_01.json", StandardCharsets.UTF_8);
+
+    DealHistoryResponse dealHistoryResponse = mapper.readValue(response, DealHistoryResponse.class);
+
+    assertEquals(2, dealHistoryResponse.getDeals().size());
+    String expectedRawJson =
+        "[\"BTC-USD\",0,0,0,1234,0,9900000000,10000000,9998000,1558051200000,1558052600000,12,1,9900000000,2000,19800000000000,100000,0,1,1234,4321]";
+    DealHistory expected =
+        DealHistory.builder()
+            .instrumentName("BTC-USD")
+            .orderType(OrderType.LIMIT)
+            .side(Side.BID)
+            .cancelReason(CancelReason.IN_PLACE_OR_FILLED)
+            .orderId(1234)
+            .clientOrderId(0)
+            .orderPrice(9900000000L)
+            .orderInitialSize(10000000)
+            .remainingOrderSize(9998000)
+            .orderCreatedAt(1558051200000L)
+            .dealMoment(1558052600000L)
+            .dealId(12)
+            .dealAggressorSide(Side.ASK)
+            .dealPrice(9900000000L)
+            .dealSize(2000)
+            .dealVolume(19800000000000L)
+            .dealDelta(100000)
+            .counterpartyId(0)
+            .bySizeOrVolume(OrderCreatedBy.VOLUME)
+            .counterpartySubaccountId(1234)
+            .linkedDealId(4321)
+            .rawData(expectedRawJson)
+            .build();
+
+    DealHistory actual = dealHistoryResponse.getDeals().get(0);
+    assertEquals(expected, actual);
   }
 }

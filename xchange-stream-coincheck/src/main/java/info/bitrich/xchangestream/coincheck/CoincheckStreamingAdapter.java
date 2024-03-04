@@ -81,6 +81,7 @@ public class CoincheckStreamingAdapter {
         null,
         streamingTrade.getId(),
         null,
+        null,
         null);
   }
 
