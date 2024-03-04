@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsCurrency;
@@ -65,7 +66,7 @@ public class FineryMarketsInstrumentsResponseDeserializer
         response.setNetworks(list);
       }
     } else {
-      response.setNetworks(new ArrayList<>());
+      response.setNetworks(Collections.emptyList());
     }
 
     return response;
