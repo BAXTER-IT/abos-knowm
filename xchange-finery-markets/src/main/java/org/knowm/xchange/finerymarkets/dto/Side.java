@@ -2,7 +2,7 @@ package org.knowm.xchange.finerymarkets.dto;
 
 public enum Side {
   BID(0),
-  ASK(0);
+  ASK(1);
 
   private final int apiIndex;
 
