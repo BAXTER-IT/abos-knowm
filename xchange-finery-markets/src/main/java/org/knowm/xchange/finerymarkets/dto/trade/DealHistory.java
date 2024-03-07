@@ -130,7 +130,7 @@ public class DealHistory {
     return orderId == that.orderId && orderCreatedAt == that.orderCreatedAt
         && dealMoment == that.dealMoment && dealId == that.dealId && dealPrice == that.dealPrice
         && dealSize == that.dealSize && Objects.equals(instrumentName, that.instrumentName)
-        && orderType == that.orderType && side == that.side;
+        && orderType == that.orderType && side == that.side && Objects.equals(rawData, that.rawData);
   }
 
   @Override

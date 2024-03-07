@@ -83,7 +83,8 @@ public class FineryMarketsDeserializationTest {
     DealHistoryResponse dealHistoryResponse = mapper.readValue(response, DealHistoryResponse.class);
 
     assertEquals(17, dealHistoryResponse.getDeals().size());
-    String expectedRawJson = "";
+    String expectedRawJson =
+        "[\"BTC-USDT\",4,0,0,48221507535,0,0,100000000,0,1709716088000,1709716088000,1864944,0,6674859047619,85000000,5673630190500,0,87,0,0,1864943]";
 
     DealHistory expected =
         DealHistory.builder()
