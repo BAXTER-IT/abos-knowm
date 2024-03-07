@@ -78,36 +78,36 @@ public class FineryMarketsDeserializationTest {
 
   @Test
   public void testDealHistoryResponse() throws IOException {
-    String response = IOUtils.resourceToString("/dealHistory_test_01.json", StandardCharsets.UTF_8);
+    String response = IOUtils.resourceToString("/dealHistory_test_02.json", StandardCharsets.UTF_8);
 
     DealHistoryResponse dealHistoryResponse = mapper.readValue(response, DealHistoryResponse.class);
 
-    assertEquals(2, dealHistoryResponse.getDeals().size());
-    String expectedRawJson =
-        "[\"BTC-USD\",0,0,0,1234,0,9900000000,10000000,9998000,1558051200000,1558052600000,12,1,9900000000,2000,19800000000000,100000,0,1,1234,4321]";
+    assertEquals(17, dealHistoryResponse.getDeals().size());
+    String expectedRawJson = "";
+
     DealHistory expected =
         DealHistory.builder()
-            .instrumentName("BTC-USD")
-            .orderType(OrderType.LIMIT)
+            .instrumentName("BTC-USDT")
+            .orderType(OrderType.MARKET_IOC)
             .side(Side.BID)
             .cancelReason(CancelReason.IN_PLACE_OR_FILLED)
-            .orderId(1234)
+            .orderId(48221507535L)
             .clientOrderId(0)
-            .orderPrice(9900000000L)
-            .orderInitialSize(10000000)
-            .remainingOrderSize(9998000)
-            .orderCreatedAt(1558051200000L)
-            .dealMoment(1558052600000L)
-            .dealId(12)
-            .dealAggressorSide(Side.ASK)
-            .dealPrice(9900000000L)
-            .dealSize(2000)
-            .dealVolume(19800000000000L)
-            .dealDelta(100000)
-            .counterpartyId(0)
-            .bySizeOrVolume(OrderCreatedBy.VOLUME)
-            .counterpartySubaccountId(1234)
-            .linkedDealId(4321)
+            .orderPrice(0)
+            .orderInitialSize(100000000)
+            .remainingOrderSize(0)
+            .orderCreatedAt(1709716088000L)
+            .dealMoment(1709716088000L)
+            .dealId(1864944)
+            .dealAggressorSide(Side.BID)
+            .dealPrice(6674859047619L)
+            .dealSize(85000000)
+            .dealVolume(5673630190500L)
+            .dealDelta(0)
+            .counterpartyId(87)
+            .bySizeOrVolume(OrderCreatedBy.SIZE)
+            .counterpartySubaccountId(0)
+            .linkedDealId(1864943)
             .rawData(expectedRawJson)
             .build();
 
