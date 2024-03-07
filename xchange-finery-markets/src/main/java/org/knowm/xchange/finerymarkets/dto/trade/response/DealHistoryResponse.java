@@ -22,8 +22,13 @@ public class DealHistoryResponse {
     return deals.size() == MAX_DEAL_HISTORY_SIZE;
   }
 
-  public long getTillId() {
-    // TODO check if first or last one, or sort needed
-    return deals.get(0).getDealId();
+  /**
+   * If the number of deals in the specified period may exceed the limit, the request returns 250
+   * latest deals. To get other deals, a user needs to remember the earliest DealId and specify it
+   * in the next request(s).
+   * @return the deal id of the earliest deal in the response
+   */
+  public long getTillDealId() {
+    return deals.get(deals.size() - 1).getDealId();
   }
 }

@@ -37,7 +37,7 @@ public class FineryMarketsTradeService extends FineryMarketsTradeServiceRaw
     do {
       chunk = getDealHistory(request);
       result.addAll(chunk.getDeals());
-      request.setTill(chunk.getTillId());
+      request.setTill(chunk.getTillDealId());
     } while (chunk.isFullPage());
 
     return adaptUserTrades(result);
