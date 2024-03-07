@@ -35,7 +35,7 @@ public class FineryMarketsCurrencyResponseDeserializer
         .price(node.get(3).asLong())
         .typeName(node.get(4).asText())
         .networks(networks)
-        .rawData(node.toString())
+        .rawJson(node.toString())
         .build();
   }
 }

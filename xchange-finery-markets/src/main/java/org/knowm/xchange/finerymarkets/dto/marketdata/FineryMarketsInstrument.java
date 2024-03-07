@@ -25,7 +25,7 @@ public class FineryMarketsInstrument {
   /** Balance Currency Name */
   private String balanceCurrencyName;
 
-  private String rawData;
+  private String rawJson;
 
   @Override
   public boolean equals(Object o) {

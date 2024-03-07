@@ -118,7 +118,7 @@ public class DealHistory {
    */
   private long linkedDealId;
 
-  private String rawData;
+  private String rawJson;
 
   @Override
   public boolean equals(Object o) {
@@ -130,12 +130,12 @@ public class DealHistory {
     return orderId == that.orderId && orderCreatedAt == that.orderCreatedAt
         && dealMoment == that.dealMoment && dealId == that.dealId && dealPrice == that.dealPrice
         && dealSize == that.dealSize && Objects.equals(instrumentName, that.instrumentName)
-        && orderType == that.orderType && side == that.side && Objects.equals(rawData, that.rawData);
+        && orderType == that.orderType && side == that.side && Objects.equals(rawJson, that.rawJson);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(instrumentName, orderType, side, orderId, orderCreatedAt, dealMoment,
-        dealId, dealPrice, dealSize);
+        dealId, dealPrice, dealSize, rawJson);
   }
 }

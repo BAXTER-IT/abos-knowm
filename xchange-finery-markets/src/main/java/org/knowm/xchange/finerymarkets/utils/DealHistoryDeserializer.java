@@ -39,7 +39,7 @@ public class DealHistoryDeserializer extends JsonDeserializer<DealHistory> {
         .bySizeOrVolume(OrderCreatedBy.fromApiIndex(node.get(18).asInt()))
         .counterpartySubaccountId(node.get(19).asInt())
         .linkedDealId(node.get(20).asInt())
-        .rawData(node.toString())
+        .rawJson(node.toString())
         .build();
   }
 }

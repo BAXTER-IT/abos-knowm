@@ -19,7 +19,7 @@ public class FineryMarketsInstrumentResponseDeserializer
         .id(node.get(1).asLong())
         .assetCurrencyName(node.get(2).asText())
         .balanceCurrencyName(node.get(3).asText())
-        .rawData(node.toString())
+        .rawJson(node.toString())
         .build();
   }
 }

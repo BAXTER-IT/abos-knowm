@@ -49,20 +49,20 @@ public class FineryMarketsDeserializationTest {
         new String[] {"Arbitrum", "AVAX", "SOL", "BNB"}, firstCurrency.getNetworks().toArray());
     assertEquals(
         "[\"OP\",121,1,341000000,\"crypto\",[\"Arbitrum\",\"AVAX\",\"SOL\",\"BNB\"]]",
-        firstCurrency.getRawData());
+        firstCurrency.getRawJson());
 
     assertEquals(3, instrumentsResponse.getInstruments().size());
     assertEquals("USDC-INR", firstInstrument.getName());
     assertEquals(563, firstInstrument.getId());
     assertEquals("USDC", firstInstrument.getAssetCurrencyName());
     assertEquals("INR", firstInstrument.getBalanceCurrencyName());
-    assertEquals("[\"USDC-INR\",563,\"USDC\",\"INR\"]", firstInstrument.getRawData());
+    assertEquals("[\"USDC-INR\",563,\"USDC\",\"INR\"]", firstInstrument.getRawJson());
 
     assertEquals(3, instrumentsResponse.getNetworks().size());
     assertEquals("XTZ", secondNetwork.getName());
     assertEquals("Tezos", secondNetwork.getDescription());
     assertEquals(28, secondNetwork.getId());
-    assertEquals("[\"XTZ\",\"Tezos\",28]", secondNetwork.getRawData());
+    assertEquals("[\"XTZ\",\"Tezos\",28]", secondNetwork.getRawJson());
   }
 
   @Test
@@ -109,7 +109,7 @@ public class FineryMarketsDeserializationTest {
             .bySizeOrVolume(OrderCreatedBy.SIZE)
             .counterpartySubaccountId(0)
             .linkedDealId(1864943)
-            .rawData(expectedRawJson)
+            .rawJson(expectedRawJson)
             .build();
 
     DealHistory actual = dealHistoryResponse.getDeals().get(0);

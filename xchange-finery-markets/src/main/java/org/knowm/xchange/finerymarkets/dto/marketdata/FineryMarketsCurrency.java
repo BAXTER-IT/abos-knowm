@@ -34,7 +34,7 @@ public class FineryMarketsCurrency {
    */
   private List<String> networks;
 
-  private String rawData;
+  private String rawJson;
 
   @Override
   public boolean equals(Object o) {

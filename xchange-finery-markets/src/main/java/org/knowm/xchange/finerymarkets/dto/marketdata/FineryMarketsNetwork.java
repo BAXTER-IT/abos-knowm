@@ -22,7 +22,7 @@ public class FineryMarketsNetwork {
   /** Network ID */
   private int id;
 
-  private String rawData;
+  private String rawJson;
 
   @Override
   public boolean equals(Object o) {

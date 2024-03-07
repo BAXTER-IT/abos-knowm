@@ -18,7 +18,7 @@ public class FineryMarketsNetworkResponseDeserializer
         .name(node.get(0).asText())
         .description(node.get(1).asText())
         .id(node.get(2).asInt())
-        .rawData(node.toString())
+        .rawJson(node.toString())
         .build();
   }
 }
