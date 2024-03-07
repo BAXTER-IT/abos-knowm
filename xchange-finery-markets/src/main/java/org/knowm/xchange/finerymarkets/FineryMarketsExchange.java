@@ -27,6 +27,7 @@ public class FineryMarketsExchange extends BaseExchange {
     exchangeSpecification.setExchangeName("FineryMarkets");
     exchangeSpecification.setExchangeDescription(
         "Finery Markets is the first global crypto-native Multi-Dealer Platform. Serving clients since 2019.");
+    exchangeSpecification.setShouldLoadRemoteMetaData(false);
     exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX, false);
     return exchangeSpecification;
   }
