@@ -59,7 +59,7 @@ public class DealHistory {
 
   private long orderId;
 
-  private int clientOrderId;
+  private long clientOrderId;
 
   private long orderPrice;
 
@@ -75,7 +75,7 @@ public class DealHistory {
 
   private long dealMoment;
 
-  private int dealId;
+  private long dealId;
 
   /**
    * Deal aggressor side
