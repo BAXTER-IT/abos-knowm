@@ -9,6 +9,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trade;
+import org.knowm.xchange.dto.marketdata.Trade.Builder;
 import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
@@ -201,6 +202,21 @@ public class UserTrade extends Trade {
     @Override
     public Builder id(String id) {
       return (Builder) super.id(id);
+    }
+
+    @Override
+    public Builder makerOrderId(String makerOrderId) {
+      return (Builder) super.makerOrderId(makerOrderId);
+    }
+
+    @Override
+    public Builder takerOrderId(String takerOrderId) {
+      return (Builder) super.takerOrderId(takerOrderId);
+    }
+
+    @Override
+    public Builder rawJson(String rawJson) {
+      return (Builder) super.rawJson(rawJson);
     }
 
     public Builder orderId(String orderId) {

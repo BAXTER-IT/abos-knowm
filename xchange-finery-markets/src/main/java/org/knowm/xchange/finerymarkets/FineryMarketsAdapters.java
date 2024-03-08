@@ -1,16 +1,20 @@
 package org.knowm.xchange.finerymarkets;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsCurrency;
 import org.knowm.xchange.finerymarkets.dto.marketdata.FineryMarketsInstrument;
 import org.knowm.xchange.finerymarkets.dto.marketdata.response.InstrumentsResponse;
@@ -20,6 +24,7 @@ import org.knowm.xchange.finerymarkets.dto.trade.request.DealHistoryRequest;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 
+@Slf4j
 public class FineryMarketsAdapters {
 
   private FineryMarketsAdapters() {}
@@ -86,12 +91,48 @@ public class FineryMarketsAdapters {
   }
 
   private static UserTrade adaptUserTrade(DealHistory input) {
-    // TODO check with business, create a mapping method for future exchanges
+    OrderType orderType = null;
+    // DealHistory (method input) also has an orderType field, but that means else
+    switch (input.getSide()) {
+      case BID:
+        orderType = OrderType.BID;
+        break;
+      case ASK:
+        orderType = OrderType.ASK;
+        break;
+      default:
+        log.error("Unknown order type: {}", input.getSide());
+    }
+
+    MarketParticipant marketParticipant = null;
+    switch (input.getOrderType()) {
+      case LIMIT:
+      case POST_ONLY:
+      case LIMIT_IOC:
+      case LIMIT_FOK:
+        marketParticipant = MarketParticipant.MAKER;
+        break;
+      case MARKET_IOC:
+      case MARKET_FOK:
+      case MANUAL_TRADE:
+      case LIQUIDATION_TRADE:
+        marketParticipant = MarketParticipant.TAKER;
+        break;
+      default:
+        log.error("Unknown market participant: {}", input.getOrderType());
+    }
+
     return new UserTrade.Builder()
+        .type(orderType)
+        .originalAmount(BigDecimal.valueOf(input.getDealSize()))
+        .instrument(adaptCurrencyPair(input.getInstrumentName()))
+        .price(BigDecimal.valueOf(input.getDealPrice()))
+        .timestamp(adaptDate(input.getDealMoment()))
         .id(String.valueOf(input.getDealId()))
         .orderId(String.valueOf(input.getOrderId()))
-        .instrument(adaptCurrencyPair(input.getInstrumentName()))
-        .timestamp(adaptDate(input.getDealMoment()))
+        .orderUserReference(String.valueOf(input.getClientOrderId()))
+        .marketParticipant(marketParticipant)
+        .rawJson(input.getRawJson())
         .build();
   }
 
