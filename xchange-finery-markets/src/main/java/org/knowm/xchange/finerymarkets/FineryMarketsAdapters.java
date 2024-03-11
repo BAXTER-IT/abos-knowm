@@ -1,6 +1,7 @@
 package org.knowm.xchange.finerymarkets;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ public class FineryMarketsAdapters {
   private FineryMarketsAdapters() {}
 
   public static Map<Currency, CurrencyMetaData> adaptCurrencies(InstrumentsResponse input) {
+    if (input == null) {
+      return Collections.emptyMap();
+    }
     return input.getCurrencies().stream()
         .distinct()
         .collect(
@@ -39,6 +43,9 @@ public class FineryMarketsAdapters {
   }
 
   public static Map<Instrument, InstrumentMetaData> adaptInstruments(InstrumentsResponse input) {
+    if (input == null) {
+      return Collections.emptyMap();
+    }
     return input.getInstruments().stream()
         .distinct()
         .collect(
@@ -48,16 +55,25 @@ public class FineryMarketsAdapters {
   }
 
   public static UserTrades adaptUserTrades(List<DealHistory> input) {
+    if (input == null) {
+      return new UserTrades(Collections.emptyList(), TradeSortType.SortByID);
+    }
     return new UserTrades(
         input.stream().map(FineryMarketsAdapters::adaptUserTrade).collect(Collectors.toList()),
         TradeSortType.SortByID);
   }
 
   public static String adaptInstrument(CurrencyPair input) {
+    if (input == null) {
+      return null;
+    }
     return input.toString().replace("/", "-");
   }
 
   public static DealHistoryRequest adaptDealHistoryRequest(TradeHistoryParamsAll input) {
+    if (input == null) {
+      return null;
+    }
     DealFilter filterParam = (DealFilter) input.getCustomParam("filter");
     DealFilter filter = filterParam == null ? DealFilter.ALL : filterParam;
 
@@ -72,18 +88,30 @@ public class FineryMarketsAdapters {
   }
 
   private static CurrencyPair adaptInstrument(FineryMarketsInstrument input) {
+    if (input == null) {
+      return null;
+    }
     return new CurrencyPair(input.getAssetCurrencyName(), input.getBalanceCurrencyName());
   }
 
   private static InstrumentMetaData adaptInstrumentMetaData(FineryMarketsInstrument input) {
+    if (input == null) {
+      return null;
+    }
     return new InstrumentMetaData.Builder().rawJson(input.getRawJson()).build();
   }
 
   private static Currency adaptCurrency(FineryMarketsCurrency input) {
+    if (input == null) {
+      return null;
+    }
     return new Currency(input.getName());
   }
 
   private static CurrencyMetaData adaptCurrencyMetaData(FineryMarketsCurrency input) {
+    if (input == null) {
+      return null;
+    }
     return CurrencyMetaData.builder()
         .scale(input.getBalanceStep())
         .rawJson(input.getRawJson())
@@ -91,6 +119,9 @@ public class FineryMarketsAdapters {
   }
 
   private static UserTrade adaptUserTrade(DealHistory input) {
+    if (input == null) {
+      return null;
+    }
     OrderType orderType = null;
     // DealHistory (method input) also has an orderType field, but that means else
     switch (input.getSide()) {
@@ -137,6 +168,9 @@ public class FineryMarketsAdapters {
   }
 
   private static CurrencyPair adaptCurrencyPair(String input) {
+    if (input == null) {
+      return null;
+    }
     return new CurrencyPair(input);
   }
 
