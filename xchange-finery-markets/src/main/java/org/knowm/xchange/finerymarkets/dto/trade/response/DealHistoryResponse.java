@@ -1,6 +1,7 @@
 package org.knowm.xchange.finerymarkets.dto.trade.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +19,12 @@ public class DealHistoryResponse {
 
   private List<DealHistory> deals;
 
+  public DealHistoryResponse() {
+    deals = new ArrayList<>();
+  }
+
   public boolean isFullPage() {
-    return deals.size() == MAX_DEAL_HISTORY_SIZE;
+    return deals.size() == getMaxDealHistorySize();
   }
 
   /**
@@ -28,7 +33,15 @@ public class DealHistoryResponse {
    * in the next request(s).
    * @return the deal id of the earliest deal in the response
    */
-  public long getTillDealId() {
-    return deals.get(deals.size() - 1).getDealId();
+  public Long getTillDealId() {
+    int dealSize = deals.size();
+    if (dealSize == 0) {
+      return null;
+    }
+    return deals.get(dealSize - 1).getDealId();
+  }
+
+  protected int getMaxDealHistorySize() {
+    return MAX_DEAL_HISTORY_SIZE;
   }
 }
