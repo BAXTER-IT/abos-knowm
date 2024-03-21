@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -44,6 +46,7 @@
     <version.slf4j>2.0.6</version.slf4j>
     <version.crypto>5.0.0</version.crypto>
     <version.java-jwt>4.4.0</version.java-jwt>
+    <version.quickfixj>2.3.1</version.quickfixj>
 
     <skipIntegrationTests>true</skipIntegrationTests>
   </properties>
@@ -195,6 +198,7 @@
     <module>xchange-stream-coinmate</module>
     <module>xchange-stream-core</module>
     <module>xchange-stream-dydx</module>
+    <module>xchange-stream-finery-markets</module>
     <module>xchange-stream-ftx</module>
     <module>xchange-stream-gateio</module>
     <module>xchange-stream-gemini</module>
@@ -293,16 +297,16 @@
         <artifactId>jackson-databind</artifactId>
         <version>${version.fasterxml}</version>
       </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${version.fasterxml}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${version.fasterxml}</version>
-        </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${version.fasterxml}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${version.fasterxml}</version>
+      </dependency>
       <dependency>
         <groupId>org.web3j</groupId>
         <artifactId>crypto</artifactId>
@@ -354,12 +358,18 @@
         <artifactId>pubnub-gson</artifactId>
         <version>4.31.3</version>
       </dependency>
-        <!-- Netty version compatible with service-wamp -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.96.Final</version>
-        </dependency>
+      <!-- Netty version compatible with service-wamp -->
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-all</artifactId>
+        <version>4.1.96.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>org.quickfixj</groupId>
+        <artifactId>quickfixj-all</artifactId>
+        <version>${version.quickfixj}</version>
+      </dependency>
+
 
     </dependencies>
 
@@ -414,30 +424,30 @@
   </dependencies>
 
   <profiles>
-	<profile>
-		<id>Distribution-Artifactory</id>
-		<distributionManagement>
-			<repository>
-				<id>artifactory-release-repository</id>
-				<name>Artifactory Release Repository</name>
-				<url>https://baxter.jfrog.io/baxter/baxter-releases</url>
-			</repository>
-			<snapshotRepository>
-				<id>artifactory-snapshot-repository</id>
-				<name>Artifactory Snapshot Repository</name>
-				<url>https://baxter.jfrog.io/baxter/baxter-snapshots</url>
-			</snapshotRepository>
-			<site>
-				<id>artifactory-sites-repository</id>
-				<url>dav:https://baxter.jfrog.io/baxter/sites/parent/</url>
-			</site>
-		</distributionManagement>
-	</profile>
+    <profile>
+      <id>Distribution-Artifactory</id>
+      <distributionManagement>
+        <repository>
+          <id>artifactory-release-repository</id>
+          <name>Artifactory Release Repository</name>
+          <url>https://baxter.jfrog.io/baxter/baxter-releases</url>
+        </repository>
+        <snapshotRepository>
+          <id>artifactory-snapshot-repository</id>
+          <name>Artifactory Snapshot Repository</name>
+          <url>https://baxter.jfrog.io/baxter/baxter-snapshots</url>
+        </snapshotRepository>
+        <site>
+          <id>artifactory-sites-repository</id>
+          <url>dav:https://baxter.jfrog.io/baxter/sites/parent/</url>
+        </site>
+      </distributionManagement>
+    </profile>
     <profile>
       <id>release-sign-artifacts</id>
       <activation>
         <property>
-            <name>gpg.passphrase</name>
+          <name>gpg.passphrase</name>
           <value>true</value>
         </property>
       </activation>
@@ -454,12 +464,12 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
-                  <configuration>
-                      <gpgArguments>
-                          <arg>--pinentry-mode</arg>
-                          <arg>loopback</arg>
-                      </gpgArguments>
-                  </configuration>
+                <configuration>
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
               </execution>
             </executions>
 
@@ -595,7 +605,7 @@
         <executions>
           <execution>
             <goals>
-<!--              <goal>format</goal>-->
+              <!--              <goal>format</goal>-->
             </goals>
           </execution>
         </executions>

@@ -177,4 +177,8 @@ public class FineryMarketsAdapters {
   private static Date adaptDate(long input) {
     return new Date(input);
   }
+
+  public static UserTrade adaptExecutionReport(quickfix.fix44.ExecutionReport message) {
+    return UserTrade.builder().build();
+  }
 }
