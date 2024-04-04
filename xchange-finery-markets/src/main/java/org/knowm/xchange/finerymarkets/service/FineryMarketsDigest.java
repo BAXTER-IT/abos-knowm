@@ -30,7 +30,6 @@ public class FineryMarketsDigest extends BaseParamsDigest {
     String method = restInvocation.getMethodPath();
     String payload = restInvocation.getRequestBody();
     String toSign = method + payload;
-    log.info("FineryMarkets toSign: {}", toSign);
     Mac mac = getMac();
     mac.update(toSign.getBytes(StandardCharsets.UTF_8));
     return Base64.getEncoder().encodeToString(mac.doFinal());

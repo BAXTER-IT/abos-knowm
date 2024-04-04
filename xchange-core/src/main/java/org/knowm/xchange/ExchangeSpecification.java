@@ -4,6 +4,8 @@ import static org.knowm.xchange.ExchangeClassUtils.exchangeClassForName;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Specification to provide the following to {@link ExchangeFactory}:
@@ -13,6 +15,8 @@ import java.util.Map;
  *   <li>Provision of optional exchangeSpecificParameters for additional configuration
  * </ul>
  */
+@Setter
+@Getter
 public class ExchangeSpecification {
 
   private final Class<? extends Exchange> exchangeClass;
@@ -26,6 +30,7 @@ public class ExchangeSpecification {
   private String plainTextUri;
   private String overrideWebsocketApiUri;
   private String host;
+  private String wsEndpoint;
   private int port = 80;
   private String proxyHost;
   private Integer proxyPort;
