@@ -9,17 +9,21 @@ import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-import javax.crypto.Mac;
+import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.enums.HashingAlgorithm;
+import org.knowm.xchange.exceptions.SignatureFieldsUnsetException;
 import org.knowm.xchange.finerymarkets.streaming.dtos.FineryMarketsStreamingOrderRequestDto;
 import org.knowm.xchange.finerymarkets.streaming.dtos.FineryMarketsStreamingPingDto;
 import org.knowm.xchange.finerymarkets.streaming.enums.Event;
+import org.knowm.xchange.utils.SignatureCreator;
 
+@Slf4j
 public class FineryMarketsStreamingService extends JsonNettyStreamingService {
 
   public static final String HEADER_EFX_KEY = "EFX-Key";
@@ -90,11 +94,16 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
   }
 
   private String generateSignature(String toSign) {
-    // TODO: Implement this
-//    Mac mac = getMac();
-//    mac.update(toSign.getBytes(StandardCharsets.UTF_8));
-//    return Base64.getEncoder().encodeToString(mac.doFinal());
-    return "";
+    try {
+      return new SignatureCreator()
+          .withHashingAlgorithm(HashingAlgorithm.SHA384)
+          .withInformation(toSign)
+          .withSecret(exchangeSpecification.getSecretKey())
+          .create();
+    } catch (SignatureFieldsUnsetException | NoSuchAlgorithmException | InvalidKeyException e) {
+      log.error("Failed to generate signature", e);
+      return "";
+    }
   }
 
   private String generateContent() {
