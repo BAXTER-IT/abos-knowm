@@ -23,7 +23,7 @@ public class FineryMarketsExchange extends BaseExchange {
     ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass());
     exchangeSpecification.setSslUri("https://trade.finerymarkets.com");
     exchangeSpecification.setHost("trade.finerymarkets.com");
-    exchangeSpecification.setWsEndpoint("wss://trade.finerymarkets.com");
+    exchangeSpecification.setWsEndpoint("wss://trade.finerymarkets.com/ws");
     exchangeSpecification.setPort(80);
     exchangeSpecification.setExchangeName("FineryMarkets");
     exchangeSpecification.setExchangeDescription(
@@ -38,7 +38,7 @@ public class FineryMarketsExchange extends BaseExchange {
     if (useSandbox(exchangeSpecification)) {
       exchangeSpecification.setSslUri("https://test.finerymarkets.com");
       exchangeSpecification.setHost("test.finerymarkets.com");
-      exchangeSpecification.setWsEndpoint("wss://test.finerymarkets.com");
+      exchangeSpecification.setWsEndpoint("wss://test.finerymarkets.com/ws");
     }
     super.applySpecification(exchangeSpecification);
   }

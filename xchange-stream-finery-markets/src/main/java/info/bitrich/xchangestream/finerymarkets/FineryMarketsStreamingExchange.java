@@ -13,17 +13,6 @@ public class FineryMarketsStreamingExchange extends FineryMarketsExchange
   FineryMarketsStreamingService streamingService;
   private FineryMarketsStreamingTradeService streamingTradeService;
 
-  //  @Override
-  //  protected void initServices() {
-  //    super.initServices();
-  //    streamingService =
-  //        new FineryMarketsStreamingService(
-  //            getFineryMarketsURI(useSandbox(exchangeSpecification), true, ""),
-  // exchangeSpecification);
-  //
-  //    streamingTradeService = new FineryMarketsStreamingTradeService(streamingService);
-  //  }
-
   @Override
   public Completable connect(ProductSubscription... args) {
 

@@ -21,5 +21,5 @@ public class FineryMarketsStreamingOrderResponseDto {
   private Feed feed;
   private String feedId;
   private Action action;
-  private List<DealHistory> deals;
+  private DealHistory deal;
 }

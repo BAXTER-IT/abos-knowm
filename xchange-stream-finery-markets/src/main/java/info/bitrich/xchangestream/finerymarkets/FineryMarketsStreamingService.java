@@ -3,7 +3,9 @@ package info.bitrich.xchangestream.finerymarkets;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
+import info.bitrich.xchangestream.service.netty.WebSocketClientCompressionAllowClientNoContextAndServerNoContextHandler;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.websocketx.extensions.WebSocketClientExtensionHandler;
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
@@ -32,7 +34,7 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
 
   private final ExchangeSpecification exchangeSpecification;
 
-  private final Observable<Long> pingPongSrc = Observable.interval(60, 60, TimeUnit.SECONDS);
+  private final Observable<Long> pingPongSrc = Observable.interval(30, 30, TimeUnit.SECONDS);
   private Disposable pingPongSubscription;
 
   public FineryMarketsStreamingService(String apiUrl, ExchangeSpecification exchangeSpecification) {
@@ -44,38 +46,27 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
   public Completable connect() {
     Completable conn = super.connect();
     return conn.andThen(
-            (CompletableSource)
-                completable -> {
-                  try {
-                    if (pingPongSubscription != null && !pingPongSubscription.isDisposed()) {
-                      pingPongSubscription.dispose();
-                    }
+        (CompletableSource)
+            completable -> {
+              try {
+                if (pingPongSubscription != null && !pingPongSubscription.isDisposed()) {
+                  pingPongSubscription.dispose();
+                }
 
-                    pingPongSubscription =
-                        pingPongSrc.subscribe(o -> this.sendMessage(getPingMessage()));
+                pingPongSubscription =
+                    pingPongSrc.subscribe(o -> this.sendMessage(getPingMessage()));
 
-                    completable.onComplete();
-                  } catch (Exception e) {
-                    completable.onError(e);
-                  }
-                })
-        .andThen(
-            (CompletableSource)
-                completable -> {
-                  resubscribeChannels();
-                  completable.onComplete();
-                });
+                completable.onComplete();
+              } catch (Exception e) {
+                completable.onError(e);
+              }
+            });
   }
 
   @Override
   protected void handleMessage(JsonNode message) {
-    JsonNode actionNode = message.get(2);
-    if (actionNode == null) {
-      super.handleError(message, new Exception("No action in message"));
-      return;
-    }
-    String action = actionNode.asText();
-    if ("Z".equalsIgnoreCase(action)) {
+    boolean hasErrorCode = message.get(3).isNumber() && message.get(3).intValue() > 0;
+    if (hasErrorCode) {
       super.handleError(message, new Exception("Failed to subscribe"));
       return;
     }
@@ -86,7 +77,6 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
   protected DefaultHttpHeaders getCustomHeaders() {
     DefaultHttpHeaders customHeaders = new DefaultHttpHeaders();
     customHeaders.add(HEADER_EFX_KEY, exchangeSpecification.getApiKey());
-
     String content = generateContent();
     customHeaders.add(HEADER_EFX_CONTENT, content);
     customHeaders.add(HEADER_EFX_SIGNATURE, generateSignature(content));
@@ -107,8 +97,8 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
   }
 
   private String generateContent() {
-    HashMap<String, String> content = new HashMap<>();
-    String timestamp = Long.toString(System.currentTimeMillis());
+    HashMap<String, Object> content = new HashMap<>();
+    Long timestamp = System.currentTimeMillis();
     content.put("nonce", timestamp);
     content.put("timestamp", timestamp);
     try {
@@ -118,10 +108,10 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
     }
   }
 
-  //  @Override
-  //  protected WebSocketClientExtensionHandler getWebSocketClientExtensionHandler() {
-  //    return WebSocketClientCompressionAllowClientNoContextAndServerNoContextHandler.INSTANCE;
-  //  }
+  @Override
+  protected WebSocketClientExtensionHandler getWebSocketClientExtensionHandler() {
+    return WebSocketClientCompressionAllowClientNoContextAndServerNoContextHandler.INSTANCE;
+  }
 
   @Override
   protected String getChannelNameFromMessage(JsonNode message) {

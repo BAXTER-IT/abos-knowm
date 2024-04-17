@@ -10,6 +10,7 @@ import java.util.Objects;
 import lombok.Getter;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
+import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 
@@ -21,7 +22,7 @@ public class Trade implements Serializable {
   private static final long serialVersionUID = -4078893146776655648L;
 
   /** Did this trade result from the execution of a bid or a ask? */
-  protected final OrderType type;
+  protected OrderType type;
 
   /** Amount that was traded */
   protected final BigDecimal originalAmount;
@@ -139,6 +140,10 @@ public class Trade implements Serializable {
         + takerOrderId
         + '\''
         + '}';
+  }
+
+  public void invertType() {
+    this.type = this.type == OrderType.BID ? OrderType.ASK : OrderType.BID;
   }
 
   @JsonPOJOBuilder(withPrefix = "")

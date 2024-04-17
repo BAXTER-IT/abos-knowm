@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -87,41 +88,7 @@ public class FineryMarketsAdapters {
         .build();
   }
 
-  private static CurrencyPair adaptInstrument(FineryMarketsInstrument input) {
-    if (input == null) {
-      return null;
-    }
-    return new CurrencyPair(input.getAssetCurrencyName(), input.getBalanceCurrencyName());
-  }
-
-  private static InstrumentMetaData adaptInstrumentMetaData(FineryMarketsInstrument input) {
-    if (input == null) {
-      return null;
-    }
-    return new InstrumentMetaData.Builder().rawJson(input.getRawJson()).build();
-  }
-
-  private static Currency adaptCurrency(FineryMarketsCurrency input) {
-    if (input == null) {
-      return null;
-    }
-    return new Currency(input.getName());
-  }
-
-  private static CurrencyMetaData adaptCurrencyMetaData(FineryMarketsCurrency input) {
-    if (input == null) {
-      return null;
-    }
-    return CurrencyMetaData.builder()
-        .scale(input.getBalanceStep())
-        .rawJson(input.getRawJson())
-        .build();
-  }
-
-  private static UserTrade adaptUserTrade(DealHistory input) {
-    if (input == null) {
-      return null;
-    }
+  public static UserTrade adaptUserTrade(@NonNull DealHistory input) {
     OrderType orderType = null;
     // DealHistory (method input) also has an orderType field, but that means else
     switch (input.getSide()) {
@@ -153,16 +120,51 @@ public class FineryMarketsAdapters {
         log.error("Unknown market participant: {}", input.getOrderType());
     }
 
+    CurrencyPair instrument = adaptCurrencyPair(input.getInstrumentName());
+
     return new UserTrade.Builder()
         .type(orderType)
-        .originalAmount(BigDecimal.valueOf(input.getDealSize()))
-        .instrument(adaptCurrencyPair(input.getInstrumentName()))
-        .price(BigDecimal.valueOf(input.getDealPrice()))
+        .originalAmount(BigDecimal.valueOf(input.getDealSize()).movePointLeft(8))
+        .instrument(instrument)
+        .price(BigDecimal.valueOf(input.getDealPrice()).movePointLeft(8))
         .timestamp(adaptDate(input.getDealMoment()))
         .id(String.valueOf(input.getDealId()))
         .orderId(String.valueOf(input.getOrderId()))
-        .orderUserReference(String.valueOf(input.getClientOrderId()))
+        .orderUserReference(String.valueOf(input.getCounterpartyId()))
         .marketParticipant(marketParticipant)
+        .feeAmount(BigDecimal.ZERO)
+        .feeCurrency(instrument.getBase())
+        .rawJson(input.getRawJson())
+        .build();
+  }
+
+  private static CurrencyPair adaptInstrument(FineryMarketsInstrument input) {
+    if (input == null) {
+      return null;
+    }
+    return new CurrencyPair(input.getAssetCurrencyName(), input.getBalanceCurrencyName());
+  }
+
+  private static InstrumentMetaData adaptInstrumentMetaData(FineryMarketsInstrument input) {
+    if (input == null) {
+      return null;
+    }
+    return new InstrumentMetaData.Builder().rawJson(input.getRawJson()).build();
+  }
+
+  private static Currency adaptCurrency(FineryMarketsCurrency input) {
+    if (input == null) {
+      return null;
+    }
+    return new Currency(input.getName());
+  }
+
+  private static CurrencyMetaData adaptCurrencyMetaData(FineryMarketsCurrency input) {
+    if (input == null) {
+      return null;
+    }
+    return CurrencyMetaData.builder()
+        .scale(input.getBalanceStep())
         .rawJson(input.getRawJson())
         .build();
   }

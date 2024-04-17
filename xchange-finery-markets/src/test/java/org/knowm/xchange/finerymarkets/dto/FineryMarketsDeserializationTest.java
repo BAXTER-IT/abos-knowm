@@ -148,33 +148,10 @@ public class FineryMarketsDeserializationTest extends FineryMarketsTestBase {
             .rawJson(expectedRawJson)
             .build();
 
-    DealHistory actual = response.getDeals().get(0);
+    DealHistory actual = response.getDeal();
     assertEquals(expected, actual);
     assertEquals(Feed.ORDERS, response.getFeed());
     assertEquals("0", response.getFeedId());
     assertEquals(Action.NEW_DEAL, response.getAction());
-  }
-
-  @Test
-  public void testStreamingDealDeserialization_when_snapshot_response() throws IOException {
-    String responseString =
-        IOUtils.resourceToString("/streamingDealResponse_snapshot_01.json", StandardCharsets.UTF_8);
-
-    FineryMarketsStreamingOrderResponseDto response =
-        mapper.readValue(responseString, FineryMarketsStreamingOrderResponseDto.class);
-    assertEquals(Feed.ORDERS, response.getFeed());
-    assertEquals("0", response.getFeedId());
-    assertEquals(Action.SNAPSHOT, response.getAction());
-    assertEquals(2, response.getDeals().size());
-  }
-
-  @Test
-  public void testStreamingDealDeserialization_when_failed_subscribe_response() throws IOException {
-    String responseString =
-        IOUtils.resourceToString("/streamingDealResponse_failed_subscribe_01.json", StandardCharsets.UTF_8);
-
-    assertThrows(
-        FailedToSubscribeException.class,
-        () -> mapper.readValue(responseString, FineryMarketsStreamingOrderResponseDto.class));
   }
 }

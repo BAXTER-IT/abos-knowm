@@ -44,7 +44,6 @@ public class SignatureCreator {
 
   public String create()
       throws SignatureFieldsUnsetException, NoSuchAlgorithmException, InvalidKeyException {
-    log.trace("Creating signature: {}", this);
     raiseExceptionIfFieldsAreNotSet();
     mac = Mac.getInstance(hashingAlgorithm.toString());
     SecretKey secretKey =
