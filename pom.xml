@@ -44,7 +44,8 @@
     <version.slf4j>2.0.6</version.slf4j>
     <version.crypto>5.0.0</version.crypto>
     <version.java-jwt>4.4.0</version.java-jwt>
-
+    <version.mockito>5.11.0</version.mockito>
+    <version.wiremock>3.2.0</version.wiremock>
     <skipIntegrationTests>true</skipIntegrationTests>
   </properties>
 
@@ -101,6 +102,7 @@
     <module>xchange-bitcointoyou</module>
     <module>xchange-bitfinex</module>
     <module>xchange-bitflyer</module>
+    <module>xchange-bitget</module>
     <module>xchange-bithumb</module>
     <module>xchange-ascendex</module>
     <module>xchange-bitmex</module>
@@ -186,6 +188,7 @@
     <module>xchange-stream-binance</module>
     <module>xchange-stream-bitfinex</module>
     <module>xchange-stream-bitflyer</module>
+    <module>xchange-stream-bitget</module>
     <module>xchange-stream-bitmex</module>
     <module>xchange-stream-bitstamp</module>
     <module>xchange-stream-btcmarkets</module>
@@ -355,13 +358,30 @@
         <artifactId>pubnub-gson</artifactId>
         <version>4.31.3</version>
       </dependency>
-        <!-- Netty version compatible with service-wamp -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.96.Final</version>
-        </dependency>
-
+      <!-- Netty version compatible with service-wamp -->
+      <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+          <version>4.1.96.Final</version>
+      </dependency>
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-engine</artifactId>
+          <version>${version.junit}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-junit-jupiter</artifactId>
+          <version>${version.mockito}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.wiremock</groupId>
+          <artifactId>wiremock</artifactId>
+          <version>${version.wiremock}</version>
+          <scope>test</scope>
+      </dependency>
     </dependencies>
 
   </dependencyManagement>
