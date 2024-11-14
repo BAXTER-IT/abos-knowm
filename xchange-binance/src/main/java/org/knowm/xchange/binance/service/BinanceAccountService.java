@@ -288,17 +288,17 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
         super.withdrawHistory(asset, startTime, endTime)
             .forEach(
                 w -> result.add(
-                    FundingRecord.builder()
-                        .address(w.getAddress())
-                        .addressTag(w.getAddressTag())
-                        .date(BinanceAdapters.toDate(w.getApplyTime()))
-                        .currency(Currency.getInstance(w.getCoin()))
-                        .amount(w.getAmount())
-                        .internalId(w.getId())
-                        .blockchainTransactionHash(w.getTxId())
-                        .type(Type.WITHDRAWAL)
-                        .status(withdrawStatus(w.getStatus()))
-                        .fee(w.getTransactionFee())
+                    new FundingRecord.Builder()
+                        .setAddress(w.getAddress())
+                        .setAddressTag(w.getAddressTag())
+                        .setDate(BinanceAdapters.toDate(w.getApplyTime()))
+                        .setCurrency(Currency.getInstance(w.getCoin()))
+                        .setAmount(w.getAmount())
+                        .setInternalId(w.getId())
+                        .setBlockchainTransactionHash(w.getTxId())
+                        .setType(Type.WITHDRAWAL)
+                        .setStatus(withdrawStatus(w.getStatus()))
+                        .setFee(w.getTransactionFee())
                         .build()));
       }
 
@@ -306,15 +306,15 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
         super.depositHistory(asset, startTime, endTime)
             .forEach(
                 d -> result.add(
-                    FundingRecord.builder()
-                        .address(d.getAddress())
-                        .addressTag(d.getAddressTag())
-                        .date(new Date(d.getInsertTime()))
-                        .currency(Currency.getInstance(d.getCoin()))
-                        .amount(d.getAmount())
-                        .blockchainTransactionHash(d.getTxId())
-                        .type(Type.DEPOSIT)
-                        .status(depositStatus(d.getStatus()))
+                    new FundingRecord.Builder()
+                        .setAddress(d.getAddress())
+                        .setAddressTag(d.getAddressTag())
+                        .setDate(new Date(d.getInsertTime()))
+                        .setCurrency(Currency.getInstance(d.getCoin()))
+                        .setAmount(d.getAmount())
+                        .setBlockchainTransactionHash(d.getTxId())
+                        .setType(Type.DEPOSIT)
+                        .setStatus(depositStatus(d.getStatus()))
                         .build()));
       }
 
@@ -322,14 +322,14 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
         super.getAssetDividend(asset, startTime, endTime)
             .forEach(
                 a -> result.add(
-                    FundingRecord.builder()
-                        .date(new Date(a.getDivTime()))
-                        .currency(Currency.getInstance(a.getAsset()))
-                        .amount(a.getAmount())
-                        .blockchainTransactionHash(String.valueOf(a.getTranId()))
-                        .type(Type.OTHER_INFLOW)
-                        .status(Status.COMPLETE)
-                        .description(a.getEnInfo())
+                    new FundingRecord.Builder()
+                        .setDate(new Date(a.getDivTime()))
+                        .setCurrency(Currency.getInstance(a.getAsset()))
+                        .setAmount(a.getAmount())
+                        .setBlockchainTransactionHash(String.valueOf(a.getTranId()))
+                        .setType(Type.OTHER_INFLOW)
+                        .setStatus(Status.COMPLETE)
+                        .setDescription(a.getEnInfo())
                         .build()));
       }
 
@@ -339,13 +339,13 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
         super.getTransferHistory(email, startTime, endTime, page, limit)
             .forEach(
                 a -> result.add(
-                    FundingRecord.builder()
-                        .address(finalEmail)
-                        .date(new Date(a.getTime()))
-                        .currency(Currency.getInstance(a.getAsset()))
-                        .amount(a.getQty())
-                        .type(Type.INTERNAL_WITHDRAWAL)
-                        .status(transferHistoryStatus(a.getStatus()))
+                    new FundingRecord.Builder()
+                        .setAddress(finalEmail)
+                        .setDate(new Date(a.getTime()))
+                        .setCurrency(Currency.getInstance(a.getAsset()))
+                        .setAmount(a.getQty())
+                        .setType(Type.INTERNAL_WITHDRAWAL)
+                        .setStatus(transferHistoryStatus(a.getAsset()))
                         .build()));
       }
 
@@ -355,16 +355,15 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
         super.getSubUserHistory(asset, type, startTime, endTime, limit)
             .forEach(
                 a -> result.add(
-                    FundingRecord.builder()
-                        .address(a.getEmail())
-                        .date(new Date(a.getTime()))
-                        .currency(Currency.getInstance(a.getAsset()))
-                        .amount(a.getQty())
-                        .type(
-                            a.getType().equals(1)
+                    new FundingRecord.Builder()
+                        .setAddress(a.getEmail())
+                        .setDate(new Date(a.getTime()))
+                        .setCurrency(Currency.getInstance(a.getAsset()))
+                        .setAmount(a.getQty())
+                        .setType(a.getType().equals(1)
                                 ? Type.INTERNAL_DEPOSIT
                                 : Type.INTERNAL_WITHDRAWAL)
-                        .status(Status.COMPLETE)
+                        .setStatus(Status.COMPLETE)
                         .build()));
       }
 

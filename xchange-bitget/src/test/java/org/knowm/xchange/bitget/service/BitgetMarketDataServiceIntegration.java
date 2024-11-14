@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.bitget.BitgetIntegrationTestParent;
 import org.knowm.xchange.currency.Currency;
@@ -12,6 +13,8 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
+import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.exceptions.InstrumentNotValidException;
 import org.knowm.xchange.instrument.Instrument;
 
@@ -31,20 +34,18 @@ class BitgetMarketDataServiceIntegration extends BitgetIntegrationTestParent {
 
   @Test
   void valid_currencies() throws IOException {
-    List<Currency> currencies =
-        ((BitgetMarketDataService) exchange.getMarketDataService()).getCurrencies();
+    Map<Currency, CurrencyMetaData> currencies = ((BitgetMarketDataService) exchange.getMarketDataService()).getCurrencies();
 
     assertThat(currencies).isNotEmpty();
-    assertThat(currencies.stream().distinct().count()).isEqualTo(currencies.size());
+    assertThat(currencies.keySet().stream().distinct().count()).isEqualTo(currencies.size());
   }
 
   @Test
   void valid_instruments() throws IOException {
-    List<Instrument> instruments =
-        ((BitgetMarketDataService) exchange.getMarketDataService()).getInstruments();
+    Map<Instrument, InstrumentMetaData> instruments = ((BitgetMarketDataService) exchange.getMarketDataService()).getInstruments();
 
     assertThat(instruments).isNotEmpty();
-    assertThat(instruments.stream().distinct().count()).isEqualTo(instruments.size());
+    assertThat(instruments.keySet().stream().distinct().count()).isEqualTo(instruments.size());
   }
 
   @Test

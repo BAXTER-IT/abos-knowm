@@ -215,7 +215,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
 
       fundingHistory.addAll(
           transfers.stream()
-              .filter(transfer -> transfer.getType().equals(Type.INTERNAL_DEPOSIT) || transfer.getType().equals(Type.INTERNAL_WITHDRAW))
+              .filter(transfer -> transfer.getType().equals(Type.INTERNAL_DEPOSIT) || transfer.getType().equals(Type.INTERNAL_WITHDRAWAL))
               .map(CoinbaseProAdapters::adaptFundingRecord)
               .collect(Collectors.toList()));
 
@@ -243,7 +243,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     while (true) {
       CoinbaseProTransfers transfers =
           getTransfers(
-              Type.WITHDRAW.name().toLowerCase(),
+              Type.WITHDRAWAL.name().toLowerCase(),
               null,
               beforeItem,
               afterItem,

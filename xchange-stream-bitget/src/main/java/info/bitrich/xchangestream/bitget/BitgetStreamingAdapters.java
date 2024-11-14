@@ -24,6 +24,7 @@ import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 
 @UtilityClass
@@ -116,6 +117,17 @@ public class BitgetStreamingAdapters {
 
   public UserTrade toUserTrade(BitgetWsUserTradeNotification notification) {
     BitgetFillData bitgetFillData = notification.getPayloadItems().get(0);
+    MarketParticipant marketParticipant;
+    switch (bitgetFillData.getTradeScope()) {
+      case TAKER:
+        marketParticipant = MarketParticipant.TAKER;
+        break;
+      case MAKER:
+        marketParticipant = MarketParticipant.MAKER;
+        break;
+      default:
+        throw new IllegalArgumentException("Can't map " + bitgetFillData.getTradeScope());
+    }
     return new UserTrade(
         bitgetFillData.getOrderSide(),
         bitgetFillData.getAssetAmount(),
@@ -132,6 +144,6 @@ public class BitgetStreamingAdapters {
             .map(FeeDetail::getCurrency)
             .findFirst()
             .orElse(null),
-        null);
+        null, marketParticipant, null);
   }
 }

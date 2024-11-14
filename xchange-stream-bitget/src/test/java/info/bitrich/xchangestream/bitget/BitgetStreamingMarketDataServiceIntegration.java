@@ -2,8 +2,8 @@ package info.bitrich.xchangestream.bitget;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.observers.TestObserver;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;

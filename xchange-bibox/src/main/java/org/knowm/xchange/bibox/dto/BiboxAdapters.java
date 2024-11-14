@@ -172,24 +172,24 @@ public class BiboxAdapters {
   }
 
   public static FundingRecord adaptDeposit(BiboxDeposit d) {
-    return FundingRecord.builder()
-        .address(d.to)
-        .date(d.getCreatedAt())
-        .currency(Currency.getInstance(d.coinSymbol))
-        .amount(d.amount)
-        .type(Type.DEPOSIT)
-        .status(convertStatus(d.status))
+    return new FundingRecord.Builder()
+        .setAddress(d.to)
+        .setDate(d.getCreatedAt())
+        .setCurrency(Currency.getInstance(d.coinSymbol))
+        .setAmount(d.amount)
+        .setType(Type.DEPOSIT)
+        .setStatus(convertStatus(d.status))
         .build();
   }
 
   public static FundingRecord adaptDeposit(BiboxWithdrawal w) {
-    return FundingRecord.builder()
-        .address(w.toAddress)
-        .date(w.getCreatedAt())
-        .currency(Currency.getInstance(w.coinSymbol))
-        .amount(w.amountReal)
-        .type(Type.WITHDRAWAL)
-        .status(convertStatus(w.status))
+    return new FundingRecord.Builder()
+        .setAddress(w.toAddress)
+        .setDate(w.getCreatedAt())
+        .setCurrency(Currency.getInstance(w.coinSymbol))
+        .setAmount(w.amountReal)
+        .setType(Type.WITHDRAWAL)
+        .setStatus(convertStatus(w.status))
         .build();
   }
 

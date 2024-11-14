@@ -8,6 +8,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.*;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
+import org.knowm.xchange.dto.meta.ExchangeHealth;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
@@ -28,6 +29,15 @@ import org.knowm.xchange.service.trade.params.CandleStickDataParams;
  * some kind
  */
 public interface MarketDataService extends BaseService {
+
+    /**
+   * Get exchange health
+   *
+   * @return The exchange health
+   */
+  default ExchangeHealth getExchangeHealth() {
+    return ExchangeHealth.ONLINE;
+  }
 
   /**
    * Get a ticker representing the current exchange rate

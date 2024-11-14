@@ -13,6 +13,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
+import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamLimit;
@@ -86,17 +87,17 @@ public class BitbayAccountService extends BitbayAccountServiceRaw implements Acc
             ? FundingRecord.Type.WITHDRAWAL
             : FundingRecord.Type.DEPOSIT;
 
-    return FundingRecord.builder()
-        .type(type)
-        .blockchainTransactionHash(null) // not available in the API yet
-        .address(null) // not available in the API yet
-        .amount(item.getValue().abs())
-        .currency(Currency.getInstance(item.getBalance().getCurrency()))
-        .date(DateUtils.fromMillisUtc(item.getTime()))
-        .internalId(item.getHistoryId().toString())
-        .fee(null) // not available in the API yet
-        .status(FundingRecord.Status.COMPLETE)
-        .balance(item.getFundsAfter().getTotal())
+    return new FundingRecord.Builder()
+        .setType(type)
+        .setBlockchainTransactionHash(null) // not available in the API yet
+        .setAddress(null) // not available in the API yet
+        .setAmount(item.getValue().abs())
+        .setCurrency(Currency.getInstance(item.getBalance().getCurrency()))
+        .setDate(DateUtils.fromMillisUtc(item.getTime()))
+        .setInternalId(item.getHistoryId().toString())
+        .setFee(null) // not available in the API yet
+        .setStatus(Status.COMPLETE)
+        .setBalance(item.getFundsAfter().getTotal())
         .build();
   }
 }

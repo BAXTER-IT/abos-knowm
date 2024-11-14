@@ -6,7 +6,7 @@ import info.bitrich.xchangestream.core.StreamingAccountService;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.core.StreamingTradeService;
-import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.Completable;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.bitget.BitgetExchange;

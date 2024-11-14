@@ -40,6 +40,7 @@ import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 
 @UtilityClass
@@ -227,6 +228,17 @@ public class BitgetAdapters {
   }
 
   public UserTrade toUserTrade(BitgetFillDto bitgetFillDto) {
+    MarketParticipant marketParticipant;
+    switch (bitgetFillDto.getTradeScope()) {
+      case TAKER:
+        marketParticipant = MarketParticipant.TAKER;
+        break;
+      case MAKER:
+        marketParticipant = MarketParticipant.MAKER;
+        break;
+      default:
+        throw new IllegalArgumentException("Can't map " + bitgetFillDto.getTradeScope());
+    }
     return new UserTrade(
         bitgetFillDto.getOrderSide(),
         bitgetFillDto.getAssetAmount(),
@@ -237,7 +249,7 @@ public class BitgetAdapters {
         bitgetFillDto.getOrderId(),
         bitgetFillDto.getFeeDetail().getTotalFee().abs(),
         bitgetFillDto.getFeeDetail().getCurrency(),
-        null);
+        null, marketParticipant, null);
   }
 
   public String toString(BitgetAccountType bitgetAccountType) {

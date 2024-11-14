@@ -111,7 +111,7 @@ public class CoinbaseProPrivateIntegration {
           assertThat(fundingRecord).isNotNull();
           assertThat(fundingRecord.getDate()).isNotNull();
           assertThat(fundingRecord.getAmount()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
-          assertThat(fundingRecord.getType()).isEqualTo(Type.WITHDRAW);
+          assertThat(fundingRecord.getType()).isEqualTo(Type.WITHDRAWAL);
           assertThat(fundingRecord.getStatus()).isInstanceOf(FundingRecord.Status.class);
           assertThat(fundingRecord.getCurrency()).isNotNull();
         });
@@ -167,7 +167,7 @@ public class CoinbaseProPrivateIntegration {
     CoinbaseProFundingHistoryParams coinbaseFundingHistoryParams = (CoinbaseProFundingHistoryParams) exchange.getAccountService().createFundingHistoryParams();
 
     coinbaseFundingHistoryParams.setLimit(50);
-    coinbaseFundingHistoryParams.setType(Type.WITHDRAW);
+    coinbaseFundingHistoryParams.setType(Type.WITHDRAWAL);
 
     exchange
         .getAccountService()

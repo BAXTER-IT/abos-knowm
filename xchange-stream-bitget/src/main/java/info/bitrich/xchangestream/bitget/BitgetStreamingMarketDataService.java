@@ -5,7 +5,7 @@ import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.MarketType;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetTickerNotification;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsOrderBookSnapshotNotification;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
-import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.Observable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.knowm.xchange.currency.CurrencyPair;

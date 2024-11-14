@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.knowm.xchange.currency.CurrencyPair.BTC_USDT;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.observers.TestObserver;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;

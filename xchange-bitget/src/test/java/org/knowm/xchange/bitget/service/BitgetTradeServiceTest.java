@@ -125,7 +125,7 @@ class BitgetTradeServiceTest extends BitgetExchangeWiremock {
             "1225475622585147396",
             new BigDecimal("0.000000246"),
             Currency.BTC,
-            null);
+            null, null, null);
 
     assertThat(userTrades.getUserTrades()).first().usingRecursiveComparison().isEqualTo(expected);
   }

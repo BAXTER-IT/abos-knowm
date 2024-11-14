@@ -50,6 +50,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
   protected static final Duration DEFAULT_RETRY_DURATION = Duration.ofSeconds(15);
   protected static final int DEFAULT_IDLE_TIMEOUT = 15;
 
+  @Getter
   protected class Subscription {
 
     final ObservableEmitter<T> emitter;
