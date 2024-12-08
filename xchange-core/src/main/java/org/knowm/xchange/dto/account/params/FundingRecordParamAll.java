@@ -22,6 +22,8 @@ public class FundingRecordParamAll {
   private Status status;
   private Date startTime;
   private Date endTime;
+  private String endId;
+  private String orderId;
   private Integer limit;
   private Type type;
   private boolean usePagination;

@@ -6,13 +6,15 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.jackson.Jacksonized;
 import org.knowm.xchange.bitget.config.converter.StringToCurrencyConverter;
+import org.knowm.xchange.bitget.config.converter.StringToFundingRecordStatusConverter;
+import org.knowm.xchange.bitget.config.deserializer.BitgetTransferRecordDtoDeserializer;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.account.FundingRecord.Status;
 
 @Data
 @Builder
-@Jacksonized
+@JsonDeserialize(using = BitgetTransferRecordDtoDeserializer.class)
 public class BitgetTransferRecordDto {
 
   @JsonProperty("clientOid")
@@ -26,6 +28,7 @@ public class BitgetTransferRecordDto {
   private Currency currency;
 
   @JsonProperty("status")
+  @JsonDeserialize(converter = StringToFundingRecordStatusConverter.class)
   private Status status;
 
   @JsonProperty("toType")
@@ -46,14 +49,5 @@ public class BitgetTransferRecordDto {
   @JsonProperty("ts")
   private Instant timestamp;
 
-  public static enum Status {
-    @JsonProperty("Successful")
-    SUCCESSFUL,
-
-    @JsonProperty("Processing")
-    PROCESSING,
-
-    @JsonProperty("Failed")
-    FAILED
-  }
+  private String rawJson;
 }

@@ -11,10 +11,13 @@ public class StringToFundingRecordStatusConverter extends StdConverter<String, S
   public Status convert(String value) {
     switch (value.toUpperCase(Locale.ROOT)) {
       case "PENDING":
+      case "PROCESSING":
         return Status.PROCESSING;
       case "FAIL":
+      case "FAILED":
         return Status.FAILED;
       case "SUCCESS":
+      case "SUCCESSFUL":
         return Status.COMPLETE;
       default:
         throw new IllegalArgumentException("Can't map " + value);

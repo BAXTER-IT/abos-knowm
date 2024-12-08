@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
@@ -26,13 +27,16 @@ public class TradeHistoryParamsAll
         TradeHistoryParamPaging,
         TradeHistoryParamsIdSpan,
         TradeHistoryParamOffset,
+        TradeHistoryParamCurrency,
         TradeHistoryParamCurrencyPair,
         TradeHistoryParamMultiCurrencyPair,
         TradeHistoryParamInstrument,
         TradeHistoryParamMultiInstrument,
         TradeHistoryParamLimit,
         TradeHistoryParamId,
-        TradeHistoryParamUserReference{
+        TradeHistoryParamOrderId,
+    TradeHistoryParamSubaccountId,
+        TradeHistoryParamUserReference {
 
   private Integer pageLength;
   private Integer pageNumber;
@@ -41,11 +45,14 @@ public class TradeHistoryParamsAll
   private Date startTime;
   private Date endTime;
   private Long offset;
+  private Currency currency;
   private Instrument instrument;
   private Collection<Instrument> instruments = Collections.emptySet();
   private Integer limit;
   private String id;
+  private String orderId;
   private String userReference;
+  private String subaccountId;
   private Map<String, Object> customParams = new HashMap<>();
 
   @Override

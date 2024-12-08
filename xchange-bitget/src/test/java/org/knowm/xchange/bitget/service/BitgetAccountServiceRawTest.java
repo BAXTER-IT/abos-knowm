@@ -18,12 +18,11 @@ import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto.Depos
 import org.knowm.xchange.bitget.dto.account.BitgetMainSubTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetSubBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
-import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto.Status;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams.Role;
 import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
 import org.knowm.xchange.bitget.service.params.BitgetFundingHistoryParams;
-import org.knowm.xchange.dto.account.FundingRecord;
+import org.knowm.xchange.dto.account.FundingRecord.Status;
 
 class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
 
@@ -41,7 +40,7 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
             .toAccountType(BitgetAccountType.SPOT)
             .toSymbol("")
             .size(new BigDecimal("1.00000000"))
-            .status(Status.SUCCESSFUL)
+            .status(Status.COMPLETE)
             .timestamp(Instant.ofEpochMilli(1727905504678L))
             .transferId("1225489997897666560")
             .build();
@@ -72,7 +71,7 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
             .fromUserId("7326856338")
             .toUserId("1548914322")
             .size(new BigDecimal("1.00000000"))
-            .status(BitgetMainSubTransferRecordDto.Status.SUCCESSFUL)
+            .status(Status.COMPLETE)
             .timestamp(Instant.ofEpochMilli(1727905515312L))
             .transferId("72990567")
             .build();
@@ -106,7 +105,7 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
             .depositType(DepositType.ON_CHAIN)
             .toAddress("EQCJLo0UPRm6RToIXgD0eMpoak5cuj4BTt99NYCY14yOUcoT")
             .size(new BigDecimal("10.00000000"))
-            .status(FundingRecord.Status.COMPLETE)
+            .status(Status.COMPLETE)
             .createdAt(Instant.ofEpochMilli(1728494501487L))
             .updatedAt(Instant.ofEpochMilli(1728494528012L))
             .build();

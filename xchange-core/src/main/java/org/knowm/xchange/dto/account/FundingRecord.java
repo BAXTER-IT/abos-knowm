@@ -71,6 +71,8 @@ public final class FundingRecord implements Serializable {
 
   private String toSubAccount;
 
+  private String rawJson;
+
   /**
    * Constructs a {@link FundingRecord}.
    *

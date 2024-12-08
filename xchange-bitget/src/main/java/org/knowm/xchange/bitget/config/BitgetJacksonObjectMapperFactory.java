@@ -12,13 +12,13 @@ public class BitgetJacksonObjectMapperFactory extends DefaultJacksonObjectMapper
   public void configureObjectMapper(ObjectMapper objectMapper) {
     super.configureObjectMapper(objectMapper);
 
-    // by default read timetamps as milliseconds
+    // by default read timestamps as milliseconds
     objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
 
     // don't write nulls
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    // don't fail un unknown properties
+    // don't fail on unknown properties
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     // enable parsing to Instant

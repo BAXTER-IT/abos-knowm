@@ -15,8 +15,11 @@ import org.knowm.xchange.bitget.dto.account.BitgetBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto.DepositType;
 import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto.RecordType;
+import org.knowm.xchange.bitget.dto.account.BitgetMainSubTransferRecordDto;
+import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams.Role;
+import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetMarketDepthDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetSymbolDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetSymbolDto.Status;
@@ -34,6 +37,7 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
 import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
@@ -42,6 +46,7 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
+import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 
 @UtilityClass
 public class BitgetAdapters {
@@ -249,7 +254,9 @@ public class BitgetAdapters {
         bitgetFillDto.getOrderId(),
         bitgetFillDto.getFeeDetail().getTotalFee().abs(),
         bitgetFillDto.getFeeDetail().getCurrency(),
-        null, marketParticipant, null);
+        null,
+        marketParticipant,
+        bitgetFillDto.getRawJson());
   }
 
   public String toString(BitgetAccountType bitgetAccountType) {
@@ -260,38 +267,116 @@ public class BitgetAdapters {
     return Optional.ofNullable(role).map(Role::getValue).orElse(null);
   }
 
-  public FundingRecord toFundingRecord(BitgetDepositWithdrawRecordDto record) {
+  public FundingRecord toFundingRecord(BitgetDepositWithdrawRecordDto in) {
     return new FundingRecord.Builder()
-        .setInternalId(record.getOrderId())
-        .setBlockchainTransactionHash(record.getTradeId())
-        .setCurrency(record.getCurrency())
-        .setType(toFundingRecordType(record))
-        .setAmount(record.getSize())
-        .setFee(record.getFee())
-        .setStatus(record.getStatus())
-        .setAddress(record.getToAddress())
-        .setAddressTag(record.getToAddressTag())
-        .setDate(toDate(record.getUpdatedAt()))
+        .setInternalId(in.getOrderId())
+        .setBlockchainTransactionHash(in.getTradeId())
+        .setCurrency(in.getCurrency())
+        .setType(toFundingRecordType(in))
+        .setAmount(in.getSize())
+        .setFee(in.getFee())
+        .setStatus(in.getStatus())
+        .setAddress(in.getToAddress())
+        .setAddressTag(in.getToAddressTag())
+        .setDate(toDate(in.getUpdatedAt()))
         .build();
   }
 
-  public FundingRecord.Type toFundingRecordType(BitgetDepositWithdrawRecordDto record) {
-    if (record.getDepositType() == DepositType.ON_CHAIN
-        && record.getType() == RecordType.WITHDRAW) {
+  public FundingRecord toFundingRecord(BitgetMainSubTransferRecordDto in) {
+    return FundingRecord.builder()
+        .internalId(in.getTransferId())
+        .currency(in.getCurrency())
+        .amount(in.getSize())
+        .fee(BigDecimal.ZERO)
+        .status(in.getStatus())
+        .address(in.getToUserId())
+        .date(toDate(in.getTimestamp()))
+        .fromWallet(in.getFromAccountType().getValue())
+        .toWallet(in.getToAccountType().getValue())
+        .fromSubAccount(in.getFromUserId())
+        .toSubAccount(in.getToUserId())
+        .build();
+  }
+
+  public static FundingRecord toFundingRecord(BitgetTransferRecordDto in) {
+    return FundingRecord.builder()
+        .internalId(in.getTransferId())
+        .currency(in.getCurrency())
+        .amount(in.getSize())
+        .fee(BigDecimal.ZERO)
+        .status(in.getStatus())
+        .date(toDate(in.getTimestamp()))
+        .rawJson(in.getRawJson())
+        .build();
+  }
+
+  public FundingRecord.Type toFundingRecordType(BitgetDepositWithdrawRecordDto in) {
+    if (in.getDepositType() == DepositType.ON_CHAIN && in.getType() == RecordType.WITHDRAW) {
       return Type.WITHDRAWAL;
     }
-    if (record.getDepositType() == DepositType.ON_CHAIN && record.getType() == RecordType.DEPOSIT) {
+    if (in.getDepositType() == DepositType.ON_CHAIN && in.getType() == RecordType.DEPOSIT) {
       return Type.DEPOSIT;
     }
-    if (record.getDepositType() == DepositType.INTERNAL_TRANSFER
-        && record.getType() == RecordType.WITHDRAW) {
+    if (in.getDepositType() == DepositType.INTERNAL_TRANSFER
+        && in.getType() == RecordType.WITHDRAW) {
       return Type.INTERNAL_WITHDRAWAL;
     }
-    if (record.getDepositType() == DepositType.INTERNAL_TRANSFER
-        && record.getType() == RecordType.DEPOSIT) {
+    if (in.getDepositType() == DepositType.INTERNAL_TRANSFER
+        && in.getType() == RecordType.DEPOSIT) {
       return Type.INTERNAL_DEPOSIT;
     }
 
     return null;
+  }
+
+  public static TradeHistoryParamsAll toTradeHistoryParamsAll(FundingRecordParamAll params) {
+    TradeHistoryParamsAll tradeHistoryParamsAll = new TradeHistoryParamsAll();
+    tradeHistoryParamsAll.setCurrency(params.getCurrency());
+    tradeHistoryParamsAll.setOrderId(params.getOrderId());
+    tradeHistoryParamsAll.setLimit(params.getLimit());
+    tradeHistoryParamsAll.setEndId(params.getEndId());
+    tradeHistoryParamsAll.setStartTime(params.getStartTime());
+    tradeHistoryParamsAll.setEndTime(params.getEndTime());
+    tradeHistoryParamsAll.setSubaccountId(params.getSubAccountId());
+    return tradeHistoryParamsAll;
+  }
+
+  public static BitgetMainSubTransferHistoryParams toMainSubTransferHistoryParams(
+      FundingRecordParamAll params) {
+    Instant to = Instant.now();
+    Instant from = to.minus(89, java.time.temporal.ChronoUnit.DAYS);
+    if (params.getStartTime() != null) {
+      from = params.getStartTime().toInstant();
+    }
+    if (params.getEndTime() != null) {
+      to = params.getEndTime().toInstant();
+    }
+    return BitgetMainSubTransferHistoryParams.builder()
+        .currency(params.getCurrency())
+        .subAccountUid(params.getSubAccountId())
+        .clientOid(params.getTransferId())
+        .limit(params.getLimit())
+        .startTime(from)
+        .endTime(to)
+        .build();
+  }
+
+  public static BitgetTransferHistoryParams toTransferHistoryParams(FundingRecordParamAll params) {
+    Instant to = Instant.now();
+    Instant from = to.minus(89, java.time.temporal.ChronoUnit.DAYS);
+    if (params.getStartTime() != null) {
+      from = params.getStartTime().toInstant();
+    }
+    if (params.getEndTime() != null) {
+      to = params.getEndTime().toInstant();
+    }
+    return BitgetTransferHistoryParams.builder()
+        .currency(params.getCurrency())
+        .clientOid(params.getTransferId())
+        .fromAccountType(BitgetAccountType.SPOT)
+        .limit(params.getLimit())
+        .startTime(from)
+        .endTime(to)
+        .build();
   }
 }

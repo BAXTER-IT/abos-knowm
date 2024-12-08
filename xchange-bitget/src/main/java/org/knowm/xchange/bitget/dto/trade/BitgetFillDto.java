@@ -1,5 +1,6 @@
 package org.knowm.xchange.bitget.dto.trade;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
@@ -10,12 +11,13 @@ import lombok.extern.jackson.Jacksonized;
 import org.knowm.xchange.bitget.config.converter.StringToBooleanConverter;
 import org.knowm.xchange.bitget.config.converter.StringToCurrencyConverter;
 import org.knowm.xchange.bitget.config.converter.StringToOrderTypeConverter;
+import org.knowm.xchange.bitget.config.deserializer.BitgetFillDtoDeserializer;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.Order;
 
 @Data
 @Builder
-@Jacksonized
+@JsonDeserialize(using = BitgetFillDtoDeserializer.class)
 public class BitgetFillDto {
 
   @JsonProperty("userId")
@@ -58,15 +60,27 @@ public class BitgetFillDto {
   @JsonProperty("uTime")
   private Instant updatedAt;
 
-  public static enum OrderType {
+  private String rawJson;
+
+  public enum OrderType {
     @JsonProperty("limit")
     LIMIT,
 
     @JsonProperty("market")
-    MARKET
+    MARKET;
+
+    @JsonCreator
+    public static OrderType forValue(String value) {
+      for (OrderType type : values()) {
+        if (type.name().equalsIgnoreCase(value) || type.toString().equalsIgnoreCase(value)) {
+          return type;
+        }
+      }
+      throw new IllegalArgumentException("Unknown orderType: " + value);
+    }
   }
 
-  public static enum TradeScope {
+  public enum TradeScope {
     @JsonProperty("taker")
     TAKER,
 

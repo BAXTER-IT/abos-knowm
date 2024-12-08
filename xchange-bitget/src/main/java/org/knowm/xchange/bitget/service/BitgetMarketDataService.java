@@ -55,12 +55,11 @@ public class BitgetMarketDataService extends BitgetMarketDataServiceRaw
 
       return metadata.stream()
           .filter(details -> details.getStatus() == Status.ONLINE)
-          .map(BitgetSymbolDto::getCurrencyPair)
           .distinct()
           .collect(
               Collectors.toMap(
-                  instrument -> instrument,
-                  (instrument -> new InstrumentMetaData.Builder().build())));
+                  BitgetSymbolDto::getCurrencyPair,
+                  (BitgetAdapters::toInstrumentMetaData)));
     } catch (BitgetException e) {
       throw BitgetErrorAdapter.adapt(e);
     }

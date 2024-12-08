@@ -41,10 +41,8 @@ public class BitgetExchange extends BaseExchange {
     // initialize symbol mappings
     List<BitgetSymbolDto> bitgetSymbolDtos = bitgetMarketDataServiceRaw.getBitgetSymbolDtos(null);
     bitgetSymbolDtos.forEach(
-        bitgetSymbolDto -> {
-          BitgetAdapters.putSymbolMapping(
-              bitgetSymbolDto.getSymbol(), bitgetSymbolDto.getCurrencyPair());
-        });
+        bitgetSymbolDto -> BitgetAdapters.putSymbolMapping(
+            bitgetSymbolDto.getSymbol(), bitgetSymbolDto.getCurrencyPair()));
 
     // initialize instrument metadata
     Map<Instrument, InstrumentMetaData> instruments =

@@ -11,12 +11,12 @@ import org.knowm.xchange.bitget.dto.account.BitgetSubBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
-import org.knowm.xchange.bitget.service.params.BitgetFundingHistoryParams;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamClientOid;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrency;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamLimit;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamOrderId;
+import org.knowm.xchange.service.trade.params.TradeHistoryParamSubaccountId;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsIdSpan;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsTimeSpan;
@@ -110,12 +110,18 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
         params instanceof TradeHistoryParamsIdSpan
             ? ((TradeHistoryParamsIdSpan) params).getEndId()
             : null;
-    Long from = null;
-    Long to = null;
+
+    long nowInMillis = System.currentTimeMillis();
+    long from = nowInMillis - (89L * 24 * 60 * 60 * 1000);
+    long to = nowInMillis;
     if (params instanceof TradeHistoryParamsTimeSpan) {
       TradeHistoryParamsTimeSpan paramsTimeSpan = ((TradeHistoryParamsTimeSpan) params);
-      from = paramsTimeSpan.getStartTime() != null ? paramsTimeSpan.getStartTime().getTime() : null;
-      to = paramsTimeSpan.getEndTime() != null ? paramsTimeSpan.getEndTime().getTime() : null;
+      if (paramsTimeSpan.getStartTime() != null) {
+        from = paramsTimeSpan.getStartTime().getTime();
+      }
+      if (paramsTimeSpan.getEndTime() != null) {
+        to = paramsTimeSpan.getEndTime().getTime();
+      }
     }
 
     return bitgetAuthenticated
@@ -153,12 +159,17 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
         params instanceof TradeHistoryParamsIdSpan
             ? ((TradeHistoryParamsIdSpan) params).getEndId()
             : null;
-    Long from = null;
-    Long to = null;
+    long nowInMillis = System.currentTimeMillis();
+    long from = nowInMillis - (89L * 24 * 60 * 60 * 1000);
+    long to = nowInMillis;
     if (params instanceof TradeHistoryParamsTimeSpan) {
       TradeHistoryParamsTimeSpan paramsTimeSpan = ((TradeHistoryParamsTimeSpan) params);
-      from = paramsTimeSpan.getStartTime() != null ? paramsTimeSpan.getStartTime().getTime() : null;
-      to = paramsTimeSpan.getEndTime() != null ? paramsTimeSpan.getEndTime().getTime() : null;
+      if (paramsTimeSpan.getStartTime() != null) {
+        from = paramsTimeSpan.getStartTime().getTime();
+      }
+      if (paramsTimeSpan.getEndTime() != null) {
+        to = paramsTimeSpan.getEndTime().getTime();
+      }
     }
 
     return bitgetAuthenticated
@@ -179,28 +190,25 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
   public List<BitgetDepositWithdrawRecordDto> getBitgetSubAccountDepositRecords(
       TradeHistoryParams params) throws IOException {
     // get arguments
+    String subAccountUid = ((TradeHistoryParamSubaccountId) params).getSubaccountId();
+    if (subAccountUid == null || subAccountUid.isEmpty()) {
+      throw new IllegalArgumentException("Sub account uid is required");
+    }
     Currency currency =
-        params instanceof TradeHistoryParamCurrency
-            ? ((TradeHistoryParamCurrency) params).getCurrency()
-            : null;
-    String subAccountUid =
-        params instanceof BitgetFundingHistoryParams
-            ? ((BitgetFundingHistoryParams) params).getSubAccountUid()
-            : null;
+        ((TradeHistoryParamCurrency) params).getCurrency();
     Integer limit =
-        params instanceof TradeHistoryParamLimit
-            ? ((TradeHistoryParamLimit) params).getLimit()
-            : null;
+        ((TradeHistoryParamLimit) params).getLimit();
     String lastTradeId =
-        params instanceof TradeHistoryParamsIdSpan
-            ? ((TradeHistoryParamsIdSpan) params).getEndId()
-            : null;
-    Long from = null;
-    Long to = null;
-    if (params instanceof TradeHistoryParamsTimeSpan) {
-      TradeHistoryParamsTimeSpan paramsTimeSpan = ((TradeHistoryParamsTimeSpan) params);
-      from = paramsTimeSpan.getStartTime() != null ? paramsTimeSpan.getStartTime().getTime() : null;
-      to = paramsTimeSpan.getEndTime() != null ? paramsTimeSpan.getEndTime().getTime() : null;
+        ((TradeHistoryParamsIdSpan) params).getEndId();
+    long nowInMillis = System.currentTimeMillis();
+    long from = nowInMillis - (89L * 24 * 60 * 60 * 1000);
+    long to = nowInMillis;
+    TradeHistoryParamsTimeSpan paramsTimeSpan = ((TradeHistoryParamsTimeSpan) params);
+    if (paramsTimeSpan.getStartTime() != null) {
+      from = paramsTimeSpan.getStartTime().getTime();
+    }
+    if (paramsTimeSpan.getEndTime() != null) {
+      to = paramsTimeSpan.getEndTime().getTime();
     }
 
     return bitgetAuthenticated

@@ -8,7 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import org.knowm.xchange.bitget.config.converter.StringToCurrencyConverter;
+import org.knowm.xchange.bitget.config.converter.StringToFundingRecordStatusConverter;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.account.FundingRecord.Status;
 
 @Data
 @Builder
@@ -26,6 +28,7 @@ public class BitgetMainSubTransferRecordDto {
   private Currency currency;
 
   @JsonProperty("status")
+  @JsonDeserialize(converter = StringToFundingRecordStatusConverter.class)
   private Status status;
 
   @JsonProperty("toType")
@@ -45,15 +48,4 @@ public class BitgetMainSubTransferRecordDto {
 
   @JsonProperty("toUserId")
   private String toUserId;
-
-  public static enum Status {
-    @JsonProperty("Successful")
-    SUCCESSFUL,
-
-    @JsonProperty("Processing")
-    PROCESSING,
-
-    @JsonProperty("Failed")
-    FAILED
-  }
 }

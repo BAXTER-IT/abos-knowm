@@ -206,7 +206,7 @@ public interface AccountService extends BaseService {
   }
 
   /**
-   * @return list of transfer history if available or an empty list otherwise. This should never
+   * @return list of internal transfers, that is the transfers within the same account, e.g. sub spot -> sub futures. This should never
    *     return null.
    * @throws ExchangeException - Indication that the exchange reported some kind of error with the
    *     request or response
@@ -266,7 +266,7 @@ public interface AccountService extends BaseService {
   }
 
   /**
-   * @return list of internal wallet's transfer history if available or an empty list otherwise. This should never
+   * @return list of wallet transfers, that is the transfers between accounts, e.g. master -> sub. This should never
    *     return null.
    * @throws ExchangeException - Indication that the exchange reported some kind of error with the
    *     request or response
