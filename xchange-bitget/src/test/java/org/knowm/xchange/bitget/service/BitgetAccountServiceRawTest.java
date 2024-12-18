@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.bitget.BitgetExchangeWiremock;
 import org.knowm.xchange.bitget.dto.account.BitgetAccountType;
@@ -23,6 +24,7 @@ import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryP
 import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
 import org.knowm.xchange.bitget.service.params.BitgetFundingHistoryParams;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
+import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 
 class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
 
@@ -43,6 +45,8 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
             .status(Status.COMPLETE)
             .timestamp(Instant.ofEpochMilli(1727905504678L))
             .transferId("1225489997897666560")
+            .rawJson(
+                "{\"coin\":\"USDT\",\"status\":\"Successful\",\"toType\":\"spot\",\"toSymbol\":\"\",\"fromType\":\"spot\",\"fromSymbol\":\"\",\"size\":\"1.00000000\",\"ts\":\"1727905504678\",\"clientOid\":\"1225489997897666560\",\"transferId\":\"1225489997897666560\"}")
             .build();
 
     BitgetTransferHistoryParams params =
@@ -57,7 +61,8 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
     List<BitgetTransferRecordDto> actual = bitgetAccountServiceRaw.getBitgetTransferRecords(params);
 
     assertThat(actual).hasSize(1);
-    assertThat(actual).first().usingRecursiveComparison().isEqualTo(expected);
+    assertThat(actual).first().usingRecursiveComparison().withComparatorForType(
+        new BigDecimalComparator(), BigDecimal.class).isEqualTo(expected);
   }
 
   @Test
@@ -110,15 +115,13 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
             .updatedAt(Instant.ofEpochMilli(1728494528012L))
             .build();
 
-    BitgetFundingHistoryParams params =
-        BitgetFundingHistoryParams.builder()
-            .currency(USDT)
-            .subAccountUid("7831928986")
-            .startTime(Date.from(Instant.ofEpochMilli(1728494500000L)))
-            .endTime(Date.from(Instant.ofEpochMilli(1728494529999L)))
-            .limit(1)
-            .endId("1227960429565849609")
-            .build();
+    TradeHistoryParamsAll params = new TradeHistoryParamsAll();
+    params.setCurrency(USDT);
+    params.setSubAccountId("7831928986");
+    params.setStartTime(Date.from(Instant.ofEpochMilli(1728494500000L)));
+    params.setEndTime(Date.from(Instant.ofEpochMilli(1728494529999L)));
+    params.setLimit(1);
+    params.setEndId("1227960429565849609");
     List<BitgetDepositWithdrawRecordDto> actual =
         bitgetAccountServiceRaw.getBitgetSubAccountDepositRecords(params);
 

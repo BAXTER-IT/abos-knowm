@@ -80,8 +80,8 @@ public class CoinbaseProExchange extends BaseExchange {
   public ExchangeSpecification getDefaultExchangeSpecification() {
 
     ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass());
-    exchangeSpecification.setSslUri("https://api.pro.coinbase.com");
-    exchangeSpecification.setHost("api.pro.coinbase.com");
+    exchangeSpecification.setSslUri("https://api.exchange.coinbase.com");
+    exchangeSpecification.setHost("api.exchange.coinbase.com");
     exchangeSpecification.setPort(80);
     exchangeSpecification.setExchangeName("CoinbasePro");
     exchangeSpecification.setExchangeDescription(

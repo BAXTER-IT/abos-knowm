@@ -23,8 +23,8 @@ public class CoinbaseProExchangeIntegration {
     final Exchange exchange = ExchangeFactory.INSTANCE.createExchange(CoinbaseProExchange.class);
 
     assertThat(exchange.getExchangeSpecification().getSslUri())
-        .isEqualTo("https://api.pro.coinbase.com");
-    assertThat(exchange.getExchangeSpecification().getHost()).isEqualTo("api.pro.coinbase.com");
+        .isEqualTo("https://api.exchange.coinbase.com");
+    assertThat(exchange.getExchangeSpecification().getHost()).isEqualTo("api.exchange.coinbase.com");
   }
 
   @Test

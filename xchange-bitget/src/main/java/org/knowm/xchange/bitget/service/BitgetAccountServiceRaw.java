@@ -190,7 +190,7 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
   public List<BitgetDepositWithdrawRecordDto> getBitgetSubAccountDepositRecords(
       TradeHistoryParams params) throws IOException {
     // get arguments
-    String subAccountUid = ((TradeHistoryParamSubaccountId) params).getSubaccountId();
+    String subAccountUid = ((TradeHistoryParamSubaccountId) params).getSubAccountId();
     if (subAccountUid == null || subAccountUid.isEmpty()) {
       throw new IllegalArgumentException("Sub account uid is required");
     }

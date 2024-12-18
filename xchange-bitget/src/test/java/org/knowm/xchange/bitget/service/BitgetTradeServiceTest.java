@@ -19,6 +19,7 @@ import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.orders.DefaultQueryOrderParamInstrument;
 
@@ -125,7 +126,9 @@ class BitgetTradeServiceTest extends BitgetExchangeWiremock {
             "1225475622585147396",
             new BigDecimal("0.000000246"),
             Currency.BTC,
-            null, null, null);
+            null,
+            MarketParticipant.TAKER,
+            "{\"userId\":\"1548914322\",\"symbol\":\"BTCUSDT\",\"orderId\":\"1225475622585147396\",\"tradeId\":\"1225475622852575236\",\"orderType\":\"market\",\"side\":\"buy\",\"priceAvg\":\"60775.01\",\"size\":\"0.000246\",\"amount\":\"14.95065246\",\"feeDetail\":{\"deduction\":\"no\",\"feeCoin\":\"BTC\",\"totalDeductionFee\":\"\",\"totalFee\":\"-0.000000246\"},\"tradeScope\":\"taker\",\"cTime\":\"1727902077401\",\"uTime\":\"1727902077419\"}");
 
     assertThat(userTrades.getUserTrades()).first().usingRecursiveComparison().isEqualTo(expected);
   }

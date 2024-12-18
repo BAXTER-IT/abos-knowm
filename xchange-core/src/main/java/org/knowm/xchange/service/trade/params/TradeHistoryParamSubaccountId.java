@@ -2,7 +2,7 @@ package org.knowm.xchange.service.trade.params;
 
 public interface TradeHistoryParamSubaccountId extends TradeHistoryParams {
 
-  String getSubaccountId();
+  String getSubAccountId();
 
-  void setSubaccountId(String subaccount);
+  void setSubAccountId(String subaccount);
 }

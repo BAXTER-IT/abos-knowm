@@ -52,7 +52,7 @@ public class TradeHistoryParamsAll
   private String id;
   private String orderId;
   private String userReference;
-  private String subaccountId;
+  private String subAccountId;
   private Map<String, Object> customParams = new HashMap<>();
 
   @Override

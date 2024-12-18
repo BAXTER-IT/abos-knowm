@@ -337,7 +337,7 @@ public class BitgetAdapters {
     tradeHistoryParamsAll.setEndId(params.getEndId());
     tradeHistoryParamsAll.setStartTime(params.getStartTime());
     tradeHistoryParamsAll.setEndTime(params.getEndTime());
-    tradeHistoryParamsAll.setSubaccountId(params.getSubAccountId());
+    tradeHistoryParamsAll.setSubAccountId(params.getSubAccountId());
     return tradeHistoryParamsAll;
   }
 
