@@ -3,7 +3,7 @@
     <parent>
         <artifactId>xchange-parent</artifactId>
         <groupId>org.knowm.xchange</groupId>
-        <version>5.1.15-SNAPSHOT</version>
+        <version>ABOS-5.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
