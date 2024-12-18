@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Instant;
 import org.knowm.xchange.bitget.config.converter.StringToOrderTypeConverter;
 import org.knowm.xchange.bitget.dto.trade.BitgetFillDto;
@@ -40,9 +41,9 @@ public class BitgetFillDtoDeserializer extends JsonDeserializer<BitgetFillDto> {
         .tradeId(node.get("tradeId").asText())
         .orderType(OrderType.forValue(node.get("orderType").asText()))
         .orderSide(orderSide)
-        .price(node.get("priceAvg").decimalValue())
-        .assetAmount(node.get("size").decimalValue())
-        .quoteAmount(node.get("amount").decimalValue())
+        .price(BigDecimal.valueOf(node.get("priceAvg").asDouble()))
+        .assetAmount(BigDecimal.valueOf(node.get("size").asDouble()))
+        .quoteAmount(BigDecimal.valueOf(node.get("amount").asDouble()))
         .feeDetail(feeDetail)
         .tradeScope(tradeScope)
         .createdAt(Instant.ofEpochMilli(node.get("cTime").asLong()))

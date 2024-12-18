@@ -47,7 +47,7 @@ public class BitgetTransferRecordDtoDeserializer extends JsonDeserializer<Bitget
         .toSymbol(node.get("toSymbol").asText())
         .fromAccountType(fromAccountType)
         .fromSymbol(node.get("fromSymbol").asText())
-        .size(node.get("size").decimalValue())
+        .size(BigDecimal.valueOf(node.get("size").asDouble()))
         .timestamp(Instant.ofEpochMilli(node.get("ts").asLong()))
         .rawJson(node.toString())
         .build();
