@@ -17,7 +17,7 @@ public class DecoratedPayload {
   private static final ObjectMapper objectMapper = new ObjectMapper();
   @JsonValue private final Map<String, Object> data;
 
-  public DecoratedPayload(FineryMarketsRequest data) {
+  public DecoratedPayload(Object data) {
     this.data = convert(data);
   }
 
@@ -50,7 +50,7 @@ public class DecoratedPayload {
     data.put("timestamp", timestamp);
   }
 
-  Map<String, Object> convert(FineryMarketsRequest input) {
+  Map<String, Object> convert(Object input) {
     JavaType type =
         objectMapper
             .getTypeFactory()

@@ -34,4 +34,20 @@ public interface FineryMarketsAuthenticated {
       @HeaderParam(EFX_SIGN) ParamsDigest signature,
       DecoratedPayload payload)
       throws FineryMarketsException;
+
+  @POST()
+  @Path("disableTrading")
+  void disableTrading(
+      @HeaderParam(EFX_KEY) String apiKey,
+      @HeaderParam(EFX_SIGN) ParamsDigest signature,
+      DecoratedPayload payload)
+      throws FineryMarketsException;
+
+  @POST()
+  @Path("enableTrading")
+  void enableTrading(
+      @HeaderParam(EFX_KEY) String apiKey,
+      @HeaderParam(EFX_SIGN) ParamsDigest signature,
+      DecoratedPayload payload)
+      throws FineryMarketsException;
 }

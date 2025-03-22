@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.ExchangeResponse;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.AddressWithTag;
 import org.knowm.xchange.dto.account.Fee;
 import org.knowm.xchange.dto.account.FundingRecord;
+import org.knowm.xchange.dto.account.ToggleTradingRequest;
 import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
@@ -295,4 +297,11 @@ public interface AccountService extends BaseService {
     throw new NotYetImplementedForExchangeException("getLedger");
   }
 
+  default ExchangeResponse enableTrading(ToggleTradingRequest req) {
+    throw new NotYetImplementedForExchangeException("enableTrading");
+  }
+
+  default ExchangeResponse disableTrading(ToggleTradingRequest req) {
+    throw new NotYetImplementedForExchangeException("disableTrading");
+  }
 }
