@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>xchange-parent</artifactId>
-        <groupId>org.knowm.xchange</groupId>
+        <groupId>org.knowm.xchange.fork</groupId>
         <version>5.2.2-SNAPSHOT</version>
     </parent>
 
@@ -22,7 +22,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.knowm.xchange</groupId>
+            <groupId>org.knowm.xchange.fork</groupId>
             <artifactId>xchange-core</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -9,7 +9,6 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trade;
-import org.knowm.xchange.dto.marketdata.Trade.Builder;
 import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
@@ -126,6 +125,9 @@ public class UserTrade extends Trade {
         + '\''
         + ", liquidity='"
         + marketParticipant
+        + '\''
+        + ", rawJson='"
+        + rawJson
         + '\''
         + "]";
   }

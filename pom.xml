@@ -7,7 +7,7 @@
     <maven>3.0</maven>
   </prerequisites>
 
-  <groupId>org.knowm.xchange</groupId>
+  <groupId>org.knowm.xchange.fork</groupId>
   <artifactId>xchange-parent</artifactId>
   <version>5.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -174,6 +174,7 @@
     <module>xchange-ripple</module>
     <module>xchange-serum</module>
     <module>xchange-simulated</module>
+    <module>xchange-thalex</module>
     <module>xchange-therock</module>
     <module>xchange-tradeogre</module>
     <module>xchange-truefx</module>
@@ -218,6 +219,7 @@
     <module>xchange-stream-coincheck</module>
     <module>xchange-stream-krakenfutures</module>
     <module>xchange-stream-bybit</module>
+    <module>xchange-stream-thalex</module>
   </modules>
 
   <ciManagement>
@@ -307,6 +309,11 @@
             <artifactId>jackson-core</artifactId>
             <version>${version.fasterxml}</version>
         </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>${version.fasterxml}</version>
+      </dependency>
       <dependency>
         <groupId>org.web3j</groupId>
         <artifactId>crypto</artifactId>
@@ -621,7 +628,26 @@
           </execution>
         </executions>
       </plugin>
-
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.11</version> <!-- use latest stable -->
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

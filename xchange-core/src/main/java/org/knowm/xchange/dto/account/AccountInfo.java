@@ -64,6 +64,11 @@ public final class AccountInfo implements Serializable {
     this(null, null, wallets);
   }
 
+  public AccountInfo(Collection<Wallet> wallets, Collection<OpenPosition> openPositions) {
+
+    this(null, null, wallets, openPositions, null);
+  }
+
   /** @see #AccountInfo(String, BigDecimal, Collection) */
   public AccountInfo(String username, Wallet... wallets) {
 

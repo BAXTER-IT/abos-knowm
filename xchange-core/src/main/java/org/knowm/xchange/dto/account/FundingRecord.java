@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import org.knowm.xchange.currency.Currency;
 
 /**
@@ -16,6 +18,7 @@ import org.knowm.xchange.currency.Currency;
  * currency
  */
 @Builder
+@ToString
 @AllArgsConstructor
 public final class FundingRecord implements Serializable {
 
@@ -71,6 +74,7 @@ public final class FundingRecord implements Serializable {
 
   private String toSubAccount;
 
+  @Getter
   private String rawJson;
 
   /**
@@ -319,23 +323,6 @@ public final class FundingRecord implements Serializable {
     return toSubAccount;
   }
 
-  @Override
-  public String toString() {
-    return String.format(
-        "FundingRecord{address='%s', date=%s, currency=%s, amount=%s, internalId=%s, blockchainTransactionHash=%s, description='%s', type=%s, status=%s, balance=%s, fee=%s}",
-        address,
-        date,
-        currency,
-        amount,
-        internalId,
-        blockchainTransactionHash,
-        description,
-        type,
-        status,
-        balance,
-        fee);
-  }
-
   /** Enum representing funding transaction type */
   public enum Type {
     WITHDRAWAL(false),
@@ -372,7 +359,9 @@ public final class FundingRecord implements Serializable {
 
     TRADE(false),
 
-    ORDER_FEE(false);
+    ORDER_FEE(false),
+
+    FEE(false);
 
     private static final Map<String, Type> fromString = new HashMap<>();
 
@@ -406,9 +395,12 @@ public final class FundingRecord implements Serializable {
      * to the user. The funding request may possibly still be cancelled though.
      */
     PROCESSING(
+        "AWAITING_CONFIRMATION",
+        "UNCONFIRMED",
         "WAIT CONFIRMATION",
         "EMAIL CONFIRMATION",
         "EMAIL SENT",
+        "EXECUTING",
         "AWAITING APPROVAL",
         "VERIFYING",
         "PENDING_APPROVAL",
@@ -424,7 +416,7 @@ public final class FundingRecord implements Serializable {
      * have not reached their destination yet. For deposits, the funds are available to the user.
      */
     COMPLETE(
-        "COMPLETED", "SUCCESS", "BLOCKCHAIN_CONFIRMED", "CREDITED_TO_FUNDING_POOL_SUCCESSFULLY"),
+        "COMPLETED", "SUCCESS", "BLOCKCHAIN_CONFIRMED", "CREDITED_TO_FUNDING_POOL_SUCCESSFULLY", "EXECUTED", "CONFIRMED"),
 
     /** The transfer was cancelled either by the user or by the exchange. */
     CANCELLED("REVOKED", "CANCEL", "REFUND", "CANCEL_BY_USER"),
@@ -434,7 +426,7 @@ public final class FundingRecord implements Serializable {
      * and before it was successfully processed. For withdrawals, the funds are available to the
      * user again.
      */
-    FAILED("FAILURE", "FAILED", "REJECT", "FAIL", "UNKNOWN", "DEPOSIT_FAILED");
+    FAILED("FAILURE", "FAILED", "REJECT", "REJECTED", "FAIL", "UNKNOWN", "DEPOSIT_FAILED");
 
     private static final Map<String, Status> fromString = new HashMap<>();
 
