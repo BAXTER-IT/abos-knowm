@@ -325,14 +325,37 @@ public class BybitAdapters {
               ? new FuturesContract(new CurrencyPair(symbol.substring(0, symbol.indexOf("-")), quoteCurrency), symbol.substring(symbol.indexOf("-") + 1))
               : new FuturesContract(new CurrencyPair(symbol.substring(0, symbol.length() - quoteCurrency.length()), quoteCurrency), BYBIT_PERPETUAL);
     } else if (category.equals(BybitCategory.OPTION)) {
-      int secondIndex = symbol.indexOf("-", symbol.indexOf("-") + 1); // second index of "-" after the first one
-      instrument =
-          new OptionsContract.Builder()
-              .currencyPair(new CurrencyPair(symbol.substring(0, symbol.indexOf("-")), quoteCurrency))
-              .expireDate(OPTIONS_EXPIRED_DATE_PARSER.parse(symbol.substring(symbol.indexOf("-") + 1, secondIndex)))
-              .strike(new BigDecimal(symbol.substring(secondIndex + 1, symbol.lastIndexOf("-"))))
-              .type(symbol.contains("C") ? OptionType.CALL : OptionType.PUT)
-              .build();
+    	int firstDash = symbol.indexOf("-"); // Index of the first '-'
+		int secondDash = symbol.indexOf("-", firstDash + 1); // Index of the second '-'
+		int thirdDash = symbol.indexOf("-", secondDash + 1); // Index of the third '-' (after strike, before type)
+
+		// Extract base currency, expiry date, and strike price (these parts are consistent)
+		String base = symbol.substring(0, firstDash);
+		String expiry = symbol.substring(firstDash + 1, secondDash);
+		String strikeValue = symbol.substring(secondDash + 1, thirdDash);
+
+		// Determine Option Type
+		String typeString;
+		int lastDash = symbol.lastIndexOf("-");
+
+		if (lastDash > thirdDash) {
+		    // Case 1: Symbol has a suffix after the type (e.g., ...-P-USDT)
+		    // The type is between the thirdDash and the lastDash
+		    typeString = symbol.substring(thirdDash + 1, lastDash);
+		} else {
+		    // Case 2: Symbol ends with the type (e.g., ...-140000-P)
+		    // The type is everything after the thirdDash
+		    // (lastDash will be equal to thirdDash in this scenario)
+		    typeString = symbol.substring(thirdDash + 1);
+		}
+
+		instrument =
+		    new OptionsContract.Builder()
+		        .currencyPair(new CurrencyPair(base, quoteCurrency)) // Assuming quoteCurrency is an external variable
+		        .expireDate(OPTIONS_EXPIRED_DATE_PARSER.parse(expiry))
+		        .strike(new BigDecimal(strikeValue))
+		        .type(typeString.equals("C") ? OptionType.CALL : OptionType.PUT)
+		        .build();
     }
 
     return instrument;
