@@ -45,15 +45,24 @@ public class SignatureCreator {
   public String create()
       throws SignatureFieldsUnsetException, NoSuchAlgorithmException, InvalidKeyException {
     raiseExceptionIfFieldsAreNotSet();
+    byte[] bytes = getBytes();
+    if (encodeInBase64) {
+      return Base64.getEncoder().encodeToString(bytes);
+    }
+    return new String(mac.doFinal());
+  }
+
+  private byte[] getBytes() throws NoSuchAlgorithmException, InvalidKeyException {
     mac = Mac.getInstance(hashingAlgorithm.toString());
     SecretKey secretKey =
         new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), mac.getAlgorithm());
     mac.init(secretKey);
     mac.update(information.getBytes(StandardCharsets.UTF_8));
-    if (encodeInBase64) {
-      return Base64.getEncoder().encodeToString(mac.doFinal());
-    }
-    return new String(mac.doFinal());
+    return mac.doFinal();
+  }
+
+  public byte[] createBytes() throws NoSuchAlgorithmException, InvalidKeyException {
+    return getBytes();
   }
 
   private void raiseExceptionIfFieldsAreNotSet() throws SignatureFieldsUnsetException {
