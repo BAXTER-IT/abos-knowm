@@ -100,36 +100,22 @@ public class UserTrade extends Trade {
 
   @Override
   public String toString() {
-    return "UserTrade[type="
-        + type
-        + ", originalAmount="
-        + originalAmount
-        + ", instrument="
-        + instrument
-        + ", price="
-        + price
-        + ", timestamp="
-        + timestamp
-        + ", id="
-        + id
-        + ", orderId='"
-        + orderId
-        + '\''
-        + ", feeAmount="
-        + feeAmount
-        + ", feeCurrency='"
-        + feeCurrency
-        + '\''
-        + ", orderUserReference='"
-        + orderUserReference
-        + '\''
-        + ", liquidity='"
-        + marketParticipant
-        + '\''
-        + ", rawJson='"
-        + rawJson
-        + '\''
-        + "]";
+    return "UserTrade{" +
+        "orderId='" + orderId + '\'' +
+        ", feeAmount=" + feeAmount +
+        ", feeCurrency=" + feeCurrency +
+        ", orderUserReference='" + orderUserReference + '\'' +
+        ", marketParticipant=" + marketParticipant +
+        ", type=" + type +
+        ", originalAmount=" + originalAmount +
+        ", instrument=" + instrument +
+        ", price=" + price +
+        ", timestamp=" + timestamp +
+        ", id='" + id + '\'' +
+        ", makerOrderId='" + makerOrderId + '\'' +
+        ", takerOrderId='" + takerOrderId + '\'' +
+        ", rawJson='" + rawJson + '\'' +
+        '}';
   }
 
   @Override
