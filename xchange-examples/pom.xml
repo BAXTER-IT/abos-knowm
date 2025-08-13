@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.knowm.xchange</groupId>
+		<groupId>org.knowm.xchange.fork</groupId>
 		<artifactId>xchange-parent</artifactId>
 		<version>5.2.2-SNAPSHOT</version>
 	</parent>
@@ -348,12 +348,12 @@
 			<version>${project.version}</version>
 		</dependency>
         <dependency>
-            <groupId>org.knowm.xchange</groupId>
+            <groupId>org.knowm.xchange.fork</groupId>
             <artifactId>xchange-enigma</artifactId>
             <version>${project.version}</version>
         </dependency>
 		<dependency>
-			<groupId>org.knowm.xchange</groupId>
+			<groupId>org.knowm.xchange.fork</groupId>
 			<artifactId>xchange-lgo</artifactId>
 			<version>${project.version}</version>
 		</dependency>

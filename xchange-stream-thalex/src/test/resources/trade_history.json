@@ -1,0 +1,62 @@
+{
+  "channel_name": "account.trade_history",
+  "notification": [
+    {
+      "order_id": "001F3C2600000064",
+      "trade_id": "0080000000000000184329278B2B94DB",
+      "instrument_name": "BTC-PERPETUAL",
+      "direction": "sell",
+      "price": 109100.0,
+      "amount": 0.028,
+      "time": 1748286330.1652372,
+      "position_after": 0.472,
+      "trade_type": "normal",
+      "position_pnl": -29.27758725,
+      "session_realised_after": -703.25045708,
+      "fee": 0.76,
+      "index": 109097.030166667,
+      "fee_rate": 0.00025,
+      "funding_mark": 0,
+      "maker_taker": "taker",
+      "leg_index": 0
+    },
+    {
+      "order_id": "001F3C2600000099",
+      "trade_id": "0080000000000000ABCDEFABCDEF1234",
+      "instrument_name": "BTC-PERPETUAL",
+      "direction": "buy",
+      "price": 108000.0,
+      "amount": 0.05,
+      "time": 1748286330.2652372,
+      "position_after": 0.522,
+      "trade_type": "normal",
+      "position_pnl": 15.0,
+      "session_realised_after": -688.25045708,
+      "fee": 0.50,
+      "index": 108000.0,
+      "fee_rate": 0.00025,
+      "funding_mark": 0,
+      "maker_taker": "maker",
+      "leg_index": 1
+    },
+    {
+      "order_id": "001F3C2600000100",
+      "trade_id": "0080000000000000ABCDEFABCDEF5678",
+      "instrument_name": "BTC-PERPETUAL",
+      "direction": "sell",
+      "price": 107000.0,
+      "amount": 0.03,
+      "time": 1748286330.3652372,
+      "position_after": 0.492,
+      "trade_type": "block",
+      "position_pnl": -12.5,
+      "session_realised_after": -700.0,
+      "fee": 0.45,
+      "index": 107000.0,
+      "fee_rate": 0.00025,
+      "funding_mark": 0,
+      "maker_taker": "taker",
+      "leg_index": 2
+    }
+  ]
+}
