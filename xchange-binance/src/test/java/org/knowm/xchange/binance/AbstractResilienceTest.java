@@ -1,11 +1,10 @@
 package org.knowm.xchange.binance;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class AbstractResilienceTest {
 

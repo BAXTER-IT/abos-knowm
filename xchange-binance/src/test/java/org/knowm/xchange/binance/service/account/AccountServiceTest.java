@@ -7,9 +7,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
 import java.math.BigDecimal;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.knowm.xchange.ExchangeFactory;
@@ -18,8 +18,6 @@ import org.knowm.xchange.binance.BinanceExchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.exceptions.ExchangeSecurityException;
 import org.knowm.xchange.service.account.AccountService;
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class AccountServiceTest {
 

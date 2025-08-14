@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
-
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.BinanceErrorAdapter;
 import org.knowm.xchange.binance.BinanceExchange;
@@ -34,8 +33,7 @@ import org.knowm.xchange.service.trade.params.WithdrawFundsParams;
 public class BinanceAccountService extends BinanceAccountServiceRaw implements AccountService {
 
   public BinanceAccountService(
-      BinanceExchange exchange,
-      ResilienceRegistries resilienceRegistries) {
+      BinanceExchange exchange, ResilienceRegistries resilienceRegistries) {
     super(exchange, resilienceRegistries);
   }
 
@@ -94,30 +92,31 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
       List<Wallet> wallets = new ArrayList<>();
       List<OpenPosition> openPositions = new ArrayList<>();
 
-      if(exchange.usingSandbox()){
-        if(exchange.isFuturesSandbox()){
+      if (exchange.usingSandbox()) {
+        if (exchange.isFuturesSandbox()) {
           BinanceFutureAccountInformation futureAccountInformation = futuresAccount();
           wallets.add(BinanceAdapters.adaptBinanceFutureWallet(futureAccountInformation));
-          openPositions.addAll(BinanceAdapters.adaptOpenPositions(futureAccountInformation.getPositions()));
+          openPositions.addAll(
+              BinanceAdapters.adaptOpenPositions(futureAccountInformation.getPositions()));
 
         } else {
           wallets.add(BinanceAdapters.adaptBinanceSpotWallet(account()));
         }
       } else {
-        if(exchange.isFuturesEnabled()){
+        if (exchange.isFuturesEnabled()) {
           BinanceFutureAccountInformation futureAccountInformation = futuresAccount();
           wallets.add(BinanceAdapters.adaptBinanceFutureWallet(futureAccountInformation));
-          openPositions.addAll(BinanceAdapters.adaptOpenPositions(futureAccountInformation.getPositions()));
+          openPositions.addAll(
+              BinanceAdapters.adaptOpenPositions(futureAccountInformation.getPositions()));
         }
         wallets.add(BinanceAdapters.adaptBinanceSpotWallet(account()));
       }
       return new AccountInfo(
-              exchange.getExchangeSpecification().getUserName(),
-              null,
-              wallets,
-              openPositions,
-              Date.from(Instant.now())
-      );
+          exchange.getExchangeSpecification().getUserName(),
+          null,
+          wallets,
+          openPositions,
+          Date.from(Instant.now()));
     } catch (BinanceException e) {
       throw BinanceErrorAdapter.adapt(e);
     }
@@ -128,9 +127,9 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
     try {
       BinanceAccountInformation acc = account();
       BigDecimal makerFee =
-              acc.makerCommission.divide(new BigDecimal("10000"), 4, RoundingMode.UNNECESSARY);
+          acc.makerCommission.divide(new BigDecimal("10000"), 4, RoundingMode.UNNECESSARY);
       BigDecimal takerFee =
-              acc.takerCommission.divide(new BigDecimal("10000"), 4, RoundingMode.UNNECESSARY);
+          acc.takerCommission.divide(new BigDecimal("10000"), 4, RoundingMode.UNNECESSARY);
 
       Map<Instrument, Fee> tradingFees = new HashMap<>();
       List<Instrument> pairs = exchange.getExchangeInstruments();
@@ -287,50 +286,53 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
       if (withdrawals) {
         super.withdrawHistory(asset, startTime, endTime)
             .forEach(
-                w -> result.add(
-                    new FundingRecord.Builder()
-                        .setAddress(w.getAddress())
-                        .setAddressTag(w.getAddressTag())
-                        .setDate(BinanceAdapters.toDate(w.getApplyTime()))
-                        .setCurrency(Currency.getInstance(w.getCoin()))
-                        .setAmount(w.getAmount())
-                        .setInternalId(w.getId())
-                        .setBlockchainTransactionHash(w.getTxId())
-                        .setType(Type.WITHDRAWAL)
-                        .setStatus(withdrawStatus(w.getStatus()))
-                        .setFee(w.getTransactionFee())
-                        .build()));
+                w ->
+                    result.add(
+                        new FundingRecord.Builder()
+                            .setAddress(w.getAddress())
+                            .setAddressTag(w.getAddressTag())
+                            .setDate(BinanceAdapters.toDate(w.getApplyTime()))
+                            .setCurrency(Currency.getInstance(w.getCoin()))
+                            .setAmount(w.getAmount())
+                            .setInternalId(w.getId())
+                            .setBlockchainTransactionHash(w.getTxId())
+                            .setType(Type.WITHDRAWAL)
+                            .setStatus(withdrawStatus(w.getStatus()))
+                            .setFee(w.getTransactionFee())
+                            .build()));
       }
 
       if (deposits) {
         super.depositHistory(asset, startTime, endTime)
             .forEach(
-                d -> result.add(
-                    new FundingRecord.Builder()
-                        .setAddress(d.getAddress())
-                        .setAddressTag(d.getAddressTag())
-                        .setDate(new Date(d.getInsertTime()))
-                        .setCurrency(Currency.getInstance(d.getCoin()))
-                        .setAmount(d.getAmount())
-                        .setBlockchainTransactionHash(d.getTxId())
-                        .setType(Type.DEPOSIT)
-                        .setStatus(depositStatus(d.getStatus()))
-                        .build()));
+                d ->
+                    result.add(
+                        new FundingRecord.Builder()
+                            .setAddress(d.getAddress())
+                            .setAddressTag(d.getAddressTag())
+                            .setDate(new Date(d.getInsertTime()))
+                            .setCurrency(Currency.getInstance(d.getCoin()))
+                            .setAmount(d.getAmount())
+                            .setBlockchainTransactionHash(d.getTxId())
+                            .setType(Type.DEPOSIT)
+                            .setStatus(depositStatus(d.getStatus()))
+                            .build()));
       }
 
       if (otherInflow) {
         super.getAssetDividend(asset, startTime, endTime)
             .forEach(
-                a -> result.add(
-                    new FundingRecord.Builder()
-                        .setDate(new Date(a.getDivTime()))
-                        .setCurrency(Currency.getInstance(a.getAsset()))
-                        .setAmount(a.getAmount())
-                        .setBlockchainTransactionHash(String.valueOf(a.getTranId()))
-                        .setType(Type.OTHER_INFLOW)
-                        .setStatus(Status.COMPLETE)
-                        .setDescription(a.getEnInfo())
-                        .build()));
+                a ->
+                    result.add(
+                        new FundingRecord.Builder()
+                            .setDate(new Date(a.getDivTime()))
+                            .setCurrency(Currency.getInstance(a.getAsset()))
+                            .setAmount(a.getAmount())
+                            .setBlockchainTransactionHash(String.valueOf(a.getTranId()))
+                            .setType(Type.OTHER_INFLOW)
+                            .setStatus(Status.COMPLETE)
+                            .setDescription(a.getEnInfo())
+                            .build()));
       }
 
       final String finalEmail = email;
@@ -338,15 +340,16 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
       if (email != null) {
         super.getTransferHistory(email, startTime, endTime, page, limit)
             .forEach(
-                a -> result.add(
-                    new FundingRecord.Builder()
-                        .setAddress(finalEmail)
-                        .setDate(new Date(a.getTime()))
-                        .setCurrency(Currency.getInstance(a.getAsset()))
-                        .setAmount(a.getQty())
-                        .setType(Type.INTERNAL_WITHDRAWAL)
-                        .setStatus(transferHistoryStatus(a.getAsset()))
-                        .build()));
+                a ->
+                    result.add(
+                        new FundingRecord.Builder()
+                            .setAddress(finalEmail)
+                            .setDate(new Date(a.getTime()))
+                            .setCurrency(Currency.getInstance(a.getAsset()))
+                            .setAmount(a.getQty())
+                            .setType(Type.INTERNAL_WITHDRAWAL)
+                            .setStatus(transferHistoryStatus(a.getAsset()))
+                            .build()));
       }
 
       if (subAccount) {
@@ -354,17 +357,19 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
         Integer type = deposits && withdrawals ? null : deposits ? 1 : 0;
         super.getSubUserHistory(asset, type, startTime, endTime, limit)
             .forEach(
-                a -> result.add(
-                    new FundingRecord.Builder()
-                        .setAddress(a.getEmail())
-                        .setDate(new Date(a.getTime()))
-                        .setCurrency(Currency.getInstance(a.getAsset()))
-                        .setAmount(a.getQty())
-                        .setType(a.getType().equals(1)
-                                ? Type.INTERNAL_DEPOSIT
-                                : Type.INTERNAL_WITHDRAWAL)
-                        .setStatus(Status.COMPLETE)
-                        .build()));
+                a ->
+                    result.add(
+                        new FundingRecord.Builder()
+                            .setAddress(a.getEmail())
+                            .setDate(new Date(a.getTime()))
+                            .setCurrency(Currency.getInstance(a.getAsset()))
+                            .setAmount(a.getQty())
+                            .setType(
+                                a.getType().equals(1)
+                                    ? Type.INTERNAL_DEPOSIT
+                                    : Type.INTERNAL_WITHDRAWAL)
+                            .setStatus(Status.COMPLETE)
+                            .build()));
       }
 
       return result;
