@@ -157,7 +157,6 @@
     <module>xchange-kraken</module>
     <module>xchange-kucoin</module>
     <module>xchange-kuna</module>
-    <module>xchange-lgo</module>
     <module>xchange-latoken</module>
     <module>xchange-livecoin</module>
     <module>xchange-luno</module>
@@ -207,7 +206,6 @@
     <module>xchange-stream-huobi</module>
     <module>xchange-stream-kraken</module>
     <module>xchange-stream-kucoin</module>
-    <module>xchange-stream-lgo</module>
     <module>xchange-stream-okcoin</module>
     <module>xchange-stream-okex</module>
     <module>xchange-stream-poloniex2</module>
