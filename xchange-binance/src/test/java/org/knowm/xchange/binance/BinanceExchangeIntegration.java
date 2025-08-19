@@ -1,5 +1,6 @@
 package org.knowm.xchange.binance;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -16,10 +17,7 @@ import org.knowm.xchange.binance.service.BinanceAccountService;
 
 public class BinanceExchangeIntegration {
   protected static BinanceExchange exchange;
-
-  private static int counter = 8080;
-
-  @Rule public WireMockRule wireMockRule = new WireMockRule(++counter);
+  @Rule public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
   @BeforeClass
   public static void beforeClass() throws Exception {

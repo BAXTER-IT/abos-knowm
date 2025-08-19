@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.Duration;
 import org.junit.Test;
 import org.knowm.xchange.binance.AbstractResilienceTest;
+import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.BinanceExchange;
 import org.knowm.xchange.binance.BinanceResilience;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -27,6 +28,7 @@ public class MarketDataServiceResilienceTest extends AbstractResilienceTest {
 
   @Test
   public void shouldSucceedIfFirstCallTimeoutedAndRetryIsEnabled() throws Exception {
+    BinanceAdapters.putSymbolMapping("BNBBTC", new CurrencyPair("BNB/BTC"));
     // given
     MarketDataService service = createExchangeWithRetryEnabled().getMarketDataService();
     stubForTicker24WithFirstCallTimetoutAndSecondSuccessful();
@@ -80,7 +82,7 @@ public class MarketDataServiceResilienceTest extends AbstractResilienceTest {
                 BinanceResilience.REQUEST_WEIGHT_RATE_LIMITER,
                 RateLimiterConfig.custom()
                     .limitRefreshPeriod(Duration.ofMinutes(1))
-                    .limitForPeriod(80)
+                    .limitForPeriod(350)
                     .timeoutDuration(Duration.ofMillis(10))
                     .build()));
     MarketDataService service = exchange.getMarketDataService();

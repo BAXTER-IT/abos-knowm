@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
@@ -21,9 +22,7 @@ import org.knowm.xchange.service.account.AccountService;
 
 public class AccountServiceTest {
 
-  private static int counter = 8080;
-
-  @Rule public WireMockRule wireMockRule = new WireMockRule(++counter);
+  @Rule public final WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
   @Test(timeout = 2000)
   public void withdrawSuccess() throws Exception {

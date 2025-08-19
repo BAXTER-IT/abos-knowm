@@ -37,7 +37,8 @@ public class BinanceUsAccountService extends BinanceAccountService {
   }
 
   @Override
-  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument() throws IOException {
+  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument()
+      throws IOException {
     return super.getDynamicTradingFeesByInstrument();
   }
 
@@ -88,6 +89,6 @@ public class BinanceUsAccountService extends BinanceAccountService {
   @Override
   public BinanceSystemStatus getSystemStatus() {
     LOG.warn("getSystemStatus: {}", NOT_SUPPORTED);
-    return new BinanceSystemStatus();
+    return BinanceSystemStatus.builder().build();
   }
 }
