@@ -15,7 +15,7 @@ public class KucoinWebSocketSubscribeMessage {
 
   @JsonProperty("privateChannel")
   public final boolean privateChannel;
-  
+
   @JsonProperty("response")
   public final boolean response;
 

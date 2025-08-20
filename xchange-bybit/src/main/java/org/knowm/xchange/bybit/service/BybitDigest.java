@@ -12,15 +12,6 @@ import org.knowm.xchange.service.BaseParamsDigest;
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.RestInvocation;
 
-import javax.crypto.Mac;
-import jakarta.ws.rs.FormParam;
-import jakarta.ws.rs.QueryParam;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.knowm.xchange.utils.DigestUtils.bytesToHex;
-
 public class BybitDigest extends BaseParamsDigest {
 
   public static final String X_BAPI_API_KEY = "X-BAPI-API-KEY";
@@ -39,7 +30,8 @@ public class BybitDigest extends BaseParamsDigest {
   @SneakyThrows
   @Override
   public String digestParams(RestInvocation restInvocation) {
-    Map<String, String> headers = restInvocation.getParamsMap().get(HeaderParam.class).asHttpHeaders();
+    Map<String, String> headers =
+        restInvocation.getParamsMap().get(HeaderParam.class).asHttpHeaders();
 
     // timestamp + API key + (recv_window) + (queryString | jsonBodyString)
     String plainText = getPlainText(restInvocation);

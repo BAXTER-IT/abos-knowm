@@ -16,6 +16,7 @@ public class BybitPublicEndpointsTest {
 
   private static final Exchange exchange = BybitExchangeInit.getBybitExchange();
   private final Logger LOG = LoggerFactory.getLogger(BybitPublicEndpointsTest.class);
+
   @Test
   public void checkInstrumentMetaData() {
     exchange
@@ -35,20 +36,22 @@ public class BybitPublicEndpointsTest {
 
   @Test
   public void checkCurrenciesMetaData() {
-    Map<Currency, CurrencyMetaData> currencyMetaDataMap = exchange.getExchangeMetaData().getCurrencies();
+    Map<Currency, CurrencyMetaData> currencyMetaDataMap =
+        exchange.getExchangeMetaData().getCurrencies();
     Map<Currency, Integer> numberOfOccurrences = new HashMap<>();
 
-    currencyMetaDataMap.forEach((currency,currencyMetaData) -> {
-      assertThat(currency).isNotNull();
-      assertThat(currencyMetaData.getScale()).isNotNegative();
+    currencyMetaDataMap.forEach(
+        (currency, currencyMetaData) -> {
+          assertThat(currency).isNotNull();
+          assertThat(currencyMetaData.getScale()).isNotNegative();
 
-      if(numberOfOccurrences.containsKey(currency)){
-        numberOfOccurrences.put(currency, numberOfOccurrences.get(currency) + 1);
-      } else {
-        numberOfOccurrences.put(currency, 1);
-      }
-    });
+          if (numberOfOccurrences.containsKey(currency)) {
+            numberOfOccurrences.put(currency, numberOfOccurrences.get(currency) + 1);
+          } else {
+            numberOfOccurrences.put(currency, 1);
+          }
+        });
 
-    numberOfOccurrences.forEach((currency,integer) -> assertThat(integer).isEqualTo(1));
+    numberOfOccurrences.forEach((currency, integer) -> assertThat(integer).isEqualTo(1));
   }
 }

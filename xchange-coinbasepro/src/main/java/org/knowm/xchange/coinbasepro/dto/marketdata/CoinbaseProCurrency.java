@@ -31,8 +31,8 @@ public class CoinbaseProCurrency {
       @JsonProperty("convertible_to") List<String> convertibleTo,
       @JsonProperty("details") CoinbaseProCurrencyDetails details,
       @JsonProperty("default_network") String defaultNetwork,
-      @JsonProperty("supported_networks") List<CoinbaseCurrencySupportedNetwork> supportedNetworks
-  ) {
+      @JsonProperty("supported_networks")
+          List<CoinbaseCurrencySupportedNetwork> supportedNetworks) {
     this.id = id;
     this.name = name;
     this.minSize = minSize;

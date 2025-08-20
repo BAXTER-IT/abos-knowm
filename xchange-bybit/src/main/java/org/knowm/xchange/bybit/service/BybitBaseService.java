@@ -31,7 +31,10 @@ public class BybitBaseService implements BaseService {
                     clientConfig.setJacksonObjectMapperFactory(
                         new BybitJacksonObjectMapperFactory()))
             .restProxyFactory(
-                ProxyConfig.getInstance().getRestProxyFactoryClass().getDeclaredConstructor().newInstance())
+                ProxyConfig.getInstance()
+                    .getRestProxyFactoryClass()
+                    .getDeclaredConstructor()
+                    .newInstance())
             .build();
     bybitAuthenticated =
         ExchangeRestProxyBuilder.forInterface(
@@ -41,7 +44,10 @@ public class BybitBaseService implements BaseService {
                     clientConfig.setJacksonObjectMapperFactory(
                         new BybitJacksonObjectMapperFactory()))
             .restProxyFactory(
-                ProxyConfig.getInstance().getRestProxyFactoryClass().getDeclaredConstructor().newInstance())
+                ProxyConfig.getInstance()
+                    .getRestProxyFactoryClass()
+                    .getDeclaredConstructor()
+                    .newInstance())
             .build();
     signatureCreator =
         BybitDigest.createInstance(exchange.getExchangeSpecification().getSecretKey());

@@ -43,12 +43,20 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
   public AccountInfo getAccountInfo() throws IOException {
     List<Wallet> wallets = new ArrayList<>();
 
-    if(accountType == BybitAccountType.UNIFIED){
-      wallets.add(BybitAdapters.adaptBybitBalances(getAllCoinsBalance(BybitAccountType.UNIFIED, null, null, false).getResult(),
-          Sets.newHashSet(WalletFeature.MARGIN_TRADING, WalletFeature.TRADING, WalletFeature.FUTURES_TRADING, WalletFeature.OPTIONS_TRADING)));
-    } else if(accountType == BybitAccountType.CLASSIC) {
-      wallets.add(BybitAdapters.adaptBybitBalances(getAllCoinsBalance(BybitAccountType.SPOT, null, null, false).getResult(),
-          Sets.newHashSet(WalletFeature.TRADING, WalletFeature.MARGIN_TRADING)));
+    if (accountType == BybitAccountType.UNIFIED) {
+      wallets.add(
+          BybitAdapters.adaptBybitBalances(
+              getAllCoinsBalance(BybitAccountType.UNIFIED, null, null, false).getResult(),
+              Sets.newHashSet(
+                  WalletFeature.MARGIN_TRADING,
+                  WalletFeature.TRADING,
+                  WalletFeature.FUTURES_TRADING,
+                  WalletFeature.OPTIONS_TRADING)));
+    } else if (accountType == BybitAccountType.CLASSIC) {
+      wallets.add(
+          BybitAdapters.adaptBybitBalances(
+              getAllCoinsBalance(BybitAccountType.SPOT, null, null, false).getResult(),
+              Sets.newHashSet(WalletFeature.TRADING, WalletFeature.MARGIN_TRADING)));
     }
 
     return new AccountInfo(wallets);
@@ -58,49 +66,66 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
   public AccountInfo getSubAccountInfo(String subAccountId) throws IOException {
     List<Wallet> wallets = new ArrayList<>();
 
-    if(accountType == BybitAccountType.UNIFIED){
-      wallets.add(BybitAdapters.adaptBybitBalances(getAllCoinsBalance(BybitAccountType.UNIFIED, subAccountId, null, false).getResult(),
-          Sets.newHashSet(WalletFeature.MARGIN_TRADING, WalletFeature.TRADING, WalletFeature.FUTURES_TRADING, WalletFeature.OPTIONS_TRADING)));
-    } else if(accountType == BybitAccountType.CLASSIC) {
-      wallets.add(BybitAdapters.adaptBybitBalances(getAllCoinsBalance(BybitAccountType.SPOT, subAccountId, null, false).getResult(),
-          Sets.newHashSet(WalletFeature.TRADING, WalletFeature.MARGIN_TRADING)));
+    if (accountType == BybitAccountType.UNIFIED) {
+      wallets.add(
+          BybitAdapters.adaptBybitBalances(
+              getAllCoinsBalance(BybitAccountType.UNIFIED, subAccountId, null, false).getResult(),
+              Sets.newHashSet(
+                  WalletFeature.MARGIN_TRADING,
+                  WalletFeature.TRADING,
+                  WalletFeature.FUTURES_TRADING,
+                  WalletFeature.OPTIONS_TRADING)));
+    } else if (accountType == BybitAccountType.CLASSIC) {
+      wallets.add(
+          BybitAdapters.adaptBybitBalances(
+              getAllCoinsBalance(BybitAccountType.SPOT, subAccountId, null, false).getResult(),
+              Sets.newHashSet(WalletFeature.TRADING, WalletFeature.MARGIN_TRADING)));
     }
 
     return new AccountInfo(wallets);
   }
 
   @Override
-  public List<FundingRecord> getInternalTransferHistory(FundingRecordParamAll params) throws IOException {
+  public List<FundingRecord> getInternalTransferHistory(FundingRecordParamAll params)
+      throws IOException {
 
     List<FundingRecord> fundingRecordList = new ArrayList<>();
 
-    BybitTransfersResponse res = getBybitUniversalTransfers(
-        params.getTransferId(),
-        params.getCurrency(),
-        BybitAdapters.convertToBybitStatus(params.getStatus()),
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-        null
-    ).getResult();
+    BybitTransfersResponse res =
+        getBybitUniversalTransfers(
+                params.getTransferId(),
+                params.getCurrency(),
+                BybitAdapters.convertToBybitStatus(params.getStatus()),
+                params.getStartTime(),
+                params.getEndTime(),
+                (params.getLimit() == null)
+                    ? MAX_PAGINATION_LIMIT
+                    : params.getLimit(), // 50 is the maximum
+                null)
+            .getResult();
 
-    fundingRecordList.addAll(BybitAdapters.adaptBybitUniversalTransfers(res.getInternalTransfers()));
+    fundingRecordList.addAll(
+        BybitAdapters.adaptBybitUniversalTransfers(res.getInternalTransfers()));
 
-    if(params.isUsePagination()){
+    if (params.isUsePagination()) {
       String nextPageCursor = res.getNextPageCursor();
 
       while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
-        res = getBybitUniversalTransfers(
-            params.getTransferId(),
-            params.getCurrency(),
-            BybitAdapters.convertToBybitStatus(params.getStatus()),
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-            res.getNextPageCursor()
-        ).getResult();
+        res =
+            getBybitUniversalTransfers(
+                    params.getTransferId(),
+                    params.getCurrency(),
+                    BybitAdapters.convertToBybitStatus(params.getStatus()),
+                    params.getStartTime(),
+                    params.getEndTime(),
+                    (params.getLimit() == null)
+                        ? MAX_PAGINATION_LIMIT
+                        : params.getLimit(), // 50 is the maximum
+                    res.getNextPageCursor())
+                .getResult();
 
-        fundingRecordList.addAll(BybitAdapters.adaptBybitUniversalTransfers(res.getInternalTransfers()));
+        fundingRecordList.addAll(
+            BybitAdapters.adaptBybitUniversalTransfers(res.getInternalTransfers()));
         nextPageCursor = res.getNextPageCursor();
       }
     }
@@ -113,31 +138,37 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
       throws IOException {
     List<FundingRecord> fundingRecordList = new ArrayList<>();
 
-    BybitTransfersResponse res = getBybitInternalTransfers(
-        params.getTransferId(),
-        params.getCurrency(),
-        BybitAdapters.convertToBybitStatus(params.getStatus()),
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-        null
-    ).getResult();
+    BybitTransfersResponse res =
+        getBybitInternalTransfers(
+                params.getTransferId(),
+                params.getCurrency(),
+                BybitAdapters.convertToBybitStatus(params.getStatus()),
+                params.getStartTime(),
+                params.getEndTime(),
+                (params.getLimit() == null)
+                    ? MAX_PAGINATION_LIMIT
+                    : params.getLimit(), // 50 is the maximum
+                null)
+            .getResult();
 
     fundingRecordList.addAll(adaptBybitInternalTransfers(res.getInternalTransfers()));
 
-    if(params.isUsePagination()){
+    if (params.isUsePagination()) {
       String nextPageCursor = res.getNextPageCursor();
 
       while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
-        res = getBybitInternalTransfers(
-            params.getTransferId(),
-            params.getCurrency(),
-            BybitAdapters.convertToBybitStatus(params.getStatus()),
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-            res.getNextPageCursor()
-        ).getResult();
+        res =
+            getBybitInternalTransfers(
+                    params.getTransferId(),
+                    params.getCurrency(),
+                    BybitAdapters.convertToBybitStatus(params.getStatus()),
+                    params.getStartTime(),
+                    params.getEndTime(),
+                    (params.getLimit() == null)
+                        ? MAX_PAGINATION_LIMIT
+                        : params.getLimit(), // 50 is the maximum
+                    res.getNextPageCursor())
+                .getResult();
 
         fundingRecordList.addAll(adaptBybitInternalTransfers(res.getInternalTransfers()));
         nextPageCursor = res.getNextPageCursor();
@@ -151,31 +182,37 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
   public List<FundingRecord> getWithdrawHistory(FundingRecordParamAll params) throws IOException {
     List<FundingRecord> fundingRecordList = new ArrayList<>();
 
-    BybitWithdrawRecordsResponse res = getBybitWithdrawRecords(
-        params.getTransferId(),
-        params.getCurrency(),
-        BybitWithdrawType.ALL,
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-        null
-    ).getResult();
+    BybitWithdrawRecordsResponse res =
+        getBybitWithdrawRecords(
+                params.getTransferId(),
+                params.getCurrency(),
+                BybitWithdrawType.ALL,
+                params.getStartTime(),
+                params.getEndTime(),
+                (params.getLimit() == null)
+                    ? MAX_PAGINATION_LIMIT
+                    : params.getLimit(), // 50 is the maximum
+                null)
+            .getResult();
 
     fundingRecordList.addAll(adaptBybitWithdrawRecords(res.getRows()));
 
-    if(params.isUsePagination()){
+    if (params.isUsePagination()) {
       String nextPageCursor = res.getNextPageCursor();
 
       while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
-        res = getBybitWithdrawRecords(
-            params.getTransferId(),
-            params.getCurrency(),
-            BybitWithdrawType.ALL,
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-            res.getNextPageCursor()
-        ).getResult();
+        res =
+            getBybitWithdrawRecords(
+                    params.getTransferId(),
+                    params.getCurrency(),
+                    BybitWithdrawType.ALL,
+                    params.getStartTime(),
+                    params.getEndTime(),
+                    (params.getLimit() == null)
+                        ? MAX_PAGINATION_LIMIT
+                        : params.getLimit(), // 50 is the maximum
+                    res.getNextPageCursor())
+                .getResult();
 
         fundingRecordList.addAll(adaptBybitWithdrawRecords(res.getRows()));
         nextPageCursor = res.getNextPageCursor();
@@ -195,28 +232,34 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
 
     List<FundingRecord> fundingRecordList = new ArrayList<>();
 
-    BybitDepositRecordsResponse res = getBybitSubAccountDepositRecords(
-        params.getSubAccountId(),
-        params.getCurrency(),
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-        null
-    ).getResult();
+    BybitDepositRecordsResponse res =
+        getBybitSubAccountDepositRecords(
+                params.getSubAccountId(),
+                params.getCurrency(),
+                params.getStartTime(),
+                params.getEndTime(),
+                (params.getLimit() == null)
+                    ? MAX_PAGINATION_LIMIT
+                    : params.getLimit(), // 50 is the maximum
+                null)
+            .getResult();
 
     fundingRecordList.addAll(adaptBybitDepositRecords(res.getRows()));
 
-    if(params.isUsePagination()){
+    if (params.isUsePagination()) {
       String nextPageCursor = res.getNextPageCursor();
       while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
-        res = getBybitSubAccountDepositRecords(
-            params.getSubAccountId(),
-            params.getCurrency(),
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-            res.getNextPageCursor()
-        ).getResult();
+        res =
+            getBybitSubAccountDepositRecords(
+                    params.getSubAccountId(),
+                    params.getCurrency(),
+                    params.getStartTime(),
+                    params.getEndTime(),
+                    (params.getLimit() == null)
+                        ? MAX_PAGINATION_LIMIT
+                        : params.getLimit(), // 50 is the maximum
+                    res.getNextPageCursor())
+                .getResult();
 
         fundingRecordList.addAll(adaptBybitDepositRecords(res.getRows()));
         nextPageCursor = res.getNextPageCursor();
@@ -229,40 +272,49 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
   @Override
   public List<FundingRecord> getDepositHistory(FundingRecordParamAll params) throws IOException {
 
-    BybitDepositRecordsResponse res = getBybitDepositRecords(
-        params.getCurrency(),
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-        null
-    ).getResult();
+    BybitDepositRecordsResponse res =
+        getBybitDepositRecords(
+                params.getCurrency(),
+                params.getStartTime(),
+                params.getEndTime(),
+                (params.getLimit() == null)
+                    ? MAX_PAGINATION_LIMIT
+                    : params.getLimit(), // 50 is the maximum
+                null)
+            .getResult();
 
     List<FundingRecord> fundingRecordList = new ArrayList<>();
 
-    BybitInternalDepositRecordsResponse internalRes = getBybitInternalDepositRecords(
-        params.getCurrency(),
-        params.getStartTime(),
-        params.getEndTime(),
-        (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-        null
-    ).getResult();
+    BybitInternalDepositRecordsResponse internalRes =
+        getBybitInternalDepositRecords(
+                params.getCurrency(),
+                params.getStartTime(),
+                params.getEndTime(),
+                (params.getLimit() == null)
+                    ? MAX_PAGINATION_LIMIT
+                    : params.getLimit(), // 50 is the maximum
+                null)
+            .getResult();
 
     fundingRecordList.addAll(adaptBybitDepositRecords(res.getRows()));
     fundingRecordList.addAll(adaptBybitInternalDepositRecords(internalRes.getRows()));
 
-    if(params.isUsePagination()){
+    if (params.isUsePagination()) {
       // Make calls to main deposit history
       String nextPageCursor = res.getNextPageCursor();
 
       while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
 
-        res = getBybitDepositRecords(
-            params.getCurrency(),
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-            res.getNextPageCursor()
-        ).getResult();
+        res =
+            getBybitDepositRecords(
+                    params.getCurrency(),
+                    params.getStartTime(),
+                    params.getEndTime(),
+                    (params.getLimit() == null)
+                        ? MAX_PAGINATION_LIMIT
+                        : params.getLimit(), // 50 is the maximum
+                    res.getNextPageCursor())
+                .getResult();
 
         fundingRecordList.addAll(adaptBybitDepositRecords(res.getRows()));
         nextPageCursor = res.getNextPageCursor();
@@ -273,13 +325,16 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
 
       while (nextPageCursor != null && !nextPageCursor.isEmpty()) {
 
-        internalRes = getBybitInternalDepositRecords(
-            params.getCurrency(),
-            params.getStartTime(),
-            params.getEndTime(),
-            (params.getLimit() == null) ? MAX_PAGINATION_LIMIT : params.getLimit(), // 50 is the maximum
-            internalRes.getNextPageCursor()
-        ).getResult();
+        internalRes =
+            getBybitInternalDepositRecords(
+                    params.getCurrency(),
+                    params.getStartTime(),
+                    params.getEndTime(),
+                    (params.getLimit() == null)
+                        ? MAX_PAGINATION_LIMIT
+                        : params.getLimit(), // 50 is the maximum
+                    internalRes.getNextPageCursor())
+                .getResult();
 
         fundingRecordList.addAll(adaptBybitInternalDepositRecords(internalRes.getRows()));
         nextPageCursor = internalRes.getNextPageCursor();
@@ -299,7 +354,7 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
         params.getAccountCategory() == null
             ? null
             : BybitCategory.valueOf(params.getAccountCategory().toUpperCase());
-    
+
     if (fromMillis != null && toMillis != null) {
       if (fromMillis > toMillis) {
         Long temp = fromMillis;
@@ -329,7 +384,8 @@ public class BybitAccountService extends BybitAccountServiceRaw implements Accou
 
     do {
       BybitTransactionLogResponse result =
-          getBybitLedger(accountType, category, currency, null, null, from, to, limit, nextPageCursor)
+          getBybitLedger(
+                  accountType, category, currency, null, null, from, to, limit, nextPageCursor)
               .getResult();
 
       chunk = result.getList();

@@ -12,10 +12,8 @@ import org.knowm.xchange.gateio.config.Config;
 import si.mazi.rescu.BodyLoggingRestInvocationHandler;
 import si.mazi.rescu.CustomRestProxyFactoryImpl;
 
-/**
- * Contains the example of overriding of RestProxyFactory for exchange for some specific logic
- */
-class GateioBaseServiceTest{
+/** Contains the example of overriding of RestProxyFactory for exchange for some specific logic */
+class GateioBaseServiceTest {
   protected static GateioExchange exchange;
 
   @BeforeAll
@@ -28,7 +26,8 @@ class GateioBaseServiceTest{
   @Test
   void correct_proxy_factory() {
     GateioBaseService service = ((GateioBaseService) exchange.getAccountService());
-    assertThat(Proxy.getInvocationHandler(service.gateio) instanceof BodyLoggingRestInvocationHandler).isTrue();
+    assertThat(
+            Proxy.getInvocationHandler(service.gateio) instanceof BodyLoggingRestInvocationHandler)
+        .isTrue();
   }
-
 }

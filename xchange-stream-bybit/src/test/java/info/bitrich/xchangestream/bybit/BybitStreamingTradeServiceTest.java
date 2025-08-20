@@ -94,7 +94,8 @@ public class BybitStreamingTradeServiceTest {
     BybitUserTradeResponseDto bybitUserTradeResponseDto =
         objectMapper.treeToValue(createJsonNode(json), BybitUserTradeResponseDto.class);
     assertEquals(BybitOrderType.MARKET, bybitUserTradeResponseDto.getData().get(0).getOrderType());
-    assertEquals(BybitOrderType.UNKNOWN, bybitUserTradeResponseDto.getData().get(0).getStopOrderType());
+    assertEquals(
+        BybitOrderType.UNKNOWN, bybitUserTradeResponseDto.getData().get(0).getStopOrderType());
   }
 
   private JsonNode createJsonNode(String json) throws IOException {

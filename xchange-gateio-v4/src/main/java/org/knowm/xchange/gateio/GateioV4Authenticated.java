@@ -1,7 +1,5 @@
 package org.knowm.xchange.gateio;
 
-import java.io.IOException;
-import java.util.List;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -12,6 +10,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.List;
 import org.knowm.xchange.gateio.dto.GateioException;
 import org.knowm.xchange.gateio.dto.account.GateioAccountBookRecord;
 import org.knowm.xchange.gateio.dto.account.GateioAddressRecord;
@@ -178,6 +178,7 @@ public interface GateioV4Authenticated {
 
   /**
    * Get sub account balances
+   *
    * @param subAccountId User ID of sub-account, you can query multiple records separated by ,. If
    *     not specified, it will return the records of all sub accounts
    * @return

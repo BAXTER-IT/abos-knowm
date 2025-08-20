@@ -17,9 +17,9 @@ import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProLedger;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProSendMoneyRequest;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProWithdrawCryptoResponse;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProWithdrawFundsRequest;
+import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProSendMoneyResponse;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWallet;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWalletAddress;
-import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProSendMoneyResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.utils.DateUtils;
 import org.knowm.xchange.utils.timestamp.UnixTimestampFactory;
@@ -31,8 +31,7 @@ public class CoinbaseProAccountServiceRaw extends CoinbaseProBaseService {
     super(exchange, resilienceRegistries);
   }
 
-  public CoinbaseProAccount[] getCoinbaseProAccountInfo()
-      throws CoinbaseProException, IOException {
+  public CoinbaseProAccount[] getCoinbaseProAccountInfo() throws CoinbaseProException, IOException {
     return decorateApiCall(
             () ->
                 coinbasePro.getAccounts(
@@ -44,9 +43,13 @@ public class CoinbaseProAccountServiceRaw extends CoinbaseProBaseService {
   public CoinbaseProAccount getCoinbaseProAccountById(String accountId)
       throws CoinbaseProException, IOException {
     return decorateApiCall(
-        () ->
-            coinbasePro.getAccountById(
-                apiKey, digest, UnixTimestampFactory.INSTANCE.createValue(), passphrase, accountId))
+            () ->
+                coinbasePro.getAccountById(
+                    apiKey,
+                    digest,
+                    UnixTimestampFactory.INSTANCE.createValue(),
+                    passphrase,
+                    accountId))
         .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
         .call();
   }
@@ -103,7 +106,15 @@ public class CoinbaseProAccountServiceRaw extends CoinbaseProBaseService {
   }
 
   /** https://docs.pro.coinbase.com/#get-an-account */
-  public CoinbaseProLedger getLedger(String accountId, Date startDate, Date endDate, String beforeId, String afterId, Integer limit, String profileId) throws CoinbaseProException, IOException {
+  public CoinbaseProLedger getLedger(
+      String accountId,
+      Date startDate,
+      Date endDate,
+      String beforeId,
+      String afterId,
+      Integer limit,
+      String profileId)
+      throws CoinbaseProException, IOException {
     return decorateApiCall(
             () ->
                 coinbasePro.ledger(
@@ -155,7 +166,8 @@ public class CoinbaseProAccountServiceRaw extends CoinbaseProBaseService {
   }
 
   /** https://docs.pro.coinbase.com/#get-current-exchange-limits */
-  public CoinbaseProTransfers getTransfersByAccountId(String accountId, String before, String after, int limit, String type)
+  public CoinbaseProTransfers getTransfersByAccountId(
+      String accountId, String before, String after, int limit, String type)
       throws CoinbaseProException, IOException {
     return decorateApiCall(
             () ->
@@ -174,22 +186,24 @@ public class CoinbaseProAccountServiceRaw extends CoinbaseProBaseService {
   }
 
   /** https://docs.pro.coinbase.com/#get-current-exchange-limits */
-  public CoinbaseProTransfers getTransfers(String type, String profileId, String before, String after, int limit) throws CoinbaseProException, IOException {
+  public CoinbaseProTransfers getTransfers(
+      String type, String profileId, String before, String after, int limit)
+      throws CoinbaseProException, IOException {
 
-      return decorateApiCall(
-          () ->
-              coinbasePro.getTransfers(
-                  apiKey,
-                  digest,
-                  UnixTimestampFactory.INSTANCE.createValue(),
-                  passphrase,
-                  type,
-                  profileId,
-                  before,
-                  after,
-                  limit))
-          .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
-          .call();
+    return decorateApiCall(
+            () ->
+                coinbasePro.getTransfers(
+                    apiKey,
+                    digest,
+                    UnixTimestampFactory.INSTANCE.createValue(),
+                    passphrase,
+                    type,
+                    profileId,
+                    before,
+                    after,
+                    limit))
+        .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+        .call();
   }
 
   /** https://docs.pro.coinbase.com/#coinbase-accounts */

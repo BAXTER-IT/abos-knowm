@@ -35,7 +35,7 @@ public class TradeHistoryParamsAll
         TradeHistoryParamLimit,
         TradeHistoryParamId,
         TradeHistoryParamOrderId,
-    TradeHistoryParamSubaccountId,
+        TradeHistoryParamSubaccountId,
         TradeHistoryParamUserReference {
 
   private Integer pageLength;

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.List;
-import jakarta.ws.rs.core.Response.Status;
 import org.junit.Before;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;

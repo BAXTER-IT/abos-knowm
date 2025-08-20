@@ -87,13 +87,17 @@ public class Ticker {
     this.updated = updated;
   }
 
-  /** @return The high */
+  /**
+   * @return The high
+   */
   @JsonProperty("high")
   public Double getHigh() {
     return high;
   }
 
-  /** @param high The high */
+  /**
+   * @param high The high
+   */
   @JsonProperty("high")
   public void setHigh(Double high) {
     this.high = high;
@@ -104,13 +108,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The low */
+  /**
+   * @return The low
+   */
   @JsonProperty("low")
   public Double getLow() {
     return low;
   }
 
-  /** @param low The low */
+  /**
+   * @param low The low
+   */
   @JsonProperty("low")
   public void setLow(Double low) {
     this.low = low;
@@ -121,13 +129,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The avg */
+  /**
+   * @return The avg
+   */
   @JsonProperty("avg")
   public Double getAvg() {
     return avg;
   }
 
-  /** @param avg The avg */
+  /**
+   * @param avg The avg
+   */
   @JsonProperty("avg")
   public void setAvg(Double avg) {
     this.avg = avg;
@@ -138,13 +150,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The lastbuy */
+  /**
+   * @return The lastbuy
+   */
   @JsonProperty("lastbuy")
   public Double getLastbuy() {
     return lastbuy;
   }
 
-  /** @param lastbuy The lastbuy */
+  /**
+   * @param lastbuy The lastbuy
+   */
   @JsonProperty("lastbuy")
   public void setLastbuy(Double lastbuy) {
     this.lastbuy = lastbuy;
@@ -155,13 +171,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The lastsell */
+  /**
+   * @return The lastsell
+   */
   @JsonProperty("lastsell")
   public Double getLastsell() {
     return lastsell;
   }
 
-  /** @param lastsell The lastsell */
+  /**
+   * @param lastsell The lastsell
+   */
   @JsonProperty("lastsell")
   public void setLastsell(Double lastsell) {
     this.lastsell = lastsell;
@@ -172,13 +192,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The buy */
+  /**
+   * @return The buy
+   */
   @JsonProperty("buy")
   public Double getBuy() {
     return buy;
   }
 
-  /** @param buy The buy */
+  /**
+   * @param buy The buy
+   */
   @JsonProperty("buy")
   public void setBuy(Double buy) {
     this.buy = buy;
@@ -189,13 +213,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The sell */
+  /**
+   * @return The sell
+   */
   @JsonProperty("sell")
   public Double getSell() {
     return sell;
   }
 
-  /** @param sell The sell */
+  /**
+   * @param sell The sell
+   */
   @JsonProperty("sell")
   public void setSell(Double sell) {
     this.sell = sell;
@@ -206,13 +234,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The lastprice */
+  /**
+   * @return The lastprice
+   */
   @JsonProperty("lastprice")
   public Double getLastprice() {
     return lastprice;
   }
 
-  /** @param lastprice The lastprice */
+  /**
+   * @param lastprice The lastprice
+   */
   @JsonProperty("lastprice")
   public void setLastprice(Double lastprice) {
     this.lastprice = lastprice;
@@ -223,13 +255,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The buysupport */
+  /**
+   * @return The buysupport
+   */
   @JsonProperty("buysupport")
   public Double getBuysupport() {
     return buysupport;
   }
 
-  /** @param buysupport The buysupport */
+  /**
+   * @param buysupport The buysupport
+   */
   @JsonProperty("buysupport")
   public void setBuysupport(Double buysupport) {
     this.buysupport = buysupport;
@@ -240,13 +276,17 @@ public class Ticker {
     return this;
   }
 
-  /** @return The updated */
+  /**
+   * @return The updated
+   */
   @JsonProperty("updated")
   public Integer getUpdated() {
     return updated;
   }
 
-  /** @param updated The updated */
+  /**
+   * @param updated The updated
+   */
   @JsonProperty("updated")
   public void setUpdated(Integer updated) {
     this.updated = updated;

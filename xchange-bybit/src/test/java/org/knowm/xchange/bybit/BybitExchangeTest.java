@@ -3,9 +3,6 @@ package org.knowm.xchange.bybit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import jakarta.ws.rs.core.Response.Status;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;

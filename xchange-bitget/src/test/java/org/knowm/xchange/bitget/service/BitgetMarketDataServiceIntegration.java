@@ -34,7 +34,8 @@ class BitgetMarketDataServiceIntegration extends BitgetIntegrationTestParent {
 
   @Test
   void valid_currencies() throws IOException {
-    Map<Currency, CurrencyMetaData> currencies = ((BitgetMarketDataService) exchange.getMarketDataService()).getCurrencies();
+    Map<Currency, CurrencyMetaData> currencies =
+        ((BitgetMarketDataService) exchange.getMarketDataService()).getCurrencies();
 
     assertThat(currencies).isNotEmpty();
     assertThat(currencies.keySet().stream().distinct().count()).isEqualTo(currencies.size());
@@ -42,7 +43,8 @@ class BitgetMarketDataServiceIntegration extends BitgetIntegrationTestParent {
 
   @Test
   void valid_instruments() throws IOException {
-    Map<Instrument, InstrumentMetaData> instruments = ((BitgetMarketDataService) exchange.getMarketDataService()).getInstruments();
+    Map<Instrument, InstrumentMetaData> instruments =
+        ((BitgetMarketDataService) exchange.getMarketDataService()).getInstruments();
 
     assertThat(instruments).isNotEmpty();
     assertThat(instruments.keySet().stream().distinct().count()).isEqualTo(instruments.size());

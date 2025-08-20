@@ -114,8 +114,7 @@ public final class GateioAdapters {
     return new OrderBook(null, asks, bids);
   }
 
-  public static LimitOrder adaptOrder(
-      GateioOpenOrder order, Collection<Instrument> currencyPairs) {
+  public static LimitOrder adaptOrder(GateioOpenOrder order, Collection<Instrument> currencyPairs) {
 
     String[] currencyPairSplit = order.getCurrencyPair().split("_");
     CurrencyPair currencyPair = new CurrencyPair(currencyPairSplit[0], currencyPairSplit[1]);
@@ -239,10 +238,12 @@ public final class GateioAdapters {
       CurrencyPair currencyPair = entry.getKey();
       GateioMarketInfo btermarketInfo = entry.getValue();
 
-      currencyPairs.put(currencyPair, new InstrumentMetaData.Builder()
-                      .tradingFee(btermarketInfo.getFee())
-                      .minimumAmount(btermarketInfo.getMinAmount())
-                      .priceScale(btermarketInfo.getDecimalPlaces())
+      currencyPairs.put(
+          currencyPair,
+          new InstrumentMetaData.Builder()
+              .tradingFee(btermarketInfo.getFee())
+              .minimumAmount(btermarketInfo.getMinAmount())
+              .priceScale(btermarketInfo.getDecimalPlaces())
               .build());
     }
 

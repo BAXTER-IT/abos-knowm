@@ -20,6 +20,7 @@ public class BybitExchange extends BaseExchange {
         new BybitAccountService(
             this, ((BybitExchangeSpecification) getExchangeSpecification()).getAccountType());
   }
+
   @Override
   public ExchangeSpecification getDefaultExchangeSpecification() {
     BybitExchangeSpecification exchangeSpecification =
@@ -36,7 +37,7 @@ public class BybitExchange extends BaseExchange {
 
   @Override
   public void applySpecification(ExchangeSpecification exchangeSpecification) {
-    if(useSandbox(exchangeSpecification)){
+    if (useSandbox(exchangeSpecification)) {
       exchangeSpecification.setSslUri("https://api-testnet.bybit.com");
     }
     super.applySpecification(exchangeSpecification);
@@ -45,16 +46,17 @@ public class BybitExchange extends BaseExchange {
   @Override
   public void remoteInit() throws IOException, ExchangeException {
     // initialize currency pairs & currencies
-    exchangeMetaData = new ExchangeMetaData(
-        marketDataService.getInstruments(),
-        marketDataService.getCurrencies(),
-        null,
-        null,
-        true);
+    exchangeMetaData =
+        new ExchangeMetaData(
+            marketDataService.getInstruments(),
+            marketDataService.getCurrencies(),
+            null,
+            null,
+            true);
   }
 
-  protected boolean useSandbox(ExchangeSpecification exchangeSpecification){
-      return Boolean.TRUE.equals(
-          exchangeSpecification.getExchangeSpecificParametersItem(USE_SANDBOX));
+  protected boolean useSandbox(ExchangeSpecification exchangeSpecification) {
+    return Boolean.TRUE.equals(
+        exchangeSpecification.getExchangeSpecificParametersItem(USE_SANDBOX));
   }
 }

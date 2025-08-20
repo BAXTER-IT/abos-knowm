@@ -12,5 +12,4 @@ import lombok.ToString;
 public class ToggleTradingRequest {
 
   private final long counterpartyId;
-
 }

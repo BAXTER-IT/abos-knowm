@@ -39,6 +39,4 @@ public class GateioCurrencyChain {
   public boolean isEnabled() {
     return (disabled != null) && !disabled;
   }
-
-
 }

@@ -30,5 +30,4 @@ public class BitstampPairInfo {
 
   @JsonProperty("description")
   String description;
-
 }

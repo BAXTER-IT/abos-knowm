@@ -1,73 +1,69 @@
 package info.bitrich.xchangestream.kucoin.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.ToString;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.kucoin.KucoinAdapters;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.kucoin.KucoinAdapters;
 
 @Getter
 @ToString
 @NoArgsConstructor
 public class KucoinOrderEventData {
 
-    @JsonProperty("symbol")
-    public String symbol;
+  @JsonProperty("symbol")
+  public String symbol;
 
-    @JsonProperty("orderType")
-    public String orderType;
+  @JsonProperty("orderType")
+  public String orderType;
 
-    @JsonProperty("side")
-    public String side;
+  @JsonProperty("side")
+  public String side;
 
-    @JsonProperty("orderId")
-    public String orderId;
-    
-    @JsonProperty("liquidity")
-    public String liquidity;
-    
-    @JsonProperty("type")
-    public String type;
+  @JsonProperty("orderId")
+  public String orderId;
 
-    @JsonProperty("orderTime")
-    public long orderTime;
+  @JsonProperty("liquidity")
+  public String liquidity;
 
-    @JsonProperty("size")
-    public String size;
+  @JsonProperty("type")
+  public String type;
 
-    @JsonProperty("filledSize")
-    public String filledSize;
+  @JsonProperty("orderTime")
+  public long orderTime;
 
-    @JsonProperty("price")
-    public String price;
+  @JsonProperty("size")
+  public String size;
 
-    @JsonProperty("clientOid")
-    public String clientOid;
+  @JsonProperty("filledSize")
+  public String filledSize;
 
-    @JsonProperty("remainSize")
-    public String remainSize;
+  @JsonProperty("price")
+  public String price;
 
-    @JsonProperty("matchPrice")
-    public String matchPrice;
+  @JsonProperty("clientOid")
+  public String clientOid;
 
-    @JsonProperty("matchSize")
-    public String matchSize;
-    
-    @JsonProperty("tradeId")
-    public String tradeId;
+  @JsonProperty("remainSize")
+  public String remainSize;
 
-    @JsonProperty("status")
-    public String status;
+  @JsonProperty("matchPrice")
+  public String matchPrice;
 
-    @JsonProperty("ts")
-    public long timestamp;
+  @JsonProperty("matchSize")
+  public String matchSize;
 
-    public CurrencyPair getCurrencyPair() {
-        return KucoinAdapters.adaptCurrencyPair(symbol);
-    }
+  @JsonProperty("tradeId")
+  public String tradeId;
+
+  @JsonProperty("status")
+  public String status;
+
+  @JsonProperty("ts")
+  public long timestamp;
+
+  public CurrencyPair getCurrencyPair() {
+    return KucoinAdapters.adaptCurrencyPair(symbol);
+  }
 }

@@ -3,9 +3,7 @@ package si.mazi.rescu;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Invocation handler that logs the raw textual response body
- */
+/** Invocation handler that logs the raw textual response body */
 @Slf4j
 public class BodyLoggingRestInvocationHandler extends RestInvocationHandler {
 
@@ -14,7 +12,8 @@ public class BodyLoggingRestInvocationHandler extends RestInvocationHandler {
   }
 
   @Override
-  protected Object mapInvocationResult(InvocationResult invocationResult, RestMethodMetadata methodMetadata) throws IOException {
+  protected Object mapInvocationResult(
+      InvocationResult invocationResult, RestMethodMetadata methodMetadata) throws IOException {
     // log the body
     log.info(invocationResult.getHttpBody());
 

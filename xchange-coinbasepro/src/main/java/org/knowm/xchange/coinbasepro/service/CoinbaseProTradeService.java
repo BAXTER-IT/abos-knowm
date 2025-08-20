@@ -103,21 +103,18 @@ public class CoinbaseProTradeService extends CoinbaseProTradeServiceRaw implemen
     String endDate = null;
 
     if (params instanceof CoinbaseProTradeHistoryParams) {
-      CoinbaseProTradeHistoryParams historyParams =
-          (CoinbaseProTradeHistoryParams) params;
+      CoinbaseProTradeHistoryParams historyParams = (CoinbaseProTradeHistoryParams) params;
       afterTradeId = historyParams.getAfterTradeId();
       beforeTradeId = historyParams.getBeforeTradeId();
     }
 
     if (params instanceof TradeHistoryParamTransactionId) {
-      TradeHistoryParamTransactionId tnxIdParams =
-          (TradeHistoryParamTransactionId) params;
+      TradeHistoryParamTransactionId tnxIdParams = (TradeHistoryParamTransactionId) params;
       orderId = tnxIdParams.getTransactionId();
     }
 
     if (params instanceof TradeHistoryParamCurrencyPair) {
-      TradeHistoryParamCurrencyPair ccyPairParams =
-          (TradeHistoryParamCurrencyPair) params;
+      TradeHistoryParamCurrencyPair ccyPairParams = (TradeHistoryParamCurrencyPair) params;
       CurrencyPair currencyPair = ccyPairParams.getCurrencyPair();
       if (currencyPair != null) {
         productId = CoinbaseProAdapters.adaptProductID(currencyPair);
@@ -125,8 +122,7 @@ public class CoinbaseProTradeService extends CoinbaseProTradeServiceRaw implemen
     }
 
     if (params instanceof TradeHistoryParamInstrument) {
-      TradeHistoryParamInstrument ccyPairParams =
-          (TradeHistoryParamInstrument) params;
+      TradeHistoryParamInstrument ccyPairParams = (TradeHistoryParamInstrument) params;
       Instrument instrument = ccyPairParams.getInstrument();
       if (instrument != null) {
         productId = CoinbaseProAdapters.adaptProductID(instrument);
@@ -138,17 +134,25 @@ public class CoinbaseProTradeService extends CoinbaseProTradeServiceRaw implemen
       limit = limitParams.getLimit();
     }
 
-    if(params instanceof TradeHistoryParamsTimeSpan){
+    if (params instanceof TradeHistoryParamsTimeSpan) {
       TradeHistoryParamsTimeSpan timeSpanParams = (TradeHistoryParamsTimeSpan) params;
-      startDate = (timeSpanParams.getStartTime() == null) ? null : DateUtils.toISODateString(timeSpanParams.getStartTime());
-      endDate = (timeSpanParams.getEndTime() == null) ? null : DateUtils.toISODateString(timeSpanParams.getEndTime());
+      startDate =
+          (timeSpanParams.getStartTime() == null)
+              ? null
+              : DateUtils.toISODateString(timeSpanParams.getStartTime());
+      endDate =
+          (timeSpanParams.getEndTime() == null)
+              ? null
+              : DateUtils.toISODateString(timeSpanParams.getEndTime());
     }
 
-    if(orderId == null && productId == null){
+    if (orderId == null && productId == null) {
       throw new CoinbaseProException("Either orderId or productId must be provided");
     }
 
-    return CoinbaseProAdapters.adaptTradeHistory(getCoinbaseProFills(orderId, productId, limit, beforeTradeId, afterTradeId, null, startDate, endDate));
+    return CoinbaseProAdapters.adaptTradeHistory(
+        getCoinbaseProFills(
+            orderId, productId, limit, beforeTradeId, afterTradeId, null, startDate, endDate));
   }
 
   @Override
@@ -158,7 +162,8 @@ public class CoinbaseProTradeService extends CoinbaseProTradeServiceRaw implemen
 
   @Override
   public Collection<Order> getOrder(OrderQueryParams... orderQueryParams) throws IOException {
-    final String[] orderIds = Arrays.stream(orderQueryParams).map(OrderQueryParams::getOrderId).toArray(String[]::new);
+    final String[] orderIds =
+        Arrays.stream(orderQueryParams).map(OrderQueryParams::getOrderId).toArray(String[]::new);
 
     Collection<Order> orders = new ArrayList<>(orderIds.length);
 

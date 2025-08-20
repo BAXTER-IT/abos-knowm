@@ -22,7 +22,6 @@ import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams.Role;
 import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
-import org.knowm.xchange.bitget.service.params.BitgetFundingHistoryParams;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 
@@ -61,8 +60,11 @@ class BitgetAccountServiceRawTest extends BitgetExchangeWiremock {
     List<BitgetTransferRecordDto> actual = bitgetAccountServiceRaw.getBitgetTransferRecords(params);
 
     assertThat(actual).hasSize(1);
-    assertThat(actual).first().usingRecursiveComparison().withComparatorForType(
-        new BigDecimalComparator(), BigDecimal.class).isEqualTo(expected);
+    assertThat(actual)
+        .first()
+        .usingRecursiveComparison()
+        .withComparatorForType(new BigDecimalComparator(), BigDecimal.class)
+        .isEqualTo(expected);
   }
 
   @Test

@@ -10,7 +10,7 @@ import org.knowm.xchange.coinbasepro.service.CoinbaseProBaseService;
 import si.mazi.rescu.BodyLoggingRestInvocationHandler;
 import si.mazi.rescu.CustomRestProxyFactoryImpl;
 
-public class CoinbaseProProxyTest extends CoinbaseProExchangeWiremock{
+public class CoinbaseProProxyTest extends CoinbaseProExchangeWiremock {
 
   static {
     ProxyConfig.getInstance().setRestProxyFactoryClass(CustomRestProxyFactoryImpl.class);
@@ -18,8 +18,12 @@ public class CoinbaseProProxyTest extends CoinbaseProExchangeWiremock{
 
   @Test
   public void testProxyFactory()
-      throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+      throws InvocationTargetException,
+          NoSuchMethodException,
+          InstantiationException,
+          IllegalAccessException {
     CoinbaseProBaseService service = ((CoinbaseProBaseService) exchange.getMarketDataService());
-    assertThat(Proxy.getInvocationHandler(service.getCoinbaseProExchangeRestProxy())).isInstanceOf(BodyLoggingRestInvocationHandler.class);
+    assertThat(Proxy.getInvocationHandler(service.getCoinbaseProExchangeRestProxy()))
+        .isInstanceOf(BodyLoggingRestInvocationHandler.class);
   }
 }

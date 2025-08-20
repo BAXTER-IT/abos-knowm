@@ -17,5 +17,4 @@ public class DefaultTradeHistoryParamId implements TradeHistoryParamId {
   public void setId(String id) {
     this.id = id;
   }
-
 }

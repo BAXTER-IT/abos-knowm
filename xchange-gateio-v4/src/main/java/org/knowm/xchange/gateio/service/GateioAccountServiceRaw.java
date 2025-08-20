@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.params.FundingRecordParamAll;
-import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.gateio.GateioAdapters;
 import org.knowm.xchange.gateio.GateioErrorAdapter;
 import org.knowm.xchange.gateio.GateioExchange;
@@ -238,8 +237,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
         long newFrom = fromSec + ((long) i * THIRTY_DAYS_IN_SECONDS);
         long newTo = Math.min(toSec, newFrom + THIRTY_DAYS_IN_SECONDS);
         if (params.isUsePagination()) {
-          result.addAll(
-              getPaginatedAccountBookRecords(currency, newFrom, newTo, pageLength, type));
+          result.addAll(getPaginatedAccountBookRecords(currency, newFrom, newTo, pageLength, type));
         } else {
           result.addAll(
               gateioV4Authenticated.getAccountBookRecords(
@@ -257,8 +255,7 @@ public class GateioAccountServiceRaw extends GateioBaseService {
       }
     } else {
       if (params.isUsePagination()) {
-        result.addAll(
-            getPaginatedAccountBookRecords(currency, fromSec, toSec, pageLength, type));
+        result.addAll(getPaginatedAccountBookRecords(currency, fromSec, toSec, pageLength, type));
       } else {
         result.addAll(
             gateioV4Authenticated.getAccountBookRecords(

@@ -20,6 +20,7 @@ public class BybitStreamingPrivateEndpointsTest {
 
   Instrument instrument = new FuturesContract("BTC/USDT/PERP");
   StreamingExchange exchange;
+
   @Before
   public void setUp() {
     Properties properties = new Properties();

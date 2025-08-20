@@ -195,11 +195,11 @@ public class CoinbaseProAdapters {
     List<Balance> balances = new ArrayList<>();
 
     balances.add(
-          new Balance(
-              Currency.getInstance(coinbaseProAccount.getCurrency()),
-              coinbaseProAccount.getBalance(),
-              coinbaseProAccount.getAvailable(),
-              coinbaseProAccount.getHold()));
+        new Balance(
+            Currency.getInstance(coinbaseProAccount.getCurrency()),
+            coinbaseProAccount.getBalance(),
+            coinbaseProAccount.getAvailable(),
+            coinbaseProAccount.getHold()));
 
     return Wallet.Builder.from(balances).id(coinbaseProAccount.getProfileId()).build();
   }
@@ -479,7 +479,8 @@ public class CoinbaseProAdapters {
     if (address == null) address = coinbaseProTransfer.getDetails().getSentToAddress();
 
     String cryptoTransactionHash = coinbaseProTransfer.getDetails().getCryptoTransactionHash();
-    String transactionHash = adaptTransactionHash(coinbaseProTransfer.getCurrency(), cryptoTransactionHash);
+    String transactionHash =
+        adaptTransactionHash(coinbaseProTransfer.getCurrency(), cryptoTransactionHash);
 
     return FundingRecord.builder()
         .address(address)
@@ -522,52 +523,67 @@ public class CoinbaseProAdapters {
     List<FundingRecord> records = new ArrayList<>();
 
     ledger.forEach(
-        coinbaseProLedgerDto -> records.add(FundingRecord.builder()
-                .internalId(coinbaseProLedgerDto.getId())
-                .amount(coinbaseProLedgerDto.getAmount())
-                .balance(coinbaseProLedgerDto.getBalance())
-                .date(coinbaseProLedgerDto.getCreatedAt())
-                .status(Status.COMPLETE)
-                .description(coinbaseProLedgerDto.getType().name())
-//                .type(convertCoinbaseProLedgerTxType(coinbaseProLedgerDto.getType()))
-            .build()));
+        coinbaseProLedgerDto ->
+            records.add(
+                FundingRecord.builder()
+                    .internalId(coinbaseProLedgerDto.getId())
+                    .amount(coinbaseProLedgerDto.getAmount())
+                    .balance(coinbaseProLedgerDto.getBalance())
+                    .date(coinbaseProLedgerDto.getCreatedAt())
+                    .status(Status.COMPLETE)
+                    .description(coinbaseProLedgerDto.getType().name())
+                    //
+                    // .type(convertCoinbaseProLedgerTxType(coinbaseProLedgerDto.getType()))
+                    .build()));
     return records;
   }
 
-
-  public static Map<Currency, CurrencyMetaData> adaptCoinbaseProCurrencies(CoinbaseProCurrency[] coinbaseProCurrencies) {
+  public static Map<Currency, CurrencyMetaData> adaptCoinbaseProCurrencies(
+      CoinbaseProCurrency[] coinbaseProCurrencies) {
     Map<Currency, CurrencyMetaData> map = new HashMap<>();
 
-    Arrays.stream(coinbaseProCurrencies).forEach(coinbaseProCurrency -> map.put(adaptCurrency(coinbaseProCurrency), CurrencyMetaData.builder()
-            .scale(coinbaseProCurrency.getMinSize().scale())
-            .walletHealth("online".equals(coinbaseProCurrency.getStatus())
-                ? WalletHealth.ONLINE
-                : WalletHealth.OFFLINE)
-            .minWithdrawalAmount((coinbaseProCurrency.getDetails().getMinWithdrawalAmount() != null)
-                ? coinbaseProCurrency.getDetails().getMinWithdrawalAmount()
-                : BigDecimal.ZERO)
-        .build()));
+    Arrays.stream(coinbaseProCurrencies)
+        .forEach(
+            coinbaseProCurrency ->
+                map.put(
+                    adaptCurrency(coinbaseProCurrency),
+                    CurrencyMetaData.builder()
+                        .scale(coinbaseProCurrency.getMinSize().scale())
+                        .walletHealth(
+                            "online".equals(coinbaseProCurrency.getStatus())
+                                ? WalletHealth.ONLINE
+                                : WalletHealth.OFFLINE)
+                        .minWithdrawalAmount(
+                            (coinbaseProCurrency.getDetails().getMinWithdrawalAmount() != null)
+                                ? coinbaseProCurrency.getDetails().getMinWithdrawalAmount()
+                                : BigDecimal.ZERO)
+                        .build()));
 
     return map;
   }
 
-  public static Map<Instrument, InstrumentMetaData> adaptCoinbaseProCurrencyPairs(CoinbaseProProduct[] coinbaseProProducts) {
+  public static Map<Instrument, InstrumentMetaData> adaptCoinbaseProCurrencyPairs(
+      CoinbaseProProduct[] coinbaseProProducts) {
     Map<Instrument, InstrumentMetaData> map = new HashMap<>();
 
-    Arrays.stream(coinbaseProProducts).forEach(coinbaseProProduct -> {
-      Instrument instrument = adaptCurrencyPair(coinbaseProProduct);
+    Arrays.stream(coinbaseProProducts)
+        .forEach(
+            coinbaseProProduct -> {
+              Instrument instrument = adaptCurrencyPair(coinbaseProProduct);
 
-      map.put(instrument, new InstrumentMetaData.Builder()
-          .tradingFee(new BigDecimal("0.50"))
-          .volumeScale(numberOfDecimals(coinbaseProProduct.getBaseIncrement()))
-          .priceScale(numberOfDecimals(coinbaseProProduct.getQuoteIncrement()))
-          .counterMinimumAmount(coinbaseProProduct.getMinMarketFunds())
-          .amountStepSize(coinbaseProProduct.getBaseIncrement())
-          .priceStepSize(coinbaseProProduct.getQuoteIncrement())
-          .tradingFeeCurrency(instrument.getCounter())
-          .marketOrderEnabled(!coinbaseProProduct.isLimitOnly())
-          .build());
-    });
+              map.put(
+                  instrument,
+                  new InstrumentMetaData.Builder()
+                      .tradingFee(new BigDecimal("0.50"))
+                      .volumeScale(numberOfDecimals(coinbaseProProduct.getBaseIncrement()))
+                      .priceScale(numberOfDecimals(coinbaseProProduct.getQuoteIncrement()))
+                      .counterMinimumAmount(coinbaseProProduct.getMinMarketFunds())
+                      .amountStepSize(coinbaseProProduct.getBaseIncrement())
+                      .priceStepSize(coinbaseProProduct.getQuoteIncrement())
+                      .tradingFeeCurrency(instrument.getCounter())
+                      .marketOrderEnabled(!coinbaseProProduct.isLimitOnly())
+                      .build());
+            });
 
     return map;
   }

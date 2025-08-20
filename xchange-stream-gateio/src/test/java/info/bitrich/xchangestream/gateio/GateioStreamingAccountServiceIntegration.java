@@ -13,34 +13,35 @@ import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.Balance;
 
-@Disabled("Needs authenticated exchange and real balance change. Set env vars GATEIO_API_KEY/GATEIO_API_SECRET")
+@Disabled(
+    "Needs authenticated exchange and real balance change. Set env vars GATEIO_API_KEY/GATEIO_API_SECRET")
 class GateioStreamingAccountServiceIntegration extends GateioStreamingExchangeIT {
 
   @BeforeEach
   void authConfigured() {
-    assumeTrue(StringUtils.isNotEmpty(exchange.getExchangeSpecification().getApiKey()), "Needs auth");
-    assumeTrue(StringUtils.isNotEmpty(exchange.getExchangeSpecification().getSecretKey()), "Needs auth");
+    assumeTrue(
+        StringUtils.isNotEmpty(exchange.getExchangeSpecification().getApiKey()), "Needs auth");
+    assumeTrue(
+        StringUtils.isNotEmpty(exchange.getExchangeSpecification().getSecretKey()), "Needs auth");
   }
-
 
   @Test
   void spot_balances() {
-    Observable<Balance> observable = exchange
-        .getStreamingAccountService()
-        .getBalanceChanges(Currency.USDT);
+    Observable<Balance> observable =
+        exchange.getStreamingAccountService().getBalanceChanges(Currency.USDT);
 
     TestObserver<Balance> testObserver = observable.test();
 
-    Balance balance = testObserver
-        .assertSubscribed()
-        .awaitCount(1, TestWaitStrategy.SLEEP_10MS, 2000000)
-        .assertNoTimeout()
-        .values().get(0);
+    Balance balance =
+        testObserver
+            .assertSubscribed()
+            .awaitCount(1, TestWaitStrategy.SLEEP_10MS, 2000000)
+            .assertNoTimeout()
+            .values()
+            .get(0);
 
     testObserver.dispose();
 
     assertThat(balance).hasNoNullFieldsOrProperties();
   }
-
-
 }

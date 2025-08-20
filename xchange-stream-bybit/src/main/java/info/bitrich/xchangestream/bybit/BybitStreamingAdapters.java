@@ -11,7 +11,11 @@ public class BybitStreamingAdapters {
   public static List<UserTrade> adaptStreamingUserTradeList(List<BybitUserTradeDto> data) {
     List<UserTrade> userTrades = new ArrayList<>();
 
-    data.forEach(bybitUserTradeData -> userTrades.add(BybitAdapters.adaptUserTrade(bybitUserTradeData, bybitUserTradeData.getCategory())));
+    data.forEach(
+        bybitUserTradeData ->
+            userTrades.add(
+                BybitAdapters.adaptUserTrade(
+                    bybitUserTradeData, bybitUserTradeData.getCategory())));
 
     return userTrades;
   }

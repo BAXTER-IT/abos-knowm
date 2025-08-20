@@ -119,12 +119,13 @@ public class CoinbaseProExchange extends BaseExchange {
 
   @Override
   public void remoteInit() throws IOException {
-    exchangeMetaData = new ExchangeMetaData(
-        marketDataService.getInstruments(),
-        marketDataService.getCurrencies(),
-        exchangeMetaData == null ? null : exchangeMetaData.getPublicRateLimits(),
-        exchangeMetaData == null ? null : exchangeMetaData.getPrivateRateLimits(),
-        true);
+    exchangeMetaData =
+        new ExchangeMetaData(
+            marketDataService.getInstruments(),
+            marketDataService.getCurrencies(),
+            exchangeMetaData == null ? null : exchangeMetaData.getPublicRateLimits(),
+            exchangeMetaData == null ? null : exchangeMetaData.getPrivateRateLimits(),
+            true);
   }
 
   // @NoArgsConstructor(access = AccessLevel.PRIVATE)

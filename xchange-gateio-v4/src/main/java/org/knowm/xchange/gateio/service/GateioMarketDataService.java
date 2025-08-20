@@ -1,7 +1,6 @@
 package org.knowm.xchange.gateio.service;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +24,8 @@ import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.marketdata.params.Params;
 
-public class GateioMarketDataService extends GateioMarketDataServiceRaw implements MarketDataService {
+public class GateioMarketDataService extends GateioMarketDataServiceRaw
+    implements MarketDataService {
 
   public GateioMarketDataService(GateioExchange exchange) {
     super(exchange);
@@ -35,7 +35,6 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
   public Ticker getTicker(CurrencyPair currencyPair, Object... args) throws IOException {
     return getTicker((Instrument) currencyPair, args);
   }
-
 
   @Override
   public Ticker getTicker(Instrument instrument, Object... args) throws IOException {
@@ -50,15 +49,12 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
     }
   }
 
-
   @Override
   public List<Ticker> getTickers(Params params) throws IOException {
     try {
       List<GateioTicker> tickers = getGateioTickers(null);
 
-      return tickers.stream()
-              .map(GateioAdapters::toTicker)
-              .collect(Collectors.toList());
+      return tickers.stream().map(GateioAdapters::toTicker).collect(Collectors.toList());
     } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
@@ -83,10 +79,8 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
           .filter(gateioCurrencyInfo -> !gateioCurrencyInfo.getDelisted())
           .map(o -> StringUtils.removeEnd(o.getCurrencyWithChain(), "_" + o.getChain()))
           .distinct()
-          .collect(Collectors.toMap(
-              Currency::getInstance,
-              currency -> new CurrencyMetaData(0, null)
-          ));
+          .collect(
+              Collectors.toMap(Currency::getInstance, currency -> new CurrencyMetaData(0, null)));
     } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
@@ -96,8 +90,7 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
   public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
     try {
       return GateioAdapters.toInstruments(getCurrencyPairDetails());
-    }
-    catch (GateioException e) {
+    } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
   }
@@ -107,15 +100,15 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw implemen
       List<GateioCurrencyPairDetails> metadata = getCurrencyPairDetails();
 
       return metadata.stream()
-          .collect(Collectors.toMap(
-              gateioCurrencyPairDetails -> new CurrencyPair(gateioCurrencyPairDetails.getAsset(), gateioCurrencyPairDetails.getQuote()),
-              GateioAdapters::toInstrumentMetaData
-          ));
-    }
-    catch (GateioException e) {
+          .collect(
+              Collectors.toMap(
+                  gateioCurrencyPairDetails ->
+                      new CurrencyPair(
+                          gateioCurrencyPairDetails.getAsset(),
+                          gateioCurrencyPairDetails.getQuote()),
+                  GateioAdapters::toInstrumentMetaData));
+    } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
   }
-
-
 }

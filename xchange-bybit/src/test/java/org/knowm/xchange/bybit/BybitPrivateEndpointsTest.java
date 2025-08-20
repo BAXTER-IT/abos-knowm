@@ -30,7 +30,7 @@ public class BybitPrivateEndpointsTest {
   static String subAccountId;
 
   @BeforeClass
-  public static void setUp(){
+  public static void setUp() {
     Properties properties = new Properties();
 
     try {
@@ -58,25 +58,22 @@ public class BybitPrivateEndpointsTest {
 
     params.setInstrument(instrument);
 
-    List<UserTrade> userTrades = exchange
-        .getTradeService()
-        .getTradeHistory(params)
-        .getUserTrades();
+    List<UserTrade> userTrades = exchange.getTradeService().getTradeHistory(params).getUserTrades();
 
     assertThat(userTrades.isEmpty()).isFalse();
 
     userTrades.forEach(
-            userTrade -> {
-              assertThat(userTrade.getId()).isNotNull();
-              assertThat(userTrade.getOrderId()).isNotNull();
-              assertThat(userTrade.getOrderUserReference()).isNotNull();
-              assertThat(userTrade.getOriginalAmount()).isGreaterThan(BigDecimal.ZERO);
-              assertThat(userTrade.getPrice()).isGreaterThan(BigDecimal.ZERO);
-              assertThat(userTrade.getFeeAmount()).isGreaterThan(BigDecimal.ZERO);
-              assertThat(userTrade.getType()).isNotNull();
-              assertThat(userTrade.getFeeCurrency()).isNotNull();
-              assertThat(userTrade.getTimestamp()).isNotNull();
-            });
+        userTrade -> {
+          assertThat(userTrade.getId()).isNotNull();
+          assertThat(userTrade.getOrderId()).isNotNull();
+          assertThat(userTrade.getOrderUserReference()).isNotNull();
+          assertThat(userTrade.getOriginalAmount()).isGreaterThan(BigDecimal.ZERO);
+          assertThat(userTrade.getPrice()).isGreaterThan(BigDecimal.ZERO);
+          assertThat(userTrade.getFeeAmount()).isGreaterThan(BigDecimal.ZERO);
+          assertThat(userTrade.getType()).isNotNull();
+          assertThat(userTrade.getFeeCurrency()).isNotNull();
+          assertThat(userTrade.getTimestamp()).isNotNull();
+        });
   }
 
   @Test
@@ -89,17 +86,21 @@ public class BybitPrivateEndpointsTest {
         .forEach(
             (s, wallet) -> {
               assertThat(BybitAccountType.valueOf(s)).isInstanceOf(BybitAccountType.class);
-              assertThat(BybitAccountType.valueOf(wallet.getId())).isInstanceOf(BybitAccountType.class);
+              assertThat(BybitAccountType.valueOf(wallet.getId()))
+                  .isInstanceOf(BybitAccountType.class);
               assertThat(wallet.getFeatures()).isNotNull();
 
-              wallet.getBalances().forEach((currency, balance) -> {
-                assertThat(currency).isNotNull();
-                assertThat(balance.getAvailable()).isNotNull();
-                assertThat(balance.getTotal()).isNotNull();
-                assertThat(balance.getFrozen()).isNotNull();
-                assertThat(balance.getBorrowed()).isNotNull();
+              wallet
+                  .getBalances()
+                  .forEach(
+                      (currency, balance) -> {
+                        assertThat(currency).isNotNull();
+                        assertThat(balance.getAvailable()).isNotNull();
+                        assertThat(balance.getTotal()).isNotNull();
+                        assertThat(balance.getFrozen()).isNotNull();
+                        assertThat(balance.getBorrowed()).isNotNull();
+                      });
             });
-        });
   }
 
   @Test
@@ -112,24 +113,27 @@ public class BybitPrivateEndpointsTest {
         .forEach(
             (s, wallet) -> {
               assertThat(BybitAccountType.valueOf(s)).isInstanceOf(BybitAccountType.class);
-              assertThat(BybitAccountType.valueOf(wallet.getId())).isInstanceOf(BybitAccountType.class);
+              assertThat(BybitAccountType.valueOf(wallet.getId()))
+                  .isInstanceOf(BybitAccountType.class);
               assertThat(wallet.getFeatures()).isNotNull();
 
-              wallet.getBalances().forEach((currency, balance) -> {
-                assertThat(currency).isNotNull();
-                assertThat(balance.getAvailable()).isNotNull();
-                assertThat(balance.getTotal()).isNotNull();
-                assertThat(balance.getFrozen()).isNotNull();
-                assertThat(balance.getBorrowed()).isNotNull();
-              });
+              wallet
+                  .getBalances()
+                  .forEach(
+                      (currency, balance) -> {
+                        assertThat(currency).isNotNull();
+                        assertThat(balance.getAvailable()).isNotNull();
+                        assertThat(balance.getTotal()).isNotNull();
+                        assertThat(balance.getFrozen()).isNotNull();
+                        assertThat(balance.getBorrowed()).isNotNull();
+                      });
             });
   }
 
   @Test
   public void testWalletTransfers() throws IOException {
-    FundingRecordParamAll paramAll = FundingRecordParamAll.builder()
-        .status(FundingRecord.Status.COMPLETE)
-        .build();
+    FundingRecordParamAll paramAll =
+        FundingRecordParamAll.builder().status(FundingRecord.Status.COMPLETE).build();
     List<FundingRecord> records = exchange.getAccountService().getWalletTransferHistory(paramAll);
 
     assertThat(records.isEmpty()).isFalse();
@@ -148,8 +152,7 @@ public class BybitPrivateEndpointsTest {
 
   @Test
   public void testSubAccountTransfers() throws IOException {
-    FundingRecordParamAll paramAll = FundingRecordParamAll.builder()
-        .build();
+    FundingRecordParamAll paramAll = FundingRecordParamAll.builder().build();
     List<FundingRecord> records = exchange.getAccountService().getInternalTransferHistory(paramAll);
 
     assertThat(records.isEmpty()).isFalse();
@@ -170,8 +173,7 @@ public class BybitPrivateEndpointsTest {
 
   @Test
   public void testAccountDepositHistory() throws IOException {
-    FundingRecordParamAll paramAll = FundingRecordParamAll.builder()
-        .build();
+    FundingRecordParamAll paramAll = FundingRecordParamAll.builder().build();
     List<FundingRecord> records = exchange.getAccountService().getDepositHistory(paramAll);
 
     assertThat(records.isEmpty()).isFalse();
@@ -192,8 +194,7 @@ public class BybitPrivateEndpointsTest {
 
   @Test
   public void testAccountWithdrawHistory() throws IOException {
-    FundingRecordParamAll paramAll = FundingRecordParamAll.builder()
-        .build();
+    FundingRecordParamAll paramAll = FundingRecordParamAll.builder().build();
     List<FundingRecord> records = exchange.getAccountService().getWithdrawHistory(paramAll);
 
     assertThat(records.isEmpty()).isFalse();
@@ -211,12 +212,13 @@ public class BybitPrivateEndpointsTest {
           assertThat(fundingRecord.getBlockchainTransactionHash()).isNotNull();
         });
   }
+
   @Test
   public void testSubAccountDepositHistory() throws IOException {
-    FundingRecordParamAll paramAll = FundingRecordParamAll.builder()
-        .subAccountId(subAccountId)
-        .build();
-    List<FundingRecord> records = exchange.getAccountService().getSubAccountDepositHistory(paramAll);
+    FundingRecordParamAll paramAll =
+        FundingRecordParamAll.builder().subAccountId(subAccountId).build();
+    List<FundingRecord> records =
+        exchange.getAccountService().getSubAccountDepositHistory(paramAll);
 
     records.forEach(
         fundingRecord -> {
@@ -235,9 +237,7 @@ public class BybitPrivateEndpointsTest {
 
   @Test
   public void testLedger() throws IOException {
-    FundingRecordParamAll paramAll = FundingRecordParamAll.builder()
-        .usePagination(true)
-        .build();
+    FundingRecordParamAll paramAll = FundingRecordParamAll.builder().usePagination(true).build();
     List<FundingRecord> records = exchange.getAccountService().getLedger(paramAll);
 
     assertThat(records.isEmpty()).isFalse();

@@ -36,7 +36,6 @@ public class GateioAccountBookRecord {
   @JsonProperty("type")
   String typeDescription;
 
-
   public FundingRecord.Type getType() {
     // TODO map more types
     switch (typeDescription) {
@@ -48,6 +47,4 @@ public class GateioAccountBookRecord {
         return change.signum() > 0 ? Type.OTHER_INFLOW : Type.OTHER_OUTFLOW;
     }
   }
-
-
 }

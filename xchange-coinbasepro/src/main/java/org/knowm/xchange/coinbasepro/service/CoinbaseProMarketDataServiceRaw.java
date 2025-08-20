@@ -65,7 +65,8 @@ public class CoinbaseProMarketDataServiceRaw extends CoinbaseProBaseService {
     }
   }
 
-  public Map<String, CoinbaseProStats> getCoinbaseProStats() throws CoinbaseProException, IOException {
+  public Map<String, CoinbaseProStats> getCoinbaseProStats()
+      throws CoinbaseProException, IOException {
     try {
       return decorateApiCall(coinbasePro::getStats)
           .withRateLimiter(rateLimiter(PUBLIC_REST_ENDPOINT_RATE_LIMITER))
@@ -94,7 +95,8 @@ public class CoinbaseProMarketDataServiceRaw extends CoinbaseProBaseService {
   }
 
   /** https://docs.pro.coinbase.com/#get-trades */
-  public CoinbaseProTrade[] getCoinbaseProTrades(CurrencyPair currencyPair) throws CoinbaseProException, IOException {
+  public CoinbaseProTrade[] getCoinbaseProTrades(CurrencyPair currencyPair)
+      throws CoinbaseProException, IOException {
     try {
       return decorateApiCall(
               () ->
@@ -109,7 +111,8 @@ public class CoinbaseProMarketDataServiceRaw extends CoinbaseProBaseService {
 
   /** https://docs.pro.coinbase.com/#get-historic-rates */
   public CoinbaseProCandle[] getCoinbaseProHistoricalCandles(
-      CurrencyPair currencyPair, String start, String end, String granularity) throws CoinbaseProException, IOException {
+      CurrencyPair currencyPair, String start, String end, String granularity)
+      throws CoinbaseProException, IOException {
 
     try {
       return decorateApiCall(
@@ -151,7 +154,8 @@ public class CoinbaseProMarketDataServiceRaw extends CoinbaseProBaseService {
 
   /** https://docs.pro.coinbase.com/#get-trades */
   public CoinbaseProTrades getCoinbaseProTradesExtended(
-      CurrencyPair currencyPair, Long after, Integer limit) throws CoinbaseProException, IOException {
+      CurrencyPair currencyPair, Long after, Integer limit)
+      throws CoinbaseProException, IOException {
     return decorateApiCall(
             () ->
                 coinbasePro.getTradesPageable(

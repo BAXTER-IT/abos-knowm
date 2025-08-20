@@ -46,8 +46,8 @@ public class BitgetTradeService extends BitgetTradeServiceRaw implements TradeSe
   public UserTrades getTradeHistory(TradeHistoryParams params) throws IOException {
     try {
       List<BitgetFillDto> history = bitgetFills(params);
-      List<UserTrade> userTradeList = history.stream().map(BitgetAdapters::toUserTrade)
-          .collect(Collectors.toList());
+      List<UserTrade> userTradeList =
+          history.stream().map(BitgetAdapters::toUserTrade).collect(Collectors.toList());
       return new UserTrades(userTradeList, TradeSortType.SortByID);
     } catch (BitgetException e) {
       throw BitgetErrorAdapter.adapt(e);

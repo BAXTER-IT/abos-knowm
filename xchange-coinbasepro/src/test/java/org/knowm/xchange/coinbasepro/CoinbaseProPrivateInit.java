@@ -21,7 +21,8 @@ public class CoinbaseProPrivateInit {
 
     spec.setApiKey(properties.getProperty("coinbaseApi"));
     spec.setSecretKey(properties.getProperty("coinbaseSecret"));
-    spec.setExchangeSpecificParametersItem("passphrase", properties.getProperty("coinbasePassphrase"));
+    spec.setExchangeSpecificParametersItem(
+        "passphrase", properties.getProperty("coinbasePassphrase"));
     spec.setExchangeSpecificParametersItem(Exchange.USE_SANDBOX, true);
 
     return ExchangeFactory.INSTANCE.createExchange(spec);

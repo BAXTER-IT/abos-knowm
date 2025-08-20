@@ -4,10 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import jakarta.ws.rs.core.Response.Status;
-import org.apache.commons.io.IOUtils;
 import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +47,9 @@ public class BybitMarketDataServiceRawTest extends BaseWiremockTest {
     initInstrumentsInfoStub("/getInstrumentLinear.json5");
 
     BybitInstrumentsInfo<BybitInstrumentInfo> instrumentsInfo =
-        marketDataServiceRaw.getInstrumentsInfo(BybitCategory.LINEAR, null, null, null, 1000, null).getResult();
+        marketDataServiceRaw
+            .getInstrumentsInfo(BybitCategory.LINEAR, null, null, null, 1000, null)
+            .getResult();
 
     assertThat(instrumentsInfo.getList()).hasSize(1);
 
@@ -97,7 +95,9 @@ public class BybitMarketDataServiceRawTest extends BaseWiremockTest {
     initInstrumentsInfoStub("/getInstrumentOption.json5");
 
     BybitInstrumentsInfo<BybitInstrumentInfo> instrumentsInfo =
-        marketDataServiceRaw.getInstrumentsInfo(BybitCategory.OPTION, null, null, null, 1000, null).getResult();
+        marketDataServiceRaw
+            .getInstrumentsInfo(BybitCategory.OPTION, null, null, null, 1000, null)
+            .getResult();
 
     assertThat(instrumentsInfo.getList()).hasSize(1);
 
@@ -132,7 +132,9 @@ public class BybitMarketDataServiceRawTest extends BaseWiremockTest {
     initInstrumentsInfoStub("/getInstrumentSpot.json5");
 
     BybitInstrumentsInfo<BybitInstrumentInfo> instrumentsInfo =
-        marketDataServiceRaw.getInstrumentsInfo(BybitCategory.SPOT, null, null, null, 1000, null).getResult();
+        marketDataServiceRaw
+            .getInstrumentsInfo(BybitCategory.SPOT, null, null, null, 1000, null)
+            .getResult();
 
     assertThat(instrumentsInfo.getList()).hasSize(1);
 

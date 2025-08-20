@@ -9,10 +9,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import jakarta.ws.rs.core.Response.Status;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
@@ -289,17 +289,18 @@ public class BybitTradeServiceRawTest extends BaseWiremockTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(response)));
 
-    BybitResult<BybitTradeHistoryResponse> bybitTradeHistory = bybitTradeServiceRaw.getBybitTradeHistory(
-        BybitCategory.SPOT,
-        new CurrencyPair("BTC", "USDT"),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null);
+    BybitResult<BybitTradeHistoryResponse> bybitTradeHistory =
+        bybitTradeServiceRaw.getBybitTradeHistory(
+            BybitCategory.SPOT,
+            new CurrencyPair("BTC", "USDT"),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
 
     System.out.println(bybitTradeHistory);
   }

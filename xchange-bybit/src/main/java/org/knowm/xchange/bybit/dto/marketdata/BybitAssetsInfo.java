@@ -14,10 +14,13 @@ public class BybitAssetsInfo {
 
     @JsonProperty("coin")
     private final String coin;
+
     @JsonProperty("frozen")
     private final BigDecimal frozen;
+
     @JsonProperty("free")
     private final BigDecimal free;
+
     @JsonProperty("withdraw")
     private final BigDecimal withdraw;
   }

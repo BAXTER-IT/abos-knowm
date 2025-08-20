@@ -85,7 +85,7 @@ public class BybitTransactionLogResponse {
     private String orderId;
 
     @JsonProperty("orderLinkId")
-    private String orderLinkId; //userReference
+    private String orderLinkId; // userReference
 
     public enum BybitTransactionLogType {
       TRANSFER_IN,
@@ -106,10 +106,10 @@ public class BybitTransactionLogResponse {
       AUTO_BUY_LIABILITY_INS_LOAN,
       AUTO_PRINCIPLE_REPAYMENT_INS_LOAN,
       AUTO_INTEREST_REPAYMENT_INS_LOAN,
-      TRANSFER_IN_INS_LOAN, //Transfer In when in the liquidation of OTC loan
-      TRANSFER_OUT_INS_LOAN, //Transfer Out when in the liquidation of OTC loan
-      SPOT_REPAYMENT_SELL, //One-click repayment currency sell
-      SPOT_REPAYMENT_BUY //One-click repayment currency buy
+      TRANSFER_IN_INS_LOAN, // Transfer In when in the liquidation of OTC loan
+      TRANSFER_OUT_INS_LOAN, // Transfer Out when in the liquidation of OTC loan
+      SPOT_REPAYMENT_SELL, // One-click repayment currency sell
+      SPOT_REPAYMENT_BUY // One-click repayment currency buy
     }
   }
 }

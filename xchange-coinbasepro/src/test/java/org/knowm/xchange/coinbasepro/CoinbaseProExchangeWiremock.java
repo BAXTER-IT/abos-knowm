@@ -12,37 +12,33 @@ import org.knowm.xchange.ExchangeSpecification;
 
 public abstract class CoinbaseProExchangeWiremock {
 
-    protected static CoinbaseProExchange exchange;
-    private static final boolean IS_RECORDING = false;
+  protected static CoinbaseProExchange exchange;
+  private static final boolean IS_RECORDING = false;
 
-    @ClassRule
-    public static WireMockClassRule wireMockRule = new WireMockClassRule(options().dynamicPort());
+  @ClassRule
+  public static WireMockClassRule wireMockRule = new WireMockClassRule(options().dynamicPort());
 
-    @BeforeClass
-    public static void initExchange() {
-      ExchangeSpecification exSpec = new ExchangeSpecification(CoinbaseProExchange.class);
+  @BeforeClass
+  public static void initExchange() {
+    ExchangeSpecification exSpec = new ExchangeSpecification(CoinbaseProExchange.class);
 
-      if (IS_RECORDING) {
+    if (IS_RECORDING) {
 
-        wireMockRule.startRecording(
-            new RecordSpecBuilder()
-                .forTarget("https://api.pro.coinbase.com")
-                .matchRequestBodyWithEqualToJson()
-                .extractTextBodiesOver(1L)
-                .chooseBodyMatchTypeAutomatically()
-        );
-
-      }
-
-      exchange = (CoinbaseProExchange) ExchangeFactory.INSTANCE.createExchange(exSpec);
-
+      wireMockRule.startRecording(
+          new RecordSpecBuilder()
+              .forTarget("https://api.pro.coinbase.com")
+              .matchRequestBodyWithEqualToJson()
+              .extractTextBodiesOver(1L)
+              .chooseBodyMatchTypeAutomatically());
     }
 
+    exchange = (CoinbaseProExchange) ExchangeFactory.INSTANCE.createExchange(exSpec);
+  }
 
-    @AfterClass
-    public static void stop() {
-      if (IS_RECORDING) {
-        wireMockRule.stopRecording();
-      }
+  @AfterClass
+  public static void stop() {
+    if (IS_RECORDING) {
+      wireMockRule.stopRecording();
     }
+  }
 }

@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -17,7 +16,9 @@ import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.exceptions.ExchangeException;
 
-/** @author Z. Dolezal */
+/**
+ * @author Z. Dolezal
+ */
 @SuppressWarnings("rawtypes")
 public class BitbayAccountServiceRaw extends BitbayBaseService {
 

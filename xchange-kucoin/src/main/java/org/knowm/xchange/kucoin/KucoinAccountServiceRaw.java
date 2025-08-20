@@ -31,17 +31,18 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
                 .call());
   }
 
-  public Pagination<SubAccountsResponse> getKucoinSubAccounts(Integer pageSize, Integer currentPage) throws IOException {
+  public Pagination<SubAccountsResponse> getKucoinSubAccounts(Integer pageSize, Integer currentPage)
+      throws IOException {
     checkAuthenticated();
     return classifyingExceptions(
-            () ->
-                    decorateApiCall(
-                            () ->
-                                    accountApi.getSubAccounts(
-                                            apiKey, digest, nonceFactory, passphrase, "2", pageSize, currentPage))
-                            .withRetry(retry("subAccounts"))
-                            .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
-                            .call());
+        () ->
+            decorateApiCall(
+                    () ->
+                        accountApi.getSubAccounts(
+                            apiKey, digest, nonceFactory, passphrase, "2", pageSize, currentPage))
+                .withRetry(retry("subAccounts"))
+                .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+                .call());
   }
 
   public Void createKucoinAccount(String currency, String type) throws IOException {
@@ -66,7 +67,8 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
         () ->
             decorateApiCall(
                     () ->
-                        withdrawalAPI.applyWithdraw(apiKey, digest, nonceFactory, passphrase, "2", req))
+                        withdrawalAPI.applyWithdraw(
+                            apiKey, digest, nonceFactory, passphrase, "2", req))
                 .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
                 .call());
   }
