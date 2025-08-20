@@ -26,14 +26,14 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.knowm.xchange.fork</groupId>
-            <artifactId>xchange-core</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
+            <groupId>org.knowm.xchange.fork</groupId>
+            <artifactId>xchange-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>
