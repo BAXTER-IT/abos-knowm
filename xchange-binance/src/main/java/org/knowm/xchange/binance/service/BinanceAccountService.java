@@ -144,7 +144,8 @@ public class BinanceAccountService extends BinanceAccountServiceRaw implements A
 
   /** Results based on ExchangeSpecificParametersItem(EXCHANGE_TYPE) */
   @Override
-  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument() throws IOException {
+  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument(String... category)
+      throws IOException {
     try {
       Map<Instrument, Fee> fees = new HashMap<>();
       if (exchange
