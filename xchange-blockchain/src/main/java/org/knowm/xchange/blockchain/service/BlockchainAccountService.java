@@ -149,7 +149,8 @@ public class BlockchainAccountService extends BlockchainAccountServiceRaw
   }
 
   @Override
-  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument() throws IOException {
+  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument(String... category)
+      throws IOException {
     try {
       BlockchainFees fees = this.getFees();
       Map<Instrument, Fee> tradingFees = new HashMap<>();

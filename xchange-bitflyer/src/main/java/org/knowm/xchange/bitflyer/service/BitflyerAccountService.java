@@ -36,7 +36,8 @@ public class BitflyerAccountService extends BitflyerAccountServiceRaw implements
   }
 
   @Override
-  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument() throws IOException {
+  public Map<Instrument, Fee> getDynamicTradingFeesByInstrument(String... category)
+      throws IOException {
     Map<Instrument, Fee> tradingFees = new HashMap<>();
     List<Instrument> pairs = exchange.getExchangeInstruments();
 
