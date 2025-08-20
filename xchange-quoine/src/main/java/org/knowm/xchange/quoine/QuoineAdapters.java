@@ -208,7 +208,7 @@ public class QuoineAdapters {
   }
 
   public static String toPairString(CurrencyPair currencyPair) {
-    return currencyPair.base.getCurrencyCode() + currencyPair.counter.getCurrencyCode();
+    return currencyPair.getBase().getCurrencyCode() + currencyPair.getCounter().getCurrencyCode();
   }
 
   public static FundingRecord adaptFunding(

@@ -294,17 +294,17 @@ public class BybitAdapters {
     if (instrument instanceof CurrencyPair) {
       if (isMaker && feeRate.compareTo(BigDecimal.ZERO) > 0) {
         return (side.equals(BybitSide.BUY)
-            ? ((CurrencyPair) instrument).base
-            : ((CurrencyPair) instrument).counter);
+            ? ((CurrencyPair) instrument).getBase()
+            : ((CurrencyPair) instrument).getCounter());
       } else {
         if (isMaker) {
           return (side.equals(BybitSide.BUY)
-              ? ((CurrencyPair) instrument).counter
-              : ((CurrencyPair) instrument).base);
+              ? ((CurrencyPair) instrument).getCounter()
+              : ((CurrencyPair) instrument).getBase());
         } else {
           return (side.equals(BybitSide.BUY)
-              ? ((CurrencyPair) instrument).base
-              : ((CurrencyPair) instrument).counter);
+              ? ((CurrencyPair) instrument).getBase()
+              : ((CurrencyPair) instrument).getCounter());
         }
       }
     } else {

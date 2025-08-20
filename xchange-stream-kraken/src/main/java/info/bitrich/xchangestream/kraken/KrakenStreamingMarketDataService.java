@@ -109,7 +109,7 @@ public class KrakenStreamingMarketDataService implements StreamingMarketDataServ
   }
 
   public String getChannelName(KrakenSubscriptionName subscriptionName, CurrencyPair currencyPair) {
-    String pair = currencyPair.base.toString() + "/" + currencyPair.counter.toString();
+    String pair = currencyPair.getBase().toString() + "/" + currencyPair.getCounter().toString();
     return subscriptionName + KRAKEN_CHANNEL_DELIMITER + pair;
   }
 }

@@ -310,7 +310,7 @@ public class BitmexAdapters {
   public static String adaptCurrencyPairToSymbol(CurrencyPair currencyPair) {
     return currencyPair == null
         ? null
-        : currencyPair.base.getCurrencyCode() + currencyPair.counter.getCurrencyCode();
+        : currencyPair.getBase().getCurrencyCode() + currencyPair.getCounter().getCurrencyCode();
   }
 
   public static CurrencyPair adaptSymbolToCurrencyPair(String bitmexSymbol) {

@@ -35,8 +35,8 @@ public class BlockchainAdapters {
   public static String toSymbol(CurrencyPair currencyPair) {
     return String.format(
         CURRENCY_PAIR_SYMBOL_FORMAT,
-        currencyPair.base.getCurrencyCode(),
-        currencyPair.counter.getCurrencyCode());
+        currencyPair.getBase().getCurrencyCode(),
+        currencyPair.getCounter().getCurrencyCode());
   }
 
   public static CurrencyPair toCurrencyPair(Instrument instrument) {

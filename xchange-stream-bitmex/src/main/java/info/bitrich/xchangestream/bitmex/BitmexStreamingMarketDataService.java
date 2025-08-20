@@ -58,7 +58,7 @@ public class BitmexStreamingMarketDataService implements StreamingMarketDataServ
   }
 
   private String getBitmexSymbol(CurrencyPair currencyPair) {
-    return currencyPair.base.toString() + currencyPair.counter.toString();
+    return currencyPair.getBase().toString() + currencyPair.getCounter().toString();
   }
 
   @Override

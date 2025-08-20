@@ -29,7 +29,8 @@ import org.slf4j.LoggerFactory;
 public class BitmexBulkOrderTest {
   private static final Logger logger = LoggerFactory.getLogger(BitmexBulkOrderTest.class);
 
-  public static final String SYMBOL = XBT_USD.base.toString() + XBT_USD.counter.toString();
+  public static final String SYMBOL =
+      XBT_USD.getBase().toString() + XBT_USD.getCounter().toString();
 
   @Test
   @Ignore
