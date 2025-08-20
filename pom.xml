@@ -138,7 +138,6 @@
     <module>xchange-exmo</module>
     <module>xchange-examples</module>
     <module>xchange-finery-markets</module>
-    <module>xchange-ftx</module>
     <module>xchange-gateio</module>
     <module>xchange-gateio-v4</module>
     <module>xchange-gemini</module>
@@ -191,7 +190,6 @@
     <module>xchange-stream-core</module>
     <module>xchange-stream-dydx</module>
     <module>xchange-stream-finery-markets</module>
-    <module>xchange-stream-ftx</module>
     <module>xchange-stream-gateio</module>
     <module>xchange-stream-gemini</module>
     <module>xchange-stream-gemini-v2</module>
