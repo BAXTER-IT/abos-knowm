@@ -213,12 +213,7 @@
 			<artifactId>xchange-okex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- XChange Bleutrade exchange support -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>xchange-bleutrade</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
 		<!-- XChange Mercado Bitcoin exchange support -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
