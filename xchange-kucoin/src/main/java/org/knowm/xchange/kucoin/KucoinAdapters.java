@@ -73,7 +73,9 @@ public class KucoinAdapters {
   private static final String TAKER_FEE_RATE = "takerFeeRate";
 
   public static String adaptCurrencyPair(CurrencyPair pair) {
-    return pair == null ? null : pair.base.getCurrencyCode() + "-" + pair.counter.getCurrencyCode();
+    return pair == null
+        ? null
+        : pair.getBase().getCurrencyCode() + "-" + pair.getCounter().getCurrencyCode();
   }
 
   public static CurrencyPair adaptCurrencyPair(String symbol) {
@@ -170,10 +172,12 @@ public class KucoinAdapters {
               .marketOrderEnabled(true)
               .build());
 
-      if (!currencies.containsKey(pair.base))
-        currencies.put(pair.base, stringCurrencyMetaDataMap.get(pair.base.getCurrencyCode()));
-      if (!currencies.containsKey(pair.counter))
-        currencies.put(pair.counter, stringCurrencyMetaDataMap.get(pair.counter.getCurrencyCode()));
+      if (!currencies.containsKey(pair.getBase()))
+        currencies.put(
+            pair.getBase(), stringCurrencyMetaDataMap.get(pair.getBase().getCurrencyCode()));
+      if (!currencies.containsKey(pair.getCounter()))
+        currencies.put(
+            pair.getCounter(), stringCurrencyMetaDataMap.get(pair.getCounter().getCurrencyCode()));
     }
 
     return new ExchangeMetaData(
@@ -350,7 +354,7 @@ public class KucoinAdapters {
     return new UserTrade.Builder()
         .currencyPair(currencyPair)
         .feeAmount(histOrder.getFee())
-        .feeCurrency(currencyPair.base)
+        .feeCurrency(currencyPair.getBase())
         .id(histOrder.getId())
         .originalAmount(histOrder.getAmount())
         .price(histOrder.getPrice())

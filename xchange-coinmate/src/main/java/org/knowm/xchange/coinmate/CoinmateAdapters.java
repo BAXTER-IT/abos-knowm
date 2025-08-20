@@ -229,7 +229,7 @@ public class CoinmateAdapters {
                         .id(Long.toString(entry.getTransactionId()))
                         .orderId(Long.toString(entry.getOrderId()))
                         .feeAmount(entry.getFee())
-                        .feeCurrency(CoinmateUtils.getPair(entry.getCurrencyPair()).counter)
+                        .feeCurrency(CoinmateUtils.getPair(entry.getCurrencyPair()).getCounter())
                         .build())
             .collect(
                 Collectors.toCollection(

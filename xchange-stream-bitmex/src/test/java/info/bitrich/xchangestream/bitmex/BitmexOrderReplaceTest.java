@@ -70,8 +70,8 @@ public class BitmexOrderReplaceTest {
     //        streamingMarketDataService.authenticate();
     CurrencyPair xbtUsd =
         exchange.determineActiveContract(
-            CurrencyPair.XBT_USD.base.toString(),
-            CurrencyPair.XBT_USD.counter.toString(),
+            CurrencyPair.XBT_USD.getBase().toString(),
+            CurrencyPair.XBT_USD.getCounter().toString(),
             PERPETUAL);
 
     streamingMarketDataService

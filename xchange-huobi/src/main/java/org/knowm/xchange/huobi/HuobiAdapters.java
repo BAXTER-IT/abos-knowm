@@ -313,7 +313,7 @@ public class HuobiAdapters {
         .id("") // Trade id
         .orderId(order.getId()) // Original order id
         .feeAmount(feeAmount)
-        .feeCurrency(order.getCurrencyPair().counter)
+        .feeCurrency(order.getCurrencyPair().getCounter())
         .build();
   }
 

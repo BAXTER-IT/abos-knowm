@@ -18,7 +18,7 @@ public class BitmexStreamingTradeService {
 
   public Observable<Order> getOrders(CurrencyPair currencyPair, Object... args) {
     String channelName = "order";
-    String instrument = currencyPair.base.toString() + currencyPair.counter.toString();
+    String instrument = currencyPair.getBase().toString() + currencyPair.getCounter().toString();
     return streamingService
         .subscribeBitmexChannel(channelName)
         .flatMapIterable(

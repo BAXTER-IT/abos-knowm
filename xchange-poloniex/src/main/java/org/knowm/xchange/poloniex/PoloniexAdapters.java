@@ -219,10 +219,10 @@ public class PoloniexAdapters {
     if (orderType == OrderType.ASK) {
       feeAmount =
           amount.multiply(price).multiply(userTrade.getFee()).setScale(8, RoundingMode.DOWN);
-      feeCurrencyCode = currencyPair.counter.getCurrencyCode();
+      feeCurrencyCode = currencyPair.getCounter().getCurrencyCode();
     } else {
       feeAmount = amount.multiply(userTrade.getFee()).setScale(8, RoundingMode.DOWN);
-      feeCurrencyCode = currencyPair.base.getCurrencyCode();
+      feeCurrencyCode = currencyPair.getBase().getCurrencyCode();
     }
 
     return new UserTrade.Builder()
