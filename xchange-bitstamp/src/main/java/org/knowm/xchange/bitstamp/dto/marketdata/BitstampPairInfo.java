@@ -30,4 +30,11 @@ public class BitstampPairInfo {
 
   @JsonProperty("description")
   String description;
+
+  @JsonProperty("instant_and_market_orders")
+  String instantAndMarketOrders;
+
+  public boolean isMarketOrdersEnabled() {
+    return "Enabled".equals(instantAndMarketOrders);
+  }
 }
