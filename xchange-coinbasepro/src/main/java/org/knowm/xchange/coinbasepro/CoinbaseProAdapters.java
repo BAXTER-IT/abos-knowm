@@ -324,7 +324,7 @@ public class CoinbaseProAdapters {
       CurrencyPair currencyPair = new CurrencyPair(fill.getProductId().replace('-', '/'));
 
       trades.add(
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(fill.getSide().equals(Side.buy) ? OrderType.BID : OrderType.ASK)
               .originalAmount(fill.getSize())
               .currencyPair(currencyPair)
@@ -575,7 +575,7 @@ public class CoinbaseProAdapters {
 
               map.put(
                   instrument,
-                  new InstrumentMetaData.Builder()
+                  InstrumentMetaData.builder()
                       .tradingFee(new BigDecimal("0.50"))
                       .volumeScale(numberOfDecimals(coinbaseProProduct.getBaseIncrement()))
                       .priceScale(numberOfDecimals(coinbaseProProduct.getQuoteIncrement()))

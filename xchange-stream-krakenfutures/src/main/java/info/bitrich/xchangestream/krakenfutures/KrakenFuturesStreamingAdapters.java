@@ -104,7 +104,7 @@ public class KrakenFuturesStreamingAdapters {
         .forEach(
             krakenFuturesStreamingFill ->
                 userTrades.add(
-                    new UserTrade.Builder()
+                    UserTrade.builder()
                         .price(krakenFuturesStreamingFill.getPrice())
                         .originalAmount(krakenFuturesStreamingFill.getQty())
                         .id(krakenFuturesStreamingFill.getFill_id())

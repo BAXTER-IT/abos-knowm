@@ -118,7 +118,7 @@ public class AscendexAdapters {
     ascendexOrderHistoryResponse.forEach(
         order ->
             userTrades.add(
-                new UserTrade.Builder()
+                UserTrade.builder()
                     .feeAmount(order.getCumFee())
                     .orderId(order.getOrderId())
                     .price(order.getPrice())
@@ -194,7 +194,7 @@ public class AscendexAdapters {
         ascendexProductDto ->
             currencyPairMetaDataMap.put(
                 CurrencyPairDeserializer.getCurrencyPairFromString(ascendexProductDto.getSymbol()),
-                new InstrumentMetaData.Builder()
+                InstrumentMetaData.builder()
                     .tradingFee(ascendexProductDto.getCommissionReserveRate())
                     .priceScale(ascendexProductDto.getTickSize().scale())
                     .volumeScale(ascendexProductDto.getLotSize().scale())

@@ -130,7 +130,7 @@ public class BitmexExchange extends BaseExchange implements Exchange {
           if (!pairsMap.containsKey(cp)) {
             pairsMap.put(
                 cp,
-                new InstrumentMetaData.Builder()
+                InstrumentMetaData.builder()
                     .minimumAmount(BigDecimal.ONE)
                     .priceScale(getPriceScale(tickers, cp))
                     .build());

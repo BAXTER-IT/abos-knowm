@@ -582,7 +582,7 @@ public final class BitfinexAdapters {
       Date timestamp = convertBigDecimalTimestampToDate(trade.getTimestamp());
       final BigDecimal fee = trade.getFeeAmount() == null ? null : trade.getFeeAmount().negate();
       pastTrades.add(
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(orderType)
               .originalAmount(trade.getAmount())
               .currencyPair(currencyPair)
@@ -611,7 +611,7 @@ public final class BitfinexAdapters {
               : trade.getExecAmount();
       final BigDecimal fee = trade.getFee() != null ? trade.getFee().negate() : null;
       pastTrades.add(
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(orderType)
               .originalAmount(amount)
               .currencyPair(adaptCurrencyPair(trade.getSymbol()))
@@ -699,7 +699,7 @@ public final class BitfinexAdapters {
 
                 currencyPairs.put(
                     currencyPair,
-                    new InstrumentMetaData.Builder()
+                    InstrumentMetaData.builder()
                         .tradingFee(
                             currencyPairs.get(currencyPair) == null
                                 ? null
@@ -757,7 +757,7 @@ public final class BitfinexAdapters {
     // now.
     // also setting the taker_fee as the trading_fee for now.
     final InstrumentMetaData metaData =
-        new InstrumentMetaData.Builder()
+        InstrumentMetaData.builder()
             .tradingFee(bitfinexAccountInfos[0].getTakerFees().movePointLeft(2))
             .build();
     currencyPairs.keySet().parallelStream()
@@ -767,7 +767,7 @@ public final class BitfinexAdapters {
                     currencyPair,
                     metaData,
                     (oldMetaData, newMetaData) ->
-                        new InstrumentMetaData.Builder()
+                        InstrumentMetaData.builder()
                             .tradingFee(newMetaData.getTradingFee())
                             .minimumAmount(oldMetaData.getMinimumAmount())
                             .maximumAmount(oldMetaData.getMaximumAmount())

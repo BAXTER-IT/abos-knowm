@@ -131,7 +131,7 @@ public class CoinjarAdapters {
   }
 
   public static UserTrade adaptOrderToUserTrade(CoinjarOrder order) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .id(order.oid.toString())
         .orderId(order.oid.toString())
         .currencyPair(productToCurrencyPair(order.productId))
@@ -166,7 +166,7 @@ public class CoinjarAdapters {
   }
 
   public static UserTrade adaptFillToUserTrade(CoinjarFill coinjarFill) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .id(coinjarFill.tid.toString())
         .orderId(coinjarFill.oid.toString())
         .currencyPair(productToCurrencyPair(coinjarFill.productId))

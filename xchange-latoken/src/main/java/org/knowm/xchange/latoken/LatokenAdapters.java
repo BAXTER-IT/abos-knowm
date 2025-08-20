@@ -54,7 +54,7 @@ public class LatokenAdapters {
             .getMinOrderAmount()
             .setScale(latokenPair.getAmountPrecision(), RoundingMode.HALF_DOWN);
     int priceScale = latokenPair.getPricePrecision();
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .tradingFee(tradingFee)
         .minimumAmount(minAmount)
         .priceScale(priceScale)
@@ -204,7 +204,7 @@ public class LatokenAdapters {
   }
 
   public static UserTrade adaptUserTrade(LatokenUserTrade latokenUserTrade, CurrencyPair pair) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(adaptOrderType(latokenUserTrade.getSide()))
         .originalAmount(latokenUserTrade.getAmount())
         .currencyPair(pair)

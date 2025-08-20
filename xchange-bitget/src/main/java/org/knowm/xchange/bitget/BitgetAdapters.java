@@ -72,8 +72,8 @@ public class BitgetAdapters {
   }
 
   public InstrumentMetaData toInstrumentMetaData(BitgetSymbolDto bitgetSymbolDto) {
-    InstrumentMetaData.Builder builder =
-        new InstrumentMetaData.Builder()
+    InstrumentMetaData.InstrumentMetaDataBuilder builder =
+        InstrumentMetaData.builder()
             .tradingFee(bitgetSymbolDto.getTakerFeeRate())
             .minimumAmount(bitgetSymbolDto.getMinTradeAmount())
             .maximumAmount(bitgetSymbolDto.getMaxTradeAmount())

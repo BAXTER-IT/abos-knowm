@@ -48,7 +48,7 @@ public class OkexAdapters {
         okexOrderDetails -> {
           Instrument instrument = adaptOkexInstrumentId(okexOrderDetails.getInstrumentId());
           userTradeList.add(
-              new UserTrade.Builder()
+              UserTrade.builder()
                   .originalAmount(
                       convertContractSizeToVolume(
                           okexOrderDetails.getAmount(),
@@ -325,7 +325,7 @@ public class OkexAdapters {
       }
       instrumentMetaData.put(
           pair,
-          new InstrumentMetaData.Builder()
+          InstrumentMetaData.builder()
               .tradingFee(new BigDecimal(makerFee).negate())
               .minimumAmount(
                   (instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))

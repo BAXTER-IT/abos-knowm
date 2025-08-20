@@ -122,7 +122,7 @@ public class FineryMarketsAdapters {
 
     CurrencyPair instrument = adaptCurrencyPair(input.getInstrumentName());
 
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(orderType)
         .originalAmount(BigDecimal.valueOf(input.getDealSize()).movePointLeft(8))
         .instrument(instrument)
@@ -149,7 +149,7 @@ public class FineryMarketsAdapters {
     if (input == null) {
       return null;
     }
-    return new InstrumentMetaData.Builder().rawJson(input.getRawJson()).build();
+    return InstrumentMetaData.builder().rawJson(input.getRawJson()).build();
   }
 
   private static Currency adaptCurrency(FineryMarketsCurrency input) {
