@@ -79,7 +79,7 @@ public class GateioAdapters {
 
   public InstrumentMetaData toInstrumentMetaData(
       GateioCurrencyPairDetails gateioCurrencyPairDetails) {
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .tradingFee(gateioCurrencyPairDetails.getFee())
         .minimumAmount(gateioCurrencyPairDetails.getMinAssetAmount())
         .counterMinimumAmount(gateioCurrencyPairDetails.getMinQuoteAmount())
@@ -329,7 +329,7 @@ public class GateioAdapters {
             Collectors.toMap(
                 detail -> new CurrencyPair(detail.getAsset(), detail.getQuote()),
                 detail ->
-                    new InstrumentMetaData.Builder()
+                    InstrumentMetaData.builder()
                         .minimumAmount(detail.getMinAssetAmount())
                         .counterMinimumAmount(detail.getMinQuoteAmount())
                         .build()));

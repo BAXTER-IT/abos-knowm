@@ -104,7 +104,7 @@ public class LivecoinAdapters {
       CurrencyPair pair = adaptCurrencyPair(product);
       currencyPairs.put(
           pair,
-          new InstrumentMetaData.Builder()
+          InstrumentMetaData.builder()
               .priceScale(
                   (product.getPriceScale() == null)
                       ? FALLBACK_PRICE_SCALE
@@ -237,7 +237,7 @@ public class LivecoinAdapters {
 
     String id = map.get("id").toString();
 
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(type)
         .originalAmount(amountA)
         .currencyPair(new CurrencyPair(ccyA, ccyB))

@@ -159,7 +159,7 @@ public class KucoinAdapters {
 
       currencyPairs.put(
           pair,
-          new InstrumentMetaData.Builder()
+          InstrumentMetaData.builder()
               .tradingFee(takerTradingFee)
               .minimumAmount(minSize)
               .maximumAmount(maxSize)
@@ -335,7 +335,7 @@ public class KucoinAdapters {
   }
 
   public static UserTrade adaptUserTrade(TradeResponse trade) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .currencyPair(adaptCurrencyPair(trade.getSymbol()))
         .feeAmount(trade.getFee())
         .feeCurrency(Currency.getInstance(trade.getFeeCurrency()))
@@ -351,7 +351,7 @@ public class KucoinAdapters {
 
   public static UserTrade adaptHistOrder(HistOrdersResponse histOrder) {
     CurrencyPair currencyPair = adaptCurrencyPair(histOrder.getSymbol());
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .currencyPair(currencyPair)
         .feeAmount(histOrder.getFee())
         .feeCurrency(currencyPair.getBase())

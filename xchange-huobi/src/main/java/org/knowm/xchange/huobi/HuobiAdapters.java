@@ -161,7 +161,7 @@ public class HuobiAdapters {
             ? null
             : metadata.getMinimumAmount().setScale(pair.getAmountPrecision(), RoundingMode.DOWN);
     FeeTier[] feeTiers = metadata == null ? null : metadata.getFeeTiers();
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .tradingFee(fee)
         .minimumAmount(minQty)
         .priceScale(pair.getPricePrecision())
@@ -304,7 +304,7 @@ public class HuobiAdapters {
             .multiply(order.getLimitPrice())
             .multiply(fee)
             .setScale(8, RoundingMode.DOWN);
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(order.getType())
         .originalAmount(order.getCumulativeAmount())
         .currencyPair(order.getCurrencyPair())
@@ -368,7 +368,7 @@ public class HuobiAdapters {
         .sequential()
         .map(
             huobiOrder ->
-                new UserTrade.Builder()
+                UserTrade.builder()
                     .id(Long.toString(huobiOrder.getId()))
                     .instrument(adaptCurrencyPair(huobiOrder.getSymbol()))
                     .orderUserReference(huobiOrder.getClOrdId())

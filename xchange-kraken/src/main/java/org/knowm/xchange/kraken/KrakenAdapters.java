@@ -465,7 +465,7 @@ public class KrakenAdapters {
 
   private static InstrumentMetaData adaptPair(
       KrakenAssetPair krakenPair, InstrumentMetaData OriginalMeta) {
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .tradingFee(krakenPair.getFees().get(0).getPercentFee().divide(new BigDecimal(100)))
         .minimumAmount(krakenPair.getOrderMin())
         .priceScale(krakenPair.getPairScale())

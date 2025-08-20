@@ -71,7 +71,7 @@ public class YoBitAdapters {
       Integer priceScale = value.getDecimal_places();
       currencyPairs.put(
           pair,
-          new InstrumentMetaData.Builder()
+          InstrumentMetaData.builder()
               .tradingFee(value.getFee())
               .minimumAmount(minSize)
               .priceScale(priceScale)
@@ -244,7 +244,7 @@ public class YoBitAdapters {
 
     Date time = DateUtils.fromUnixTime(Long.parseLong(timestamp));
 
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(adaptType(type))
         .originalAmount(new BigDecimal(amount))
         .currencyPair(adaptCurrencyPair(pair))
