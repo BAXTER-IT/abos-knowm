@@ -3,8 +3,8 @@ package info.bitrich.xchangestream.bybit;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.service.netty.ConnectionStateModel;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import org.knowm.xchange.bybit.BybitExchange;
 
 public class BybitStreamingExchange extends BybitExchange implements StreamingExchange {

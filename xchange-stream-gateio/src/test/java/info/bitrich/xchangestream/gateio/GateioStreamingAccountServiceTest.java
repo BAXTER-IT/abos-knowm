@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.gateio.config.Config;
 import info.bitrich.xchangestream.gateio.dto.response.GateioWsNotification;
 import info.bitrich.xchangestream.gateio.dto.response.balance.GateioMultipleSpotBalanceNotification;
-import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.TestObserver;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -51,8 +51,7 @@ class GateioStreamingAccountServiceTest {
 
     TestObserver<Balance> testObserver = observable.test();
 
-    Balance actual =
-        testObserver.assertSubscribed().awaitCount(1).assertNoTimeout().values().get(0);
+    Balance actual = testObserver.awaitCount(1).values().get(0);
 
     testObserver.dispose();
 

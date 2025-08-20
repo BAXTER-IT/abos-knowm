@@ -298,9 +298,9 @@
 
             <!-- for streaming-->
             <dependency>
-                <groupId>io.reactivex.rxjava2</groupId>
+                <groupId>io.reactivex.rxjava3</groupId>
                 <artifactId>rxjava</artifactId>
-                <version>2.2.21</version>
+                <version>3.1.11</version>
             </dependency>
 
             <!--For String Joining, etc. -->
