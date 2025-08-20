@@ -18,7 +18,6 @@
         <url>http://knowm.org/open-source/xchange/</url>
     </organization>
 
-    <!-- Parent provides default configuration for dependencies -->
     <dependencies>
 
         <dependency>

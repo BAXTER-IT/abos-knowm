@@ -21,7 +21,6 @@
         <url>http://knowm.org/open-source/xchange/</url>
     </organization>
 
-    <!-- Parent provides default configuration for dependencies -->
     <dependencies>
 
         <dependency>
@@ -29,11 +28,16 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-        <!-- Project dependencies (version automatically set through parent) -->
         <dependency>
             <groupId>org.knowm.xchange.fork</groupId>
             <artifactId>xchange-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

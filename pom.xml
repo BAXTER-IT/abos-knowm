@@ -207,7 +207,7 @@
         <version.reflections>0.10.2</version.reflections>
         <version.resilience4j>1.7.0</version.resilience4j>
         <version.slf4j>2.0.16</version.slf4j>
-        <version.wiremock>2.27.2</version.wiremock>
+        <version.wiremock>3.4.2</version.wiremock>
     </properties>
 
     <dependencyManagement>
@@ -264,19 +264,6 @@
                         <artifactId>commons-codec</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock</artifactId>
-                <version>${version.wiremock}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-jre8</artifactId>
-                <version>2.35.0</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -360,6 +347,14 @@
                 <artifactId>crypto</artifactId>
                 <version>${version.crypto}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.wiremock</groupId>
+                <artifactId>wiremock</artifactId>
+                <version>${version.wiremock}</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
