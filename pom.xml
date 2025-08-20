@@ -141,7 +141,6 @@
     <module>xchange-ftx</module>
     <module>xchange-gateio</module>
     <module>xchange-gateio-v4</module>
-    <module>xchange-globitex</module>
     <module>xchange-gemini</module>
     <module>xchange-hitbtc</module>
     <module>xchange-huobi</module>
