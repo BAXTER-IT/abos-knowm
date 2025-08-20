@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
@@ -17,7 +17,7 @@ import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.instrument.Instrument;
 
 @Ignore
-public class KrakenFuturesStreamingPublicDataTest {
+public class KrakenFuturesStreamingPublicDataIntegration {
 
   StreamingExchange exchange =
       StreamingExchangeFactory.INSTANCE.createExchange(KrakenFuturesStreamingExchange.class);
@@ -55,7 +55,6 @@ public class KrakenFuturesStreamingPublicDataTest {
               return ticker;
             })
         .test()
-        .assertSubscribed()
         .awaitCount(1)
         .assertValue(ticker -> ticker.getInstrument().equals(instrument))
         .dispose();
@@ -73,7 +72,6 @@ public class KrakenFuturesStreamingPublicDataTest {
               return fundingRate;
             })
         .test()
-        .assertSubscribed()
         .awaitCount(1)
         .assertValue(
             fundingRate ->

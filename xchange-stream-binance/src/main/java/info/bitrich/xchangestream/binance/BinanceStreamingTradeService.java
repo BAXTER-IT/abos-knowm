@@ -14,10 +14,10 @@ import info.bitrich.xchangestream.binance.dto.OrderTradeUpdateBinanceWebSocketTr
 import info.bitrich.xchangestream.binance.dto.TradeLiteBinanceWebsocketTransaction;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import java.io.IOException;
 import java.math.BigDecimal;
 import org.knowm.xchange.binance.BinanceExchange;

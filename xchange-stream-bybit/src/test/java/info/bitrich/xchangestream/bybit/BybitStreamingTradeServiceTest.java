@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.bybit.dto.BybitUserTradeResponseDto;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
-import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.TestObserver;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
@@ -67,16 +67,15 @@ public class BybitStreamingTradeServiceTest {
     TestObserver<UserTrade> testObserver =
         exchange.getStreamingTradeService().getUserTrades().test();
 
-    testObserver.awaitTerminalEvent();
     testObserver
         .assertNoErrors()
         .assertValueCount(1)
-        .assertOf(
-            userTrade -> {
-              UserTrade trade = userTrade.values().iterator().next();
+        .assertValue(
+            trade -> {
               assertEquals(OrderType.ASK, trade.getType());
               assertEquals(CurrencyPair.BTC_USDT.toString(), trade.getInstrument().toString());
               assertEquals(MarketParticipant.TAKER, trade.getMarketParticipant());
+              return true;
             });
 
     verify(exchange.getStreamingTradeService().streamingService)
