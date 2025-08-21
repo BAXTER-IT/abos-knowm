@@ -47,6 +47,7 @@
         <module>xchange-bitfinex</module>
         <module>xchange-bitflyer</module>
         <module>xchange-bitget</module>
+        <module>xchange-bitget-futures</module>
         <module>xchange-bithumb</module>
         <module>xchange-bitmex</module>
         <module>xchange-bitso</module>
@@ -72,6 +73,7 @@
         <module>xchange-coinmarketcap</module>
         <module>xchange-coinmate</module>
         <module>xchange-coinone</module>
+        <module>xchange-coinsph</module>
         <module>xchange-core</module>
         <module>xchange-deribit</module>
         <module>xchange-dvchain</module>
@@ -121,6 +123,7 @@
         <module>xchange-stream-coincheck</module>
         <module>xchange-stream-coinjar</module>
         <module>xchange-stream-coinmate</module>
+        <module>xchange-stream-coinsph</module>
         <module>xchange-stream-core</module>
         <module>xchange-stream-dydx</module>
         <module>xchange-stream-finery-markets</module>
@@ -373,13 +376,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- javax APIs -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -592,7 +588,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.3</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
