@@ -30,7 +30,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <version.java>21</version.java>
+    <version.java>11</version.java>
     <version.assertj>3.24.2</version.assertj>
     <version.commons.lang3>3.17.0</version.commons.lang3>
     <version.fasterxml>2.18.2</version.fasterxml>
@@ -502,7 +502,6 @@
   <build>
 
     <plugins>
-      <!-- Ensure compilation is done under Java 8 in all environments -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
