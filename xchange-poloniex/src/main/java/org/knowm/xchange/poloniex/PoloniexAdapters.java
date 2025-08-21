@@ -312,16 +312,7 @@ public class PoloniexAdapters {
         .amount(a.getAmount())
         .type(type)
         .status(Status.resolveStatus(a.getStatus()))
-        .description(
-            a.getCategory()
-                + ":"
-                + a.getReason()
-                + "\n"
-                + a.getAdjustmentTitle()
-                + "\n"
-                + a.getAdjustmentDesc()
-                + "\n"
-                + a.getAdjustmentHelp())
+        .description(a.getCategory() + ":" + a.getReason() + "\n" + a.getAdjustmentTitle() + "\n" + a.getAdjustmentDesc() + "\n" + a.getAdjustmentHelp())
         .build();
   }
 
