@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -26,7 +26,6 @@ import org.knowm.xchange.instrument.Instrument;
 public abstract class Order implements Serializable {
 
   private static final long serialVersionUID = -8132103343647993249L;
-  private static final Random random = new Random();
 
   /** Order type i.e. bid or ask */
   private final OrderType type;
@@ -110,7 +109,7 @@ public abstract class Order implements Serializable {
         cumulativeAmount,
         fee,
         status,
-        Integer.toString(100000000 + random.nextInt(100000000)));
+        Integer.toString(100000000 + new SecureRandom().nextInt(100000000)));
   }
 
   /**
