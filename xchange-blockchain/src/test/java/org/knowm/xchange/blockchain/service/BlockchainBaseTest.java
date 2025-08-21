@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.knowm.xchange.blockchain.service.utils.BlockchainConstants.APPLICATION;
 import static org.knowm.xchange.blockchain.service.utils.BlockchainConstants.CONTENT_TYPE;
 
@@ -17,9 +18,8 @@ import org.knowm.xchange.blockchain.BlockchainExchange;
 
 public class BlockchainBaseTest {
 
-  private static int counter = 8080;
-
-  @ClassRule public static WireMockRule wireMockRule = new WireMockRule(++counter);
+  @ClassRule
+  public static WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
   protected static BlockchainExchange createExchange() {
     BlockchainExchange exchange =
