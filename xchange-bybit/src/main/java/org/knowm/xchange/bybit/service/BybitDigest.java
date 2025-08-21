@@ -2,7 +2,7 @@ package org.knowm.xchange.bybit.service;
 
 import static org.knowm.xchange.utils.DigestUtils.bytesToHex;
 
-import javax.ws.rs.HeaderParam;
+import jakarta.ws.rs.HeaderParam;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javax.crypto.Mac;
@@ -13,8 +13,8 @@ import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.RestInvocation;
 
 import javax.crypto.Mac;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.QueryParam;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;

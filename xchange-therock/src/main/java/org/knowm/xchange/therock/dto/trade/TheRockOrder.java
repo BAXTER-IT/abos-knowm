@@ -1,6 +1,6 @@
 package org.knowm.xchange.therock.dto.trade;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.math.BigDecimal;
 import org.knowm.xchange.therock.TheRock;
@@ -9,7 +9,7 @@ import org.knowm.xchange.therock.TheRock;
  * @author Matija Mazi
  * @author Pnk
  */
-@JsonNaming(PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy.class)
+@JsonNaming(PropertyNamingStrategies.LowerCaseStrategy.class)
 public class TheRockOrder {
 
   private Long id;

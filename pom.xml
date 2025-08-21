@@ -9,7 +9,7 @@
 
   <groupId>org.knowm.xchange.fork</groupId>
   <artifactId>xchange-parent</artifactId>
-  <version>5.2.2-SNAPSHOT</version>
+  <version>6.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>XChange</name>
@@ -30,18 +30,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <version.java>1.8</version.java>
+    <version.java>11</version.java>
     <version.assertj>3.24.2</version.assertj>
-    <version.commons.lang3>3.12.0</version.commons.lang3>
-    <version.fasterxml>2.14.1</version.fasterxml>
-    <version.github.mmazi>2.1.0</version.github.mmazi>
+    <version.commons.lang3>3.17.0</version.commons.lang3>
+    <version.fasterxml>2.18.2</version.fasterxml>
+    <version.github.mmazi>3.0</version.github.mmazi>
     <version.resilience4j>1.7.0</version.resilience4j>
     <version.junit>5.9.3</version.junit>
-    <version.lombok>1.18.26</version.lombok>
+    <version.lombok>1.18.36</version.lombok>
     <version.knowm.xchart>3.8.2</version.knowm.xchart>
     <version.qos.logback>1.3.5</version.qos.logback>
     <version.reflections>0.10.2</version.reflections>
-    <version.slf4j>2.0.6</version.slf4j>
+    <version.slf4j>2.0.16</version.slf4j>
     <version.crypto>5.0.0</version.crypto>
     <version.java-jwt>4.4.0</version.java-jwt>
     <version.mockito>3.</version.mockito>
@@ -226,19 +226,6 @@
     <url>https://travis-ci.org/github/knowm/XChange</url>
   </ciManagement>
 
-  <repositories>
-    <repository>
-      <id>sonatype-oss-public</id>
-      <url>https://oss.sonatype.org/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencyManagement>
     <dependencies>
 
@@ -404,16 +391,16 @@
 
     <!-- javax APIs -->
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>2.1.1</version>
     </dependency>
-
-    <!-- SLF4J implementation for use in examples -->
+    <!-- Lombok for boilerplate -->
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${version.lombok}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- JUnit for testing -->
@@ -431,12 +418,11 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Lombok for boilerplate -->
+    <!-- SLF4J implementation for use in examples -->
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>${version.lombok}</version>
-      <scope>provided</scope>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -508,24 +494,6 @@
               </execution>
             </executions>
           </plugin>
-          <!-- Generates JavaDocs during package -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.5.0</version>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <configuration>
-                  <doclint>none</doclint>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
         </plugins>
       </build>
     </profile>
@@ -534,11 +502,10 @@
   <build>
 
     <plugins>
-      <!-- Ensure compilation is done under Java 8 in all environments -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.13.0</version>
         <configuration>
           <source>${version.java}</source>
           <target>${version.java}</target>
@@ -571,28 +538,9 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.5.0</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <quiet>true</quiet>
-          <doclint>none</doclint>
-          <source>${version.java}</source>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.1.2</version>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
