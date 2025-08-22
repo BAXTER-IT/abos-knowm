@@ -9,6 +9,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
+import org.knowm.xchange.kucoin.dto.KucoinException;
 import org.knowm.xchange.kucoin.dto.request.ApplyWithdrawApiRequest;
 import org.knowm.xchange.kucoin.dto.response.ApplyWithdrawResponse;
 import org.knowm.xchange.kucoin.dto.response.KucoinResponse;
@@ -36,7 +37,7 @@ public interface WithdrawalAPI {
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
       @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       ApplyWithdrawApiRequest req)
-      throws IOException;
+      throws IOException, KucoinException;
 
   /**
    * Get Withdrawals List.
