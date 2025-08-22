@@ -45,16 +45,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class NettyStreamingService<T> extends ConnectableService {
+
   private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
   protected static final Duration DEFAULT_CONNECTION_TIMEOUT = Duration.ofSeconds(10);
@@ -196,13 +200,18 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
                   eventLoopGroup = new NioEventLoopGroup(2);
                 }
 
-                new Bootstrap()
-                    .group(eventLoopGroup)
-                    .option(
-                        ChannelOption.CONNECT_TIMEOUT_MILLIS,
-                        java.lang.Math.toIntExact(connectionTimeout.toMillis()))
-                    .option(ChannelOption.SO_KEEPALIVE, true)
-                    .channel(NioSocketChannel.class)
+                Bootstrap bootstrap =
+                    new Bootstrap()
+                        .group(eventLoopGroup)
+                        .option(
+                            ChannelOption.CONNECT_TIMEOUT_MILLIS,
+                            Math.toIntExact(connectionTimeout.toMillis()))
+                        .option(ChannelOption.SO_KEEPALIVE, true)
+                        .channel(NioSocketChannel.class);
+                if (socksProxyHost != null) {
+                  bootstrap.disableResolver();
+                }
+                bootstrap
                     .handler(
                         new ChannelInitializer<SocketChannel>() {
                           @Override
@@ -217,13 +226,16 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
                               p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
                             }
                             p.addLast(new HttpClientCodec());
-                            if (enableLoggingHandler)
+                            if (enableLoggingHandler) {
                               p.addLast(new LoggingHandler(loggingHandlerLevel));
-                            if (compressedMessages)
+                            }
+                            if (compressedMessages) {
                               p.addLast(WebSocketClientCompressionHandler.INSTANCE);
+                            }
                             p.addLast(new HttpObjectAggregator(8192));
-                            if (idleTimeoutSeconds > 0)
+                            if (idleTimeoutSeconds > 0) {
                               p.addLast(new IdleStateHandler(idleTimeoutSeconds, 0, 0));
+                            }
                             WebSocketClientExtensionHandler clientExtensionHandler =
                                 getWebSocketClientExtensionHandler();
                             if (clientExtensionHandler != null) {
@@ -350,7 +362,15 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
       throws IOException;
 
   public String getSubscriptionUniqueId(String channelName, Object... args) {
-    return channelName;
+
+    if (args == null || args.length == 0) {
+      return channelName;
+    }
+
+    List<String> collect = Arrays.stream(args).map(String::valueOf).collect(Collectors.toList());
+    String argsString = String.join("-", collect);
+
+    return channelName + "_" + argsString;
   }
 
   /**
@@ -394,8 +414,8 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
   }
 
   public Observable<T> subscribeChannel(String channelName, Object... args) {
-    final String channelId = getSubscriptionUniqueId(channelName, args);
-    LOG.info("Subscribing to channel {}", channelId);
+    final String subscriptionUniqueId = getSubscriptionUniqueId(channelName, args);
+    LOG.info("Subscribing to subscriptionUniqueId={}, args={}", subscriptionUniqueId, args);
 
     return Observable.<T>create(
             e -> {
@@ -403,7 +423,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
                 e.onError(new NotConnectedException());
               }
               channels.computeIfAbsent(
-                  channelId,
+                  subscriptionUniqueId,
                   cid -> {
                     Subscription newSubscription = new Subscription(e, channelName, args);
                     try {
@@ -419,13 +439,14 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
             })
         .doOnDispose(
             () -> {
-              if (channels.remove(channelId) != null) {
+              if (channels.remove(subscriptionUniqueId) != null) {
                 try {
-                  sendMessage(getUnsubscribeMessage(channelId, args));
+                  sendMessage(getUnsubscribeMessage(subscriptionUniqueId, args));
                 } catch (IOException e) {
-                  LOG.debug("Failed to unsubscribe channel: {} {}", channelId, e.toString());
+                  LOG.debug(
+                      "Failed to unsubscribe channel: {} {}", subscriptionUniqueId, e.toString());
                 } catch (Exception e) {
-                  LOG.warn("Failed to unsubscribe channel: {}", channelId, e);
+                  LOG.warn("Failed to unsubscribe channel: {}", subscriptionUniqueId, e);
                 }
               }
             })
@@ -461,13 +482,18 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
 
   protected void handleMessage(T message) {
     String channel = getChannel(message);
-    if (!StringUtil.isNullOrEmpty(channel)) handleChannelMessage(channel, message);
+    if (!StringUtil.isNullOrEmpty(channel)) {
+      handleChannelMessage(channel, message);
+    }
   }
 
   protected void handleError(T message, Throwable t) {
     String channel = getChannel(message);
-    if (!StringUtil.isNullOrEmpty(channel)) handleChannelError(channel, t);
-    else LOG.error("handleError cannot parse channel from message: {}", message);
+    if (!StringUtil.isNullOrEmpty(channel)) {
+      handleChannelError(channel, t);
+    } else {
+      LOG.error("handleError cannot parse channel from message: {}", message);
+    }
   }
 
   protected void handleIdle(ChannelHandlerContext ctx) {
@@ -539,6 +565,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+      connectionStateModel.setState(State.CLOSED);
       if (isManualDisconnect.compareAndSet(true, false)) {
         // Don't attempt to reconnect
       } else {

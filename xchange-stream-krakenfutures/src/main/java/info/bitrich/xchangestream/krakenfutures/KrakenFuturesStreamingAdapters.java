@@ -28,8 +28,7 @@ public class KrakenFuturesStreamingAdapters {
                 bids.add(
                     new LimitOrder.Builder(
                             Order.OrderType.BID,
-                            KrakenFuturesAdapters.adaptInstrument(
-                                snapshot.getProduct_id().toLowerCase()))
+                            KrakenFuturesAdapters.adaptInstrument(snapshot.getProduct_id()))
                         .limitPrice(krakenFuturesSnapShotOrder.getPrice())
                         .originalAmount(krakenFuturesSnapShotOrder.getQuantity())
                         .build()));
@@ -40,8 +39,7 @@ public class KrakenFuturesStreamingAdapters {
                 asks.add(
                     new LimitOrder.Builder(
                             Order.OrderType.ASK,
-                            KrakenFuturesAdapters.adaptInstrument(
-                                snapshot.getProduct_id().toLowerCase()))
+                            KrakenFuturesAdapters.adaptInstrument(snapshot.getProduct_id()))
                         .limitPrice(krakenFuturesSnapShotOrder.getPrice())
                         .originalAmount(krakenFuturesSnapShotOrder.getQuantity())
                         .build()));
@@ -51,8 +49,7 @@ public class KrakenFuturesStreamingAdapters {
 
   public static Ticker adaptTicker(KrakenFuturesStreamingTickerResponse tickerResponse) {
     return new Ticker.Builder()
-        .instrument(
-            KrakenFuturesAdapters.adaptInstrument(tickerResponse.getProduct_id().toLowerCase()))
+        .instrument(KrakenFuturesAdapters.adaptInstrument(tickerResponse.getProduct_id()))
         .ask(tickerResponse.getAsk())
         .bid(tickerResponse.getBid())
         .last(tickerResponse.getLast())
@@ -67,8 +64,7 @@ public class KrakenFuturesStreamingAdapters {
 
   public static FundingRate adaptFundingRate(KrakenFuturesStreamingTickerResponse tickerResponse) {
     return new FundingRate.Builder()
-        .instrument(
-            KrakenFuturesAdapters.adaptInstrument(tickerResponse.getProduct_id().toLowerCase()))
+        .instrument(KrakenFuturesAdapters.adaptInstrument(tickerResponse.getProduct_id()))
         .fundingRate1h(tickerResponse.getRelative_funding_rate())
         .fundingRate8h(
             (tickerResponse.getRelative_funding_rate() == null)
@@ -81,7 +77,7 @@ public class KrakenFuturesStreamingAdapters {
   public static Trade adaptTrade(KrakenFuturesStreamingTradeResponse trade) {
     return new Trade.Builder()
         .price(trade.getPrice())
-        .instrument(KrakenFuturesAdapters.adaptInstrument(trade.getProduct_id().toLowerCase()))
+        .instrument(KrakenFuturesAdapters.adaptInstrument(trade.getProduct_id()))
         .timestamp(trade.getTime())
         .type(
             (trade
@@ -118,7 +114,7 @@ public class KrakenFuturesStreamingAdapters {
                                 : Order.OrderType.ASK)
                         .instrument(
                             KrakenFuturesAdapters.adaptInstrument(
-                                krakenFuturesStreamingFill.getInstrument().toLowerCase()))
+                                krakenFuturesStreamingFill.getInstrument()))
                         .timestamp(krakenFuturesStreamingFill.getTime())
                         .build()));
 

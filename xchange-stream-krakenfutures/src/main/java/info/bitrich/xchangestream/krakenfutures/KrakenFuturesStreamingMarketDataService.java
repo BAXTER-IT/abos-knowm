@@ -93,7 +93,6 @@ public class KrakenFuturesStreamingMarketDataService implements StreamingMarketD
                 message
                     .get("product_id")
                     .asText()
-                    .toLowerCase()
                     .equals(KrakenFuturesAdapters.adaptKrakenFuturesSymbol(instrument)))
         .map(
             message ->
@@ -129,7 +128,6 @@ public class KrakenFuturesStreamingMarketDataService implements StreamingMarketD
                 message
                     .get("product_id")
                     .asText()
-                    .toLowerCase()
                     .equals(KrakenFuturesAdapters.adaptKrakenFuturesSymbol(instrument)))
         .map(
             message ->
