@@ -57,7 +57,7 @@ public class GateioStreamingAdapters {
   public UserTrade toUserTrade(GateioSingleUserTradeNotification notification) {
     UserTradePayload userTradePayload = notification.getResult();
 
-    return UserTrade.builder()
+    return new UserTrade.Builder()
         .type(userTradePayload.getSide())
         .originalAmount(userTradePayload.getAmount())
         .instrument(userTradePayload.getCurrencyPair())
@@ -99,7 +99,7 @@ public class GateioStreamingAdapters {
                         priceSizeEntry.getPrice()));
 
     Stream<LimitOrder> bids =
-        orderBookPayload.getAsks().stream()
+        orderBookPayload.getBids().stream()
             .map(
                 priceSizeEntry ->
                     new LimitOrder(

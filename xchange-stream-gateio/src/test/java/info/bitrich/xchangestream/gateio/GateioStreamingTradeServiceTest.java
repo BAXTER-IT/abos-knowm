@@ -57,7 +57,7 @@ class GateioStreamingTradeServiceTest {
     testObserver.dispose();
 
     UserTrade expected =
-        UserTrade.builder()
+        new UserTrade.Builder()
             .instrument(CurrencyPair.BTC_USDT)
             .id("6068323582")
             .orderId("381004078014")
