@@ -16,7 +16,7 @@ GET {{api_host}}/api/v2/spot/market/tickers
 
 ### Get Account Information
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/account/info
@@ -28,7 +28,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Account assets
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/account/assets
@@ -40,7 +40,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Sub-accounts Assets
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/account/subaccount-assets
@@ -52,7 +52,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Order Info
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/trade/orderInfo?orderId=1213530920130613257
@@ -64,7 +64,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Place Market Buy Order
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 POST {{api_host}}/api/v2/spot/trade/place-order
@@ -85,7 +85,7 @@ Content-Type: application/json
 
 ### Place Market Sell Order
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 POST {{api_host}}/api/v2/spot/trade/place-order
@@ -106,7 +106,7 @@ Content-Type: application/json
 
 ### Get History Orders
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/trade/history-orders
@@ -118,7 +118,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Fills
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/trade/fills?symbol=BTCUSDT
@@ -130,7 +130,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Transfer Record
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/account/transferRecords?coin=USDT&fromType=spot&endTime=1727904561971
@@ -142,7 +142,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get MainSub Transfer Record
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/account/sub-main-trans-record
@@ -154,7 +154,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Deposit Records
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/wallet/deposit-records?startTime=1721643200000&endTime=1727970869665
@@ -166,7 +166,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get Withdrawal Records
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/wallet/withdrawal-records?startTime=1721643200000&endTime=1727970869665
@@ -178,7 +178,7 @@ ACCESS-PASSPHRASE: {{api_passphrase}}
 
 ### Get SubAccount Deposit Records
 < {%
-  import {gen_sign} from 'xchange-bitget/src/test/resources/rest/sign.js'
+  import {gen_sign} from 'sign.js'
   gen_sign(request);
 %}
 GET {{api_host}}/api/v2/spot/wallet/subaccount-deposit-records?subUid=7831928986
