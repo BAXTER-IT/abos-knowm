@@ -179,6 +179,12 @@ public class BinanceFutureTest {
             + binanceExchange
                 .getTradeService()
                 .cancelOrder(new BinanceCancelOrderParams(instrument, orderId, userReference)));
+    // Cancel all orders
+//    logger.info(
+//        "CancelAllOrder: "
+//            +
+//            binanceExchange.getTradeService().cancelAllOrders(new DefaultCancelAllOrdersByInstrument(instrument)));
+
     // set Leverage
     boolean isChanged =
         ((BinanceAccountService) binanceExchange.getAccountService()).setLeverage(instrument, 10);
