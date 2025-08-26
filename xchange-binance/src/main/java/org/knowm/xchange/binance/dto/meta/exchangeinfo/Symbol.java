@@ -25,16 +25,21 @@ public class Symbol {
 
   private String status;
 
+  private String contractType;
+
   private String quotePrecision;
 
   private String quoteAssetPrecision;
 
   private String baseAssetPrecision;
 
+  private Long deliveryDate;
+
+  private Long onboardDate;
+
   private String[] orderTypes;
 
   private Filter[] filters;
 
   private String[] permissions;
-
 }

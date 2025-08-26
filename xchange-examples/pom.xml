@@ -74,18 +74,7 @@
 			<artifactId>xchange-bitstamp</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- XChange Bittrex exchange support -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>xchange-bittrex</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<!-- XChange BitcoinCharts support -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>xchange-bitcoincharts</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
 		<!-- XChange Bitcoinde support -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -213,12 +202,7 @@
 			<artifactId>xchange-okex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- XChange Bleutrade exchange support -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>xchange-bleutrade</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
 		<!-- XChange Mercado Bitcoin exchange support -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -247,11 +231,7 @@
 			<artifactId>xchange-ripple</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>xchange-therock</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>xchange-btcmarkets</artifactId>
@@ -342,11 +322,7 @@
 			<artifactId>xchange-dvchain</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-  		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>xchange-bankera</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
         <dependency>
             <groupId>org.knowm.xchange.fork</groupId>
             <artifactId>xchange-enigma</artifactId>

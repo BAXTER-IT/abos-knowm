@@ -1,17 +1,16 @@
 package org.knowm.xchange.binance;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 public class AbstractResilienceTest {
 
-  private static int counter = 8080;
-
-  @Rule public WireMockRule wireMockRule = new WireMockRule(++counter);
+  @Rule public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
   public static int READ_TIMEOUT_MS = 1000;
 
@@ -34,8 +33,7 @@ public class AbstractResilienceTest {
 
   protected BinanceExchange createExchange(boolean retryEnabled, boolean rateLimiterEnabled) {
     BinanceExchange exchange =
-        (BinanceExchange)
-            ExchangeFactory.INSTANCE.createExchangeWithoutSpecification(BinanceExchange.class);
+        ExchangeFactory.INSTANCE.createExchangeWithoutSpecification(BinanceExchange.class);
     ExchangeSpecification specification = exchange.getDefaultExchangeSpecification();
     specification.setHost("localhost");
     specification.setSslUri("http://localhost:" + wireMockRule.port() + "/");

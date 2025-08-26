@@ -2,7 +2,6 @@ package info.bitrich.xchangestream.binance.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
-
 import lombok.Getter;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
@@ -102,7 +101,7 @@ public class ExecutionReportBinanceUserTransaction extends ProductBinanceWebSock
 
   public UserTrade toUserTrade(boolean isFuture) {
     if (executionType != ExecutionType.TRADE) throw new IllegalStateException("Not a trade");
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(BinanceAdapters.convert(side))
         .originalAmount(lastExecutedQuantity)
         .instrument(BinanceAdapters.adaptSymbol(symbol, isFuture))
@@ -124,14 +123,17 @@ public class ExecutionReportBinanceUserTransaction extends ProductBinanceWebSock
             orderPrice,
             orderQuantity,
             lastExecutedQuantity,
-            cumulativeFilledQuantity,
+            // not sure 100%, but according SPOT documentation api
+            // https://developers.binance.com/docs/binance-spot-api-docs/user-data-stream#order-update
+            cumulativeQuoteAssetTransactedQuantity,
             currentOrderStatus,
             timeInForce,
             orderType,
             side,
             stopPrice,
             BigDecimal.ZERO,
-            timestamp), isFuture);
+            timestamp),
+        isFuture);
   }
 
   @Override

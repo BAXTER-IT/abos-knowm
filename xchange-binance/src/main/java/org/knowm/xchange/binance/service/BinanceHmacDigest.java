@@ -2,9 +2,9 @@ package org.knowm.xchange.binance.service;
 
 import static org.knowm.xchange.utils.DigestUtils.bytesToHex;
 
+import jakarta.ws.rs.QueryParam;
 import java.nio.charset.StandardCharsets;
 import javax.crypto.Mac;
-import jakarta.ws.rs.QueryParam;
 import org.knowm.xchange.binance.BinanceAuthenticated;
 import org.knowm.xchange.service.BaseParamsDigest;
 import org.slf4j.Logger;
@@ -24,7 +24,9 @@ public class BinanceHmacDigest extends BaseParamsDigest {
     return secretKeyBase64 == null ? null : new BinanceHmacDigest(secretKeyBase64);
   }
 
-  /** @return the query string except of the "signature" parameter */
+  /**
+   * @return the query string except of the "signature" parameter
+   */
   private static String getQuery(RestInvocation restInvocation) {
     final Params p = Params.of();
     restInvocation.getParamsMap().get(QueryParam.class).asHttpHeaders().entrySet().stream()
@@ -37,21 +39,19 @@ public class BinanceHmacDigest extends BaseParamsDigest {
   public String digestParams(RestInvocation restInvocation) {
     final String input;
 
-    if (restInvocation.getPath().startsWith("wapi/")) {
-      // little dirty hack for /wapi methods
-      input = getQuery(restInvocation);
-    } else {
-      switch (restInvocation.getHttpMethod()) {
-        case "GET":
-        case "DELETE":
-          input = getQuery(restInvocation);
-          break;
-        case "POST":
-          input = restInvocation.getRequestBody();
-          break;
-        default:
-          throw new RuntimeException("Not support http method: " + restInvocation.getHttpMethod());
-      }
+    switch (restInvocation.getHttpMethod()) {
+      case "GET":
+      case "DELETE":
+        input = getQuery(restInvocation);
+        break;
+      case "POST":
+        input = getQuery(restInvocation) + restInvocation.getRequestBody();
+        break;
+      case "PUT":
+        input = getQuery(restInvocation) + restInvocation.getRequestBody();
+        break;
+      default:
+        throw new RuntimeException("Not support http method: " + restInvocation.getHttpMethod());
     }
 
     Mac mac = getMac();

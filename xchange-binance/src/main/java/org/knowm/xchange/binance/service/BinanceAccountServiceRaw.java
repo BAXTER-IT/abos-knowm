@@ -7,19 +7,37 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.BinanceExchange;
 import org.knowm.xchange.binance.dto.BinanceException;
-import org.knowm.xchange.binance.dto.account.*;
+import org.knowm.xchange.binance.dto.account.AssetDetail;
+import org.knowm.xchange.binance.dto.account.AssetDividendResponse;
+import org.knowm.xchange.binance.dto.account.BinanceAccountInformation;
+import org.knowm.xchange.binance.dto.account.BinanceCurrencyInfo;
+import org.knowm.xchange.binance.dto.account.BinanceDeposit;
+import org.knowm.xchange.binance.dto.account.BinanceTradeFee;
+import org.knowm.xchange.binance.dto.account.BinanceWithdraw;
+import org.knowm.xchange.binance.dto.account.DepositAddress;
+import org.knowm.xchange.binance.dto.account.TransferHistory;
+import org.knowm.xchange.binance.dto.account.TransferSubUserHistory;
+import org.knowm.xchange.binance.dto.account.WithdrawResponse;
 import org.knowm.xchange.binance.dto.account.futures.BinanceFutureAccountInformation;
+import org.knowm.xchange.binance.dto.account.futures.BinanceFutureCommissionRate;
+import org.knowm.xchange.binance.dto.trade.futures.BinanceSetLeverage;
 import org.knowm.xchange.client.ResilienceRegistries;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.instrument.Instrument;
 
 public class BinanceAccountServiceRaw extends BinanceBaseService {
 
+  private List<BinanceCurrencyInfo> currencyInfos;
+  private final Lock currencyInfoLock = new ReentrantLock();
+
   public BinanceAccountServiceRaw(
-      BinanceExchange exchange,
-      ResilienceRegistries resilienceRegistries) {
+      BinanceExchange exchange, ResilienceRegistries resilienceRegistries) {
     super(exchange, resilienceRegistries);
   }
 
@@ -31,31 +49,48 @@ public class BinanceAccountServiceRaw extends BinanceBaseService {
         .call();
   }
 
+  public List<BinanceCurrencyInfo> currencyInfos() throws BinanceException, IOException {
+    return decorateApiCall(
+            () ->
+                binance.getCurrencyInfos(
+                    getRecvWindow(), getTimestampFactory(), apiKey, signatureCreator))
+        .withRetry(retry("currencyInfo"))
+        .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER), 5)
+        .call();
+  }
+
   public BinanceFutureAccountInformation futuresAccount() throws BinanceException, IOException {
     return decorateApiCall(
-            () -> binanceFutures.futuresAccount(getRecvWindow(), getTimestampFactory(), apiKey, signatureCreator))
-            .withRetry(retry("futures-account"))
-            .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER), 5)
-            .call();
+            () ->
+                binanceFutures.futuresAccount(
+                    getRecvWindow(), getTimestampFactory(), apiKey, signatureCreator))
+        .withRetry(retry("futures-account"))
+        .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER), 5)
+        .call();
   }
 
   public WithdrawResponse withdraw(String coin, String address, BigDecimal amount)
       throws IOException, BinanceException {
     // the name parameter seams to be mandatory
     String name = address.length() <= 10 ? address : address.substring(0, 10);
-    return withdraw(coin, address, null, amount, name);
+    return withdraw(coin, address, null, amount, name, null);
   }
 
   public WithdrawResponse withdraw(
-      String coin, String address, String addressTag, BigDecimal amount)
+      String coin, String address, String addressTag, BigDecimal amount, String network)
       throws IOException, BinanceException {
     // the name parameter seams to be mandatory
     String name = address.length() <= 10 ? address : address.substring(0, 10);
-    return withdraw(coin, address, addressTag, amount, name);
+    return withdraw(coin, address, addressTag, amount, name, network);
   }
 
   private WithdrawResponse withdraw(
-      String coin, String address, String addressTag, BigDecimal amount, String name)
+      String coin,
+      String address,
+      String addressTag,
+      BigDecimal amount,
+      String name,
+      String network)
       throws IOException, BinanceException {
     return decorateApiCall(
             () ->
@@ -65,6 +100,7 @@ public class BinanceAccountServiceRaw extends BinanceBaseService {
                     addressTag,
                     amount,
                     name,
+                    network,
                     getRecvWindow(),
                     getTimestampFactory(),
                     apiKey,
@@ -75,10 +111,16 @@ public class BinanceAccountServiceRaw extends BinanceBaseService {
   }
 
   public DepositAddress requestDepositAddress(Currency currency) throws IOException {
+    return requestDepositAddressWithNetwork(currency, null);
+  }
+
+  public DepositAddress requestDepositAddressWithNetwork(Currency currency, String network)
+      throws IOException {
     return decorateApiCall(
             () ->
                 binance.depositAddress(
                     BinanceAdapters.toSymbol(currency),
+                    network,
                     getRecvWindow(),
                     getTimestampFactory(),
                     apiKey,
@@ -191,6 +233,69 @@ public class BinanceAccountServiceRaw extends BinanceBaseService {
                     super.apiKey,
                     super.signatureCreator))
         .withRetry(retry("transferSubUserHistory"))
+        .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER))
+        .call();
+  }
+
+  protected List<BinanceCurrencyInfo> getCurrencyInfoCached() throws IOException {
+    currencyInfoLock.lock();
+    try {
+      if (currencyInfos == null) {
+        currencyInfos = currencyInfos();
+      }
+      currencyInfos = currencyInfos();
+    } finally {
+      currencyInfoLock.unlock();
+    }
+
+    return currencyInfos;
+  }
+
+  protected Optional<BinanceCurrencyInfo> getCurrencyInfo(Currency currency) throws IOException {
+    return getCurrencyInfoCached().stream()
+        .filter(info -> currency.equals(info.getCurrency()))
+        .findFirst();
+  }
+
+  protected List<BinanceTradeFee> getTradeFee() throws IOException {
+    return decorateApiCall(
+            () ->
+                binance.getTradeFee(
+                    null,
+                    getRecvWindow(),
+                    getTimestampFactory(),
+                    super.apiKey,
+                    super.signatureCreator))
+        .withRetry(retry("tradeFee"))
+        .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER))
+        .call();
+  }
+
+  protected BinanceFutureCommissionRate getCommissionRate(String symbol) throws IOException {
+    return decorateApiCall(
+            () ->
+                binanceFutures.getFutureCommissionRate(
+                    symbol,
+                    getRecvWindow(),
+                    getTimestampFactory(),
+                    super.apiKey,
+                    super.signatureCreator))
+        .withRetry(retry("commissionRate"))
+        .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER), 20)
+        .call();
+  }
+
+  public BinanceSetLeverage setLeverageRaw(Instrument instrument, int leverage) throws IOException {
+    return decorateApiCall(
+            () ->
+                binanceFutures.setLeverage(
+                    BinanceAdapters.toSymbol(instrument, false),
+                    leverage,
+                    getRecvWindow(),
+                    getTimestampFactory(),
+                    apiKey,
+                    signatureCreator))
+        .withRetry(retry("setLeverage"))
         .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER))
         .call();
   }
