@@ -19,8 +19,7 @@ public class CombinationsContract extends Instrument implements Derivative {
 
   private final Date expireDate;
 
-  @Builder.Default
-  private final List<Leg> legs = new ArrayList<>();
+  @Builder.Default private final List<Leg> legs = new ArrayList<>();
 
   @Override
   public Currency getBase() {

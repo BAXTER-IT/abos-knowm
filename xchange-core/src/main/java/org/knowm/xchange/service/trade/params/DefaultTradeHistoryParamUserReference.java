@@ -1,6 +1,6 @@
 package org.knowm.xchange.service.trade.params;
 
-public class DefaultTradeHistoryParamUserReference implements TradeHistoryParamUserReference{
+public class DefaultTradeHistoryParamUserReference implements TradeHistoryParamUserReference {
 
   private String userReference;
 

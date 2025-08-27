@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** @author odrotleff */
+/**
+ * @author odrotleff
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"count", "page", "items"})
 public class BiboxOrders {
@@ -27,37 +29,49 @@ public class BiboxOrders {
 
   @JsonIgnore private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-  /** @return The count */
+  /**
+   * @return The count
+   */
   @JsonProperty("count")
   public Integer getCount() {
     return count;
   }
 
-  /** @param count The count */
+  /**
+   * @param count The count
+   */
   @JsonProperty("count")
   public void setCount(Integer count) {
     this.count = count;
   }
 
-  /** @return The page */
+  /**
+   * @return The page
+   */
   @JsonProperty("page")
   public Integer getPage() {
     return page;
   }
 
-  /** @param page The page */
+  /**
+   * @param page The page
+   */
   @JsonProperty("page")
   public void setPage(Integer page) {
     this.page = page;
   }
 
-  /** @return The items */
+  /**
+   * @return The items
+   */
   @JsonProperty("items")
   public List<BiboxOrder> getItems() {
     return items;
   }
 
-  /** @param items The items */
+  /**
+   * @param items The items
+   */
   @JsonProperty("items")
   public void setItems(List<BiboxOrder> items) {
     this.items = items;

@@ -22,6 +22,7 @@ public class BybitInternalDepositRecordsResponse {
 
   @JsonProperty("nextPageCursor")
   private String nextPageCursor;
+
   @Getter
   @ToString
   @Builder
@@ -52,15 +53,13 @@ public class BybitInternalDepositRecordsResponse {
     @Getter
     @AllArgsConstructor
     public enum BybitInternalDepositStatus {
-
       PROCESSING(0),
 
       SUCCESS(1),
 
       FAILED(2);
 
-      @JsonValue
-      private final int value;
+      @JsonValue private final int value;
     }
   }
 }

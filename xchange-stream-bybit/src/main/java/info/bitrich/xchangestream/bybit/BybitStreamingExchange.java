@@ -2,7 +2,6 @@ package info.bitrich.xchangestream.bybit;
 
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
-import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.service.netty.ConnectionStateModel;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -26,19 +25,30 @@ public class BybitStreamingExchange extends BybitExchange implements StreamingEx
   @Override
   public Completable connect(ProductSubscription... args) {
 
-    if(exchangeSpecification.getApiKey() != null){
-      streamingService = new BybitStreamingService(getBybitURI(useSandbox(exchangeSpecification), true, ""), exchangeSpecification);
+    if (exchangeSpecification.getApiKey() != null) {
+      streamingService =
+          new BybitStreamingService(
+              getBybitURI(useSandbox(exchangeSpecification), true, ""), exchangeSpecification);
       streamingTradeService = new BybitStreamingTradeService(streamingService);
 
     } else {
-      streamingService = new BybitStreamingService(getBybitURI(useSandbox(exchangeSpecification), false, MarketType.SPOT.toString().toLowerCase()), exchangeSpecification);
+      streamingService =
+          new BybitStreamingService(
+              getBybitURI(
+                  useSandbox(exchangeSpecification),
+                  false,
+                  MarketType.SPOT.toString().toLowerCase()),
+              exchangeSpecification);
     }
 
     return streamingService.connect();
   }
 
-  private String getBybitURI(boolean isSandBox, boolean isAuthenticated, String marketType){
-    return "wss://stream"+ (isSandBox ? "-testnet" : "") + ".bybit.com/v5/" + ((isAuthenticated) ? "private" : "public/" + marketType);
+  private String getBybitURI(boolean isSandBox, boolean isAuthenticated, String marketType) {
+    return "wss://stream"
+        + (isSandBox ? "-testnet" : "")
+        + ".bybit.com/v5/"
+        + ((isAuthenticated) ? "private" : "public/" + marketType);
   }
 
   @Override

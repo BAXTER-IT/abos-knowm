@@ -58,8 +58,7 @@ public class BitgetMarketDataService extends BitgetMarketDataServiceRaw
           .distinct()
           .collect(
               Collectors.toMap(
-                  BitgetSymbolDto::getCurrencyPair,
-                  (BitgetAdapters::toInstrumentMetaData)));
+                  BitgetSymbolDto::getCurrencyPair, (BitgetAdapters::toInstrumentMetaData)));
     } catch (BitgetException e) {
       throw BitgetErrorAdapter.adapt(e);
     }

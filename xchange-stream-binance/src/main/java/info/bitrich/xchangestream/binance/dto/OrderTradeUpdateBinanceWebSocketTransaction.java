@@ -27,6 +27,7 @@ public class OrderTradeUpdateBinanceWebSocketTransaction extends BaseBinanceWebS
     this.transactionTime = transactionTime;
     this.updateTransaction = updateTransaction;
   }
+
   @Getter
   public static class OrderUpdateBinanceWebSocketTransaction {
 
@@ -154,7 +155,5 @@ public class OrderTradeUpdateBinanceWebSocketTransaction extends BaseBinanceWebS
               tradeTime),
           isFuture);
     }
-
-
   }
 }

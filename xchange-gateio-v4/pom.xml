@@ -28,12 +28,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${version.junit}</version>
@@ -53,34 +47,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.github.ekryd.sortpom</groupId>
-                <artifactId>sortpom-maven-plugin</artifactId>
-                <version>${version.sortpom-maven-plugin}</version>
-                <configuration>
-                    <sortProperties>true</sortProperties>
-                    <createBackupFile>false</createBackupFile>
-                    <sortDependencies>groupId,artifactId</sortDependencies>
-                    <sortModules>true</sortModules>
-                    <nrOfIndentSpace>4</nrOfIndentSpace>
-                    <sortPlugins>groupId,artifactId</sortPlugins>
-                    <expandEmptyElements>false</expandEmptyElements>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>sort</goal>
-                        </goals>
-                        <phase>verify</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-    </build>
 
 </project>

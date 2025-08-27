@@ -7,14 +7,14 @@ import java.util.Date;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.bybit.dto.BybitCategory;
 import org.knowm.xchange.bybit.dto.BybitResult;
+import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
 import org.knowm.xchange.bybit.dto.account.BybitDepositRecordsResponse;
+import org.knowm.xchange.bybit.dto.account.BybitFeeRates;
 import org.knowm.xchange.bybit.dto.account.BybitInternalDepositRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse.BybitTransactionLog.BybitTransactionLogType;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse.BybitTransferStatus;
-import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
-import org.knowm.xchange.bybit.dto.account.BybitFeeRates;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse.BybitWithdrawRecord.BybitWithdrawType;
 import org.knowm.xchange.bybit.dto.account.walletbalance.BybitAccountType;
@@ -177,8 +177,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
       Date startTime,
       Date endTime,
       Integer limit,
-      String cursor
-  )
+      String cursor)
       throws IOException {
     BybitResult<BybitWithdrawRecordsResponse> withdrawRecords =
         bybitAuthenticated.getWithdrawRecords(
@@ -191,8 +190,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
             (startTime == null) ? null : startTime.toInstant().toEpochMilli(),
             (endTime == null) ? null : endTime.toInstant().toEpochMilli(),
             limit,
-            cursor
-            );
+            cursor);
     if (!withdrawRecords.isSuccess()) {
       throw createBybitExceptionFromResult(withdrawRecords);
     }
@@ -200,12 +198,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
   }
 
   public BybitResult<BybitDepositRecordsResponse> getBybitDepositRecords(
-      Currency coin,
-      Date startTime,
-      Date endTime,
-      Integer limit,
-      String cursor
-  )
+      Currency coin, Date startTime, Date endTime, Integer limit, String cursor)
       throws IOException {
     BybitResult<BybitDepositRecordsResponse> depositRecords =
         bybitAuthenticated.getOnChainDepositRecords(
@@ -216,8 +209,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
             (startTime == null) ? null : startTime.toInstant().toEpochMilli(),
             (endTime == null) ? null : endTime.toInstant().toEpochMilli(),
             limit,
-            cursor
-        );
+            cursor);
     if (!depositRecords.isSuccess()) {
       throw createBybitExceptionFromResult(depositRecords);
     }
@@ -225,12 +217,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
   }
 
   public BybitResult<BybitInternalDepositRecordsResponse> getBybitInternalDepositRecords(
-      Currency coin,
-      Date startTime,
-      Date endTime,
-      Integer limit,
-      String cursor
-  )
+      Currency coin, Date startTime, Date endTime, Integer limit, String cursor)
       throws IOException {
     BybitResult<BybitInternalDepositRecordsResponse> internalDepositRecords =
         bybitAuthenticated.getInternalDepositRecords(
@@ -241,8 +228,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
             (endTime == null) ? null : endTime.toInstant().toEpochMilli(),
             (coin == null) ? null : coin.toString(),
             cursor,
-            limit
-        );
+            limit);
     if (!internalDepositRecords.isSuccess()) {
       throw createBybitExceptionFromResult(internalDepositRecords);
     }
@@ -250,13 +236,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
   }
 
   public BybitResult<BybitDepositRecordsResponse> getBybitSubAccountDepositRecords(
-      String subMemberId,
-      Currency coin,
-      Date startTime,
-      Date endTime,
-      Integer limit,
-      String cursor
-  )
+      String subMemberId, Currency coin, Date startTime, Date endTime, Integer limit, String cursor)
       throws IOException {
     BybitResult<BybitDepositRecordsResponse> subAccountDepositRecords =
         bybitAuthenticated.getSubAccountDepositRecords(
@@ -268,8 +248,7 @@ public class BybitAccountServiceRaw extends BybitBaseService {
             (startTime == null) ? null : startTime.toInstant().toEpochMilli(),
             (endTime == null) ? null : endTime.toInstant().toEpochMilli(),
             limit,
-            cursor
-        );
+            cursor);
     if (!subAccountDepositRecords.isSuccess()) {
       throw createBybitExceptionFromResult(subAccountDepositRecords);
     }

@@ -2,9 +2,6 @@ package org.knowm.xchange.coinbasepro;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -15,6 +12,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
 import org.knowm.xchange.coinbasepro.dto.CoinbasePagedResponse;
 import org.knowm.xchange.coinbasepro.dto.CoinbaseProException;
 import org.knowm.xchange.coinbasepro.dto.CoinbaseProTrades;
@@ -33,13 +33,13 @@ import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductStats;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductTicker;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProStats;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProTrade;
-import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWallet;
-import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWalletAddress;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProFill;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProIdResponse;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProOrder;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProPlaceOrder;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProSendMoneyResponse;
+import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWallet;
+import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWalletAddress;
 import org.knowm.xchange.utils.DateUtils;
 import si.mazi.rescu.ParamsDigest;
 
@@ -203,6 +203,7 @@ public interface CoinbasePro {
 
   /**
    * Get a list of fills. A fill is a partial or complete match on a specific order.
+   *
    * @param apiKey
    * @param signer
    * @param timestamp
@@ -233,8 +234,8 @@ public interface CoinbasePro {
       @QueryParam("after") Integer tradeIdAfter,
       @QueryParam("market_type") String marketType,
       @QueryParam("start_date") String startDate,
-      @QueryParam("end_date") String endDate
-  ) throws CoinbaseProException, IOException;
+      @QueryParam("end_date") String endDate)
+      throws CoinbaseProException, IOException;
 
   @POST
   @Path("accounts/{account_id}/transactions")
@@ -265,9 +266,7 @@ public interface CoinbasePro {
       @QueryParam("profile_id") String profileId)
       throws CoinbaseProException, IOException;
 
-  /**
-   * Lists past withdrawals and deposits for an account.
-   */
+  /** Lists past withdrawals and deposits for an account. */
   @GET
   @Path("accounts/{account_id}/transfers")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -280,11 +279,13 @@ public interface CoinbasePro {
       @QueryParam("before") String before,
       @QueryParam("after") String after,
       @QueryParam("limit") Integer limit,
-      @QueryParam("type") String type) // Possible types [deposit, withdraw, internal_deposit, internal_withdraw]
+      @QueryParam("type")
+          String type) // Possible types [deposit, withdraw, internal_deposit, internal_withdraw]
       throws CoinbaseProException, IOException;
 
   /**
-   * Gets a list of in-progress and completed transfers of funds in/out of any of the user's accounts.
+   * Gets a list of in-progress and completed transfers of funds in/out of any of the user's
+   * accounts.
    */
   @GET
   @Path("transfers")
@@ -294,7 +295,8 @@ public interface CoinbasePro {
       @HeaderParam("CB-ACCESS-SIGN") ParamsDigest signer,
       @HeaderParam("CB-ACCESS-TIMESTAMP") long timestamp,
       @HeaderParam("CB-ACCESS-PASSPHRASE") String passphrase,
-      @QueryParam("type") String type, // Possible types [deposit, withdraw, internal_deposit, internal_withdraw]
+      @QueryParam("type")
+          String type, // Possible types [deposit, withdraw, internal_deposit, internal_withdraw]
       @QueryParam("profile_id") String profileId,
       @QueryParam("before") String beforeDate,
       @QueryParam("after") String afterDate,

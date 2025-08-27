@@ -139,7 +139,7 @@ public class BinanceStreamingExchange extends BinanceExchange implements Streami
             realtimeOrderBookTicker,
             oderBookFetchLimitParameter);
     streamingAccountService = new BinanceStreamingAccountService(userDataStreamingService);
-    streamingTradeService = new BinanceStreamingTradeService(this,userDataStreamingService);
+    streamingTradeService = new BinanceStreamingTradeService(this, userDataStreamingService);
 
     return Completable.concat(completables)
         .doOnComplete(

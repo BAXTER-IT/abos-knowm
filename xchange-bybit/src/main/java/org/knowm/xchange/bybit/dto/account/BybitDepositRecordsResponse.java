@@ -74,7 +74,6 @@ public class BybitDepositRecordsResponse {
     @Getter
     @AllArgsConstructor
     public enum BybitDepositStatus {
-
       UNKNOWN(0),
       TO_BE_CONFIRMED(1),
       PROCESSING(2),
@@ -83,20 +82,17 @@ public class BybitDepositRecordsResponse {
       PENDING_TO_BE_CREDITED_TO_FUNDING_POOL(10011),
       CREDITED_TO_FUNDING_POOL_SUCCESSFULLY(10012);
 
-      @JsonValue
-      private final Integer value;
+      @JsonValue private final Integer value;
     }
 
     @Getter
     @AllArgsConstructor
     public enum BybitDepositType {
-
       NORMAL_DEPOSIT(0),
       DAILY_DEPOSIT_LIMIT_REACHED(10),
       ABNORMAL_DEPOSIT(20);
 
-      @JsonValue
-      private final Integer value;
+      @JsonValue private final Integer value;
     }
   }
 }

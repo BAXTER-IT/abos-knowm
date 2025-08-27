@@ -194,12 +194,9 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
     if (subAccountUid == null || subAccountUid.isEmpty()) {
       throw new IllegalArgumentException("Sub account uid is required");
     }
-    Currency currency =
-        ((TradeHistoryParamCurrency) params).getCurrency();
-    Integer limit =
-        ((TradeHistoryParamLimit) params).getLimit();
-    String lastTradeId =
-        ((TradeHistoryParamsIdSpan) params).getEndId();
+    Currency currency = ((TradeHistoryParamCurrency) params).getCurrency();
+    Integer limit = ((TradeHistoryParamLimit) params).getLimit();
+    String lastTradeId = ((TradeHistoryParamsIdSpan) params).getEndId();
     long nowInMillis = System.currentTimeMillis();
     long from = nowInMillis - (89L * 24 * 60 * 60 * 1000);
     long to = nowInMillis;

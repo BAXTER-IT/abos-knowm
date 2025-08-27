@@ -33,9 +33,7 @@ public class CoinbaseProPrivateIntegration {
 
   private final String SUB_ACCOUNT_ID = "";
 
-  /**
-   * AccountService tests
-   */
+  /** AccountService tests */
   @Test
   public void testAccountInfo() throws IOException {
     AccountInfo accountInfo = exchange.getAccountService().getAccountInfo();
@@ -59,30 +57,30 @@ public class CoinbaseProPrivateIntegration {
   @Test
   public void testInternalTransfer() throws IOException {
 
-    List<FundingRecord> internalTransfers = exchange
-        .getAccountService()
-        .getInternalTransferHistory(FundingRecordParamAll.builder().build());
+    List<FundingRecord> internalTransfers =
+        exchange
+            .getAccountService()
+            .getInternalTransferHistory(FundingRecordParamAll.builder().build());
 
-        internalTransfers.forEach(
-            fundingRecord -> {
-              LOG.info(fundingRecord.toString());
-              assertThat(fundingRecord).isNotNull();
-              assertThat(fundingRecord.getDate()).isNotNull();
-              assertThat(fundingRecord.getAmount()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
-              assertThat(fundingRecord.getType()).isInstanceOf(FundingRecord.Type.class);
-              assertThat(fundingRecord.getStatus()).isInstanceOf(FundingRecord.Status.class);
-              assertThat(fundingRecord.getCurrency()).isNotNull();
-            });
+    internalTransfers.forEach(
+        fundingRecord -> {
+          LOG.info(fundingRecord.toString());
+          assertThat(fundingRecord).isNotNull();
+          assertThat(fundingRecord.getDate()).isNotNull();
+          assertThat(fundingRecord.getAmount()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
+          assertThat(fundingRecord.getType()).isInstanceOf(FundingRecord.Type.class);
+          assertThat(fundingRecord.getStatus()).isInstanceOf(FundingRecord.Status.class);
+          assertThat(fundingRecord.getCurrency()).isNotNull();
+        });
 
-        assertThat(internalTransfers.size()).isGreaterThanOrEqualTo(1);
+    assertThat(internalTransfers.size()).isGreaterThanOrEqualTo(1);
   }
 
   @Test
   public void testDepositHistory() throws IOException {
 
-    List<FundingRecord> internalTransfers = exchange
-        .getAccountService()
-        .getDepositHistory(FundingRecordParamAll.builder().build());
+    List<FundingRecord> internalTransfers =
+        exchange.getAccountService().getDepositHistory(FundingRecordParamAll.builder().build());
 
     internalTransfers.forEach(
         fundingRecord -> {
@@ -101,9 +99,8 @@ public class CoinbaseProPrivateIntegration {
   @Test
   public void testWithdrawHistory() throws IOException {
 
-    List<FundingRecord> internalTransfers = exchange
-        .getAccountService()
-        .getWithdrawHistory(FundingRecordParamAll.builder().build());
+    List<FundingRecord> internalTransfers =
+        exchange.getAccountService().getWithdrawHistory(FundingRecordParamAll.builder().build());
 
     internalTransfers.forEach(
         fundingRecord -> {
@@ -122,9 +119,11 @@ public class CoinbaseProPrivateIntegration {
   @Test
   public void testWalletTransferHistory() throws IOException {
 
-    List<FundingRecord> internalTransfers = exchange
-        .getAccountService()
-        .getWalletTransferHistory(FundingRecordParamAll.builder().subAccountId(SUB_ACCOUNT_ID).build());
+    List<FundingRecord> internalTransfers =
+        exchange
+            .getAccountService()
+            .getWalletTransferHistory(
+                FundingRecordParamAll.builder().subAccountId(SUB_ACCOUNT_ID).build());
 
     internalTransfers.forEach(
         fundingRecord -> {
@@ -143,9 +142,11 @@ public class CoinbaseProPrivateIntegration {
   @Test
   public void testSubAccountDepositHistory() throws IOException {
 
-    List<FundingRecord> internalTransfers = exchange
-        .getAccountService()
-        .getSubAccountDepositHistory(FundingRecordParamAll.builder().subAccountId(SUB_ACCOUNT_ID).build());
+    List<FundingRecord> internalTransfers =
+        exchange
+            .getAccountService()
+            .getSubAccountDepositHistory(
+                FundingRecordParamAll.builder().subAccountId(SUB_ACCOUNT_ID).build());
 
     internalTransfers.forEach(
         fundingRecord -> {
@@ -164,7 +165,8 @@ public class CoinbaseProPrivateIntegration {
   @Test
   public void testFundingHistory() throws IOException {
 
-    CoinbaseProFundingHistoryParams coinbaseFundingHistoryParams = (CoinbaseProFundingHistoryParams) exchange.getAccountService().createFundingHistoryParams();
+    CoinbaseProFundingHistoryParams coinbaseFundingHistoryParams =
+        (CoinbaseProFundingHistoryParams) exchange.getAccountService().createFundingHistoryParams();
 
     coinbaseFundingHistoryParams.setLimit(50);
     coinbaseFundingHistoryParams.setType(Type.WITHDRAWAL);
@@ -198,27 +200,29 @@ public class CoinbaseProPrivateIntegration {
             });
   }
 
-  /**
-   * TradeService tests
-   */
+  /** TradeService tests */
   @Test
   public void testTradeHistory() throws IOException {
-    UserTrades userTrades = exchange
-        .getTradeService()
-        .getTradeHistory(new DefaultTradeHistoryParamInstrument(instrument));
+    UserTrades userTrades =
+        exchange
+            .getTradeService()
+            .getTradeHistory(new DefaultTradeHistoryParamInstrument(instrument));
 
-    userTrades.getUserTrades().forEach(userTrade -> {
-      assertThat(userTrade).isNotNull();
-      assertThat(userTrade.getId()).isNotNull();
-      assertThat(userTrade.getInstrument()).isEqualTo(instrument);
-      assertThat(userTrade.getPrice()).isGreaterThan(BigDecimal.ZERO);
-      assertThat(userTrade.getOriginalAmount()).isGreaterThan(BigDecimal.ZERO);
-      assertThat(userTrade.getFeeAmount()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
-      assertThat(userTrade.getTimestamp()).isNotNull();
-      assertThat(userTrade.getType()).isNotNull();
-      assertThat(userTrade.getOrderId()).isNotNull();
-      assertThat(userTrade.getFeeCurrency()).isNotNull();
-    });
+    userTrades
+        .getUserTrades()
+        .forEach(
+            userTrade -> {
+              assertThat(userTrade).isNotNull();
+              assertThat(userTrade.getId()).isNotNull();
+              assertThat(userTrade.getInstrument()).isEqualTo(instrument);
+              assertThat(userTrade.getPrice()).isGreaterThan(BigDecimal.ZERO);
+              assertThat(userTrade.getOriginalAmount()).isGreaterThan(BigDecimal.ZERO);
+              assertThat(userTrade.getFeeAmount()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
+              assertThat(userTrade.getTimestamp()).isNotNull();
+              assertThat(userTrade.getType()).isNotNull();
+              assertThat(userTrade.getOrderId()).isNotNull();
+              assertThat(userTrade.getFeeCurrency()).isNotNull();
+            });
   }
 
   @Test
@@ -226,20 +230,21 @@ public class CoinbaseProPrivateIntegration {
     CoinbaseProAccountService service = (CoinbaseProAccountService) exchange.getAccountService();
     CoinbaseProAccount account = service.getCoinbaseProAccountInfo()[1];
 
-    FundingRecordParamAll params = FundingRecordParamAll.builder()
-        .subAccountId(account.getId())
-        .build();
+    FundingRecordParamAll params =
+        FundingRecordParamAll.builder().subAccountId(account.getId()).build();
 
-    service.getLedger(params).forEach(record -> {
-      LOG.info(record.toString());
-      assertThat(record).isNotNull();
-      assertThat(record.getInternalId()).isNotNull();
-      assertThat(record.getAmount()).isInstanceOf(BigDecimal.class);
-      assertThat(record.getDate()).isInstanceOf(Date.class);
-      assertThat(record.getBalance()).isInstanceOf(BigDecimal.class);
-      assertThat(record.getType()).isInstanceOf(Type.class);
-      assertThat(record.getDescription()).isNotNull();
-    });
-
+    service
+        .getLedger(params)
+        .forEach(
+            record -> {
+              LOG.info(record.toString());
+              assertThat(record).isNotNull();
+              assertThat(record.getInternalId()).isNotNull();
+              assertThat(record.getAmount()).isInstanceOf(BigDecimal.class);
+              assertThat(record.getDate()).isInstanceOf(Date.class);
+              assertThat(record.getBalance()).isInstanceOf(BigDecimal.class);
+              assertThat(record.getType()).isInstanceOf(Type.class);
+              assertThat(record.getDescription()).isNotNull();
+            });
   }
 }

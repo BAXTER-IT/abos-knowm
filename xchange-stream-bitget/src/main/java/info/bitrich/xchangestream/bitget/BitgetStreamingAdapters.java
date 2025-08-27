@@ -144,6 +144,8 @@ public class BitgetStreamingAdapters {
             .map(FeeDetail::getCurrency)
             .findFirst()
             .orElse(null),
-        null, marketParticipant, null);
+        null,
+        marketParticipant,
+        null);
   }
 }

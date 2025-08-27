@@ -1,12 +1,11 @@
 package org.knowm.xchange.dto.account;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.ToString;
 import org.knowm.xchange.instrument.Instrument;
@@ -17,12 +16,16 @@ import org.knowm.xchange.instrument.Instrument;
 public class OpenPosition implements Serializable {
   /** The instrument */
   private final Instrument instrument;
+
   /** Is this a long or a short position */
   private final Type type;
+
   /** The size of the position */
   private final BigDecimal size;
+
   /** The average entry price for the position */
   @JsonIgnore private final BigDecimal price;
+
   /** The estimatedLiquidationPrice */
   @JsonIgnore private final BigDecimal liquidationPrice;
 

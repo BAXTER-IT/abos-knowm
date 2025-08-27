@@ -42,12 +42,22 @@ public class CoinbaseProBaseService extends BaseResilientExchangeService<Coinbas
         (String)
             exchange.getExchangeSpecification().getExchangeSpecificParametersItem("passphrase");
   }
-  public CoinbasePro getCoinbaseProExchangeRestProxy() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
+  public CoinbasePro getCoinbaseProExchangeRestProxy()
+      throws NoSuchMethodException,
+          InvocationTargetException,
+          InstantiationException,
+          IllegalAccessException {
     return ExchangeRestProxyBuilder.forInterface(
             CoinbasePro.class, exchange.getExchangeSpecification())
-        .restProxyFactory(ProxyConfig.getInstance().getRestProxyFactoryClass().getDeclaredConstructor().newInstance())
+        .restProxyFactory(
+            ProxyConfig.getInstance()
+                .getRestProxyFactoryClass()
+                .getDeclaredConstructor()
+                .newInstance())
         .build();
   }
+
   protected ExchangeException handleError(CoinbaseProException exception) {
 
     if (exception.getMessage().contains("Insufficient")) {

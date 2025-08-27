@@ -41,7 +41,7 @@ public class CoinbaseProLedgerDto {
 
   @Getter
   @ToString
-  public static class CoinbaseProLedgerDetails{
+  public static class CoinbaseProLedgerDetails {
 
     private final String orderId;
 
@@ -58,7 +58,8 @@ public class CoinbaseProLedgerDto {
       this.tradeId = tradeId;
     }
   }
-  public enum CoinbaseProLedgerTxType{
+
+  public enum CoinbaseProLedgerTxType {
     transfer,
     match,
     fee,
@@ -72,6 +73,5 @@ public class CoinbaseProLedgerDto {
     rfq_fee,
     match_conversion,
     stake_wrap
-
   }
 }

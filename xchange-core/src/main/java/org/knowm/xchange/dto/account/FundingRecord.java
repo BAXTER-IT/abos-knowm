@@ -74,8 +74,7 @@ public final class FundingRecord implements Serializable {
 
   private String toSubAccount;
 
-  @Getter
-  private String rawJson;
+  @Getter private String rawJson;
 
   /**
    * Constructs a {@link FundingRecord}.
@@ -416,7 +415,12 @@ public final class FundingRecord implements Serializable {
      * have not reached their destination yet. For deposits, the funds are available to the user.
      */
     COMPLETE(
-        "COMPLETED", "SUCCESS", "BLOCKCHAIN_CONFIRMED", "CREDITED_TO_FUNDING_POOL_SUCCESSFULLY", "EXECUTED", "CONFIRMED"),
+        "COMPLETED",
+        "SUCCESS",
+        "BLOCKCHAIN_CONFIRMED",
+        "CREDITED_TO_FUNDING_POOL_SUCCESSFULLY",
+        "EXECUTED",
+        "CONFIRMED"),
 
     /** The transfer was cancelled either by the user or by the exchange. */
     CANCELLED("REVOKED", "CANCEL", "REFUND", "CANCEL_BY_USER"),

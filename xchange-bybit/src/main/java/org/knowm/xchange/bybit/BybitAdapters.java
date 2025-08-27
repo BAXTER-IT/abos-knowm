@@ -15,14 +15,14 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.bybit.dto.BybitCategory;
 import org.knowm.xchange.bybit.dto.BybitResult;
+import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
+import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance.BybitCoinBalance;
 import org.knowm.xchange.bybit.dto.account.BybitDepositRecordsResponse.BybitDepositRecord;
 import org.knowm.xchange.bybit.dto.account.BybitInternalDepositRecordsResponse.BybitInternalDepositRecord;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse.BybitTransactionLog;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse.BybitTransactionLog.BybitTransactionLogType;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse.BybitTransfer;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse.BybitTransferStatus;
-import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
-import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance.BybitCoinBalance;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse.BybitWithdrawRecord;
 import org.knowm.xchange.bybit.dto.marketdata.instruments.BybitInstrumentInfo;
 import org.knowm.xchange.bybit.dto.marketdata.instruments.BybitInstrumentInfo.InstrumentStatus;
@@ -71,9 +71,11 @@ public class BybitAdapters {
 
   private static final String BYBIT_PERPETUAL = "PERP";
 
-  public static final SimpleDateFormat OPTIONS_EXPIRED_DATE_PARSER = new SimpleDateFormat("ddMMMyy", Locale.ENGLISH);
+  public static final SimpleDateFormat OPTIONS_EXPIRED_DATE_PARSER =
+      new SimpleDateFormat("ddMMMyy", Locale.ENGLISH);
 
-  public static Wallet adaptBybitBalances(BybitAllCoinsBalance allCoinsBalance, Set<WalletFeature> features) {
+  public static Wallet adaptBybitBalances(
+      BybitAllCoinsBalance allCoinsBalance, Set<WalletFeature> features) {
     List<Balance> balances = new ArrayList<>(allCoinsBalance.getBalance().size());
     for (BybitCoinBalance coinBalance : allCoinsBalance.getBalance()) {
       balances.add(
@@ -262,7 +264,8 @@ public class BybitAdapters {
                     .volumeScale(optionsInstrumentInfo.getLotSizeFilter().getQtyStep().scale())
                     .amountStepSize(optionsInstrumentInfo.getLotSizeFilter().getQtyStep())
                     .priceStepSize(optionsInstrumentInfo.getPriceFilter().getTickSize())
-                    .marketOrderEnabled(optionsInstrumentInfo.getStatus().equals(InstrumentStatus.TRADING))
+                    .marketOrderEnabled(
+                        optionsInstrumentInfo.getStatus().equals(InstrumentStatus.TRADING))
                     .build());
           }
         });
@@ -322,55 +325,65 @@ public class BybitAdapters {
     } else if (category.equals(BybitCategory.LINEAR) || category.equals(BybitCategory.INVERSE)) {
       instrument =
           (symbol.contains("-"))
-              ? new FuturesContract(new CurrencyPair(symbol.substring(0, symbol.indexOf("-")), quoteCurrency), symbol.substring(symbol.indexOf("-") + 1))
-              : new FuturesContract(new CurrencyPair(symbol.substring(0, symbol.length() - quoteCurrency.length()), quoteCurrency), BYBIT_PERPETUAL);
+              ? new FuturesContract(
+                  new CurrencyPair(symbol.substring(0, symbol.indexOf("-")), quoteCurrency),
+                  symbol.substring(symbol.indexOf("-") + 1))
+              : new FuturesContract(
+                  new CurrencyPair(
+                      symbol.substring(0, symbol.length() - quoteCurrency.length()), quoteCurrency),
+                  BYBIT_PERPETUAL);
     } else if (category.equals(BybitCategory.OPTION)) {
-    	int firstDash = symbol.indexOf("-"); // Index of the first '-'
-		int secondDash = symbol.indexOf("-", firstDash + 1); // Index of the second '-'
-		int thirdDash = symbol.indexOf("-", secondDash + 1); // Index of the third '-' (after strike, before type)
+      int firstDash = symbol.indexOf("-"); // Index of the first '-'
+      int secondDash = symbol.indexOf("-", firstDash + 1); // Index of the second '-'
+      int thirdDash =
+          symbol.indexOf("-", secondDash + 1); // Index of the third '-' (after strike, before type)
 
-		// Extract base currency, expiry date, and strike price (these parts are consistent)
-		String base = symbol.substring(0, firstDash);
-		String expiry = symbol.substring(firstDash + 1, secondDash);
-		String strikeValue = symbol.substring(secondDash + 1, thirdDash);
+      // Extract base currency, expiry date, and strike price (these parts are consistent)
+      String base = symbol.substring(0, firstDash);
+      String expiry = symbol.substring(firstDash + 1, secondDash);
+      String strikeValue = symbol.substring(secondDash + 1, thirdDash);
 
-		// Determine Option Type
-		String typeString;
-		int lastDash = symbol.lastIndexOf("-");
+      // Determine Option Type
+      String typeString;
+      int lastDash = symbol.lastIndexOf("-");
 
-		if (lastDash > thirdDash) {
-		    // Case 1: Symbol has a suffix after the type (e.g., ...-P-USDT)
-		    // The type is between the thirdDash and the lastDash
-		    typeString = symbol.substring(thirdDash + 1, lastDash);
-		} else {
-		    // Case 2: Symbol ends with the type (e.g., ...-140000-P)
-		    // The type is everything after the thirdDash
-		    // (lastDash will be equal to thirdDash in this scenario)
-		    typeString = symbol.substring(thirdDash + 1);
-		}
+      if (lastDash > thirdDash) {
+        // Case 1: Symbol has a suffix after the type (e.g., ...-P-USDT)
+        // The type is between the thirdDash and the lastDash
+        typeString = symbol.substring(thirdDash + 1, lastDash);
+      } else {
+        // Case 2: Symbol ends with the type (e.g., ...-140000-P)
+        // The type is everything after the thirdDash
+        // (lastDash will be equal to thirdDash in this scenario)
+        typeString = symbol.substring(thirdDash + 1);
+      }
 
-		instrument =
-		    new OptionsContract.Builder()
-		        .currencyPair(new CurrencyPair(base, quoteCurrency)) // Assuming quoteCurrency is an external variable
-		        .expireDate(OPTIONS_EXPIRED_DATE_PARSER.parse(expiry))
-		        .strike(new BigDecimal(strikeValue))
-		        .type(typeString.equals("C") ? OptionType.CALL : OptionType.PUT)
-		        .build();
+      instrument =
+          new OptionsContract.Builder()
+              .currencyPair(
+                  new CurrencyPair(
+                      base, quoteCurrency)) // Assuming quoteCurrency is an external variable
+              .expireDate(OPTIONS_EXPIRED_DATE_PARSER.parse(expiry))
+              .strike(new BigDecimal(strikeValue))
+              .type(typeString.equals("C") ? OptionType.CALL : OptionType.PUT)
+              .build();
     }
 
     return instrument;
   }
 
-  public static BybitCategory getBybitCategoryFromInstrument(Instrument instrument, BybitCategory defaultCategory) {
+  public static BybitCategory getBybitCategoryFromInstrument(
+      Instrument instrument, BybitCategory defaultCategory) {
     if (instrument == null) {
       return defaultCategory;
     }
     int count = StringUtils.countMatches(instrument.toString(), "/");
-    if(count == 1){
+    if (count == 1) {
       return BybitCategory.SPOT;
-    } else if(count == 4){
+    } else if (count == 4) {
       return BybitCategory.OPTION;
-    } else if(instrument.getCounter().equals(Currency.USDC) || instrument.getCounter().equals(Currency.USDT)){
+    } else if (instrument.getCounter().equals(Currency.USDC)
+        || instrument.getCounter().equals(Currency.USDT)) {
       return BybitCategory.LINEAR;
     } else {
       return BybitCategory.INVERSE;
@@ -383,8 +396,10 @@ public class BybitAdapters {
         .collect(Collectors.toList());
   }
 
-  public static UserTrade adaptUserTrade(BybitUserTradeDto bybitUserTradeDto, BybitCategory bybitCategory) {
-    Instrument instrument = BybitAdapters.adaptInstrument(bybitUserTradeDto.getSymbol(), bybitCategory);
+  public static UserTrade adaptUserTrade(
+      BybitUserTradeDto bybitUserTradeDto, BybitCategory bybitCategory) {
+    Instrument instrument =
+        BybitAdapters.adaptInstrument(bybitUserTradeDto.getSymbol(), bybitCategory);
     return new UserTrade.Builder()
         .instrument(instrument)
         .feeAmount(bybitUserTradeDto.getExecFee())
@@ -395,8 +410,16 @@ public class BybitAdapters {
         .originalAmount(bybitUserTradeDto.getExecQty())
         .price(bybitUserTradeDto.getExecPrice())
         .timestamp(bybitUserTradeDto.getExecTime())
-        .feeCurrency((instrument == null) ? null : BybitAdapters.getFeeCurrency(bybitUserTradeDto.getIsMaker(), bybitUserTradeDto.getFeeRate(), instrument , bybitUserTradeDto.getSide()))
-        .marketParticipant(bybitUserTradeDto.getIsMaker() ? MarketParticipant.MAKER : MarketParticipant.TAKER)
+        .feeCurrency(
+            (instrument == null)
+                ? null
+                : BybitAdapters.getFeeCurrency(
+                    bybitUserTradeDto.getIsMaker(),
+                    bybitUserTradeDto.getFeeRate(),
+                    instrument,
+                    bybitUserTradeDto.getSide()))
+        .marketParticipant(
+            bybitUserTradeDto.getIsMaker() ? MarketParticipant.MAKER : MarketParticipant.TAKER)
         .build();
   }
 
@@ -404,131 +427,169 @@ public class BybitAdapters {
     if (instrument == null) {
       return null;
     }
-    if(instrument instanceof CurrencyPair){
-      return instrument.toString().replace("/","");
-    } else if(instrument instanceof OptionsContract){
-      return instrument.toString().replace("/","-");
-    } else if(instrument.toString().contains(BYBIT_PERPETUAL)){
-      return instrument.toString().replace("/","").replace(BYBIT_PERPETUAL,"");
+    if (instrument instanceof CurrencyPair) {
+      return instrument.toString().replace("/", "");
+    } else if (instrument instanceof OptionsContract) {
+      return instrument.toString().replace("/", "-");
+    } else if (instrument.toString().contains(BYBIT_PERPETUAL)) {
+      return instrument.toString().replace("/", "").replace(BYBIT_PERPETUAL, "");
     } else {
-      return instrument.toString().replace("/","-");
+      return instrument.toString().replace("/", "-");
     }
   }
 
-  public static Map<Currency, CurrencyMetaData> adaptBybitCurrencies(List<BybitInstrumentInfo> list) {
+  public static Map<Currency, CurrencyMetaData> adaptBybitCurrencies(
+      List<BybitInstrumentInfo> list) {
     Map<Currency, CurrencyMetaData> currencyCurrencyMetaDataMap = new HashMap<>();
 
-    list.forEach(bybitInstrumentInfo -> {
-      BybitSpotInstrumentInfo spotInfo = (BybitSpotInstrumentInfo) bybitInstrumentInfo;
+    list.forEach(
+        bybitInstrumentInfo -> {
+          BybitSpotInstrumentInfo spotInfo = (BybitSpotInstrumentInfo) bybitInstrumentInfo;
 
-      if(!currencyCurrencyMetaDataMap.containsKey(new Currency(spotInfo.getBaseCoin()))){
-        currencyCurrencyMetaDataMap.put(
-            new Currency(spotInfo.getBaseCoin()),
-            CurrencyMetaData.builder()
-                .scale(spotInfo.getLotSizeFilter().getBasePrecision().scale())
-                .build());
-      }
-      if(!currencyCurrencyMetaDataMap.containsKey(new Currency(spotInfo.getQuoteCoin()))) {
-        currencyCurrencyMetaDataMap.put(
-            new Currency(spotInfo.getQuoteCoin()),
-            CurrencyMetaData.builder()
-                .scale(spotInfo.getLotSizeFilter().getQuotePrecision().scale())
-                .build());
-      }
-    });
+          if (!currencyCurrencyMetaDataMap.containsKey(new Currency(spotInfo.getBaseCoin()))) {
+            currencyCurrencyMetaDataMap.put(
+                new Currency(spotInfo.getBaseCoin()),
+                CurrencyMetaData.builder()
+                    .scale(spotInfo.getLotSizeFilter().getBasePrecision().scale())
+                    .build());
+          }
+          if (!currencyCurrencyMetaDataMap.containsKey(new Currency(spotInfo.getQuoteCoin()))) {
+            currencyCurrencyMetaDataMap.put(
+                new Currency(spotInfo.getQuoteCoin()),
+                CurrencyMetaData.builder()
+                    .scale(spotInfo.getLotSizeFilter().getQuotePrecision().scale())
+                    .build());
+          }
+        });
 
     return currencyCurrencyMetaDataMap;
   }
 
-  public static List<FundingRecord> adaptBybitInternalTransfers(List<BybitTransfer> internalTransfers) {
+  public static List<FundingRecord> adaptBybitInternalTransfers(
+      List<BybitTransfer> internalTransfers) {
     List<FundingRecord> fundingRecords = new ArrayList<>();
 
-    internalTransfers.forEach(internalTransfer -> fundingRecords.add(FundingRecord.builder()
-            .internalId(internalTransfer.getTransferId())
-            .currency(new Currency(internalTransfer.getCoin()))
-            .amount(internalTransfer.getAmount())
-            .date(internalTransfer.getTimestamp())
-            .type(Type.INTERNAL_WALLET_TRANSFER)
-            .status(Status.resolveStatus(internalTransfer.getStatus().name()))
-            .fromWallet(internalTransfer.getFromAccountType().name())
-            .toWallet(internalTransfer.getToAccountType().name())
-            .description(internalTransfer.getFromAccountType().name()+"->"+internalTransfer.getToAccountType().name())
-        .build()));
+    internalTransfers.forEach(
+        internalTransfer ->
+            fundingRecords.add(
+                FundingRecord.builder()
+                    .internalId(internalTransfer.getTransferId())
+                    .currency(new Currency(internalTransfer.getCoin()))
+                    .amount(internalTransfer.getAmount())
+                    .date(internalTransfer.getTimestamp())
+                    .type(Type.INTERNAL_WALLET_TRANSFER)
+                    .status(Status.resolveStatus(internalTransfer.getStatus().name()))
+                    .fromWallet(internalTransfer.getFromAccountType().name())
+                    .toWallet(internalTransfer.getToAccountType().name())
+                    .description(
+                        internalTransfer.getFromAccountType().name()
+                            + "->"
+                            + internalTransfer.getToAccountType().name())
+                    .build()));
     return fundingRecords;
   }
 
-  public static List<FundingRecord> adaptBybitWithdrawRecords(List<BybitWithdrawRecord> withdrawRecords) {
+  public static List<FundingRecord> adaptBybitWithdrawRecords(
+      List<BybitWithdrawRecord> withdrawRecords) {
     List<FundingRecord> fundingRecords = new ArrayList<>();
 
-    withdrawRecords.forEach(withdrawRecord -> fundingRecords.add(FundingRecord.builder()
-        .internalId(withdrawRecord.getWithdrawId())
-        .blockchainTransactionHash(withdrawRecord.getTxID())
-        .addressTag(withdrawRecord.getTag())
-        .address(withdrawRecord.getToAddress())
-        .currency(new Currency(withdrawRecord.getCoin()))
-        .type(withdrawRecord.getWithdrawType() == 0 ? Type.WITHDRAWAL: Type.INTERNAL_WITHDRAWAL)
-        .amount(withdrawRecord.getAmount())
-        .date(withdrawRecord.getCreateTime())
-        .status(Status.resolveStatus(withdrawRecord.getStatus().name()))
-        .fee(withdrawRecord.getWithdrawFee())
-        .description(withdrawRecord.getChain())
-        .build()));
+    withdrawRecords.forEach(
+        withdrawRecord ->
+            fundingRecords.add(
+                FundingRecord.builder()
+                    .internalId(withdrawRecord.getWithdrawId())
+                    .blockchainTransactionHash(withdrawRecord.getTxID())
+                    .addressTag(withdrawRecord.getTag())
+                    .address(withdrawRecord.getToAddress())
+                    .currency(new Currency(withdrawRecord.getCoin()))
+                    .type(
+                        withdrawRecord.getWithdrawType() == 0
+                            ? Type.WITHDRAWAL
+                            : Type.INTERNAL_WITHDRAWAL)
+                    .amount(withdrawRecord.getAmount())
+                    .date(withdrawRecord.getCreateTime())
+                    .status(Status.resolveStatus(withdrawRecord.getStatus().name()))
+                    .fee(withdrawRecord.getWithdrawFee())
+                    .description(withdrawRecord.getChain())
+                    .build()));
     return fundingRecords;
   }
 
-  public static List<FundingRecord> adaptBybitUniversalTransfers(List<BybitTransfer> universalTransfers) {
+  public static List<FundingRecord> adaptBybitUniversalTransfers(
+      List<BybitTransfer> universalTransfers) {
     List<FundingRecord> fundingRecords = new ArrayList<>();
 
-    universalTransfers.forEach(universalTransfer -> fundingRecords.add(FundingRecord.builder()
-        .internalId(universalTransfer.getTransferId())
-        .currency(Currency.getInstance(universalTransfer.getCoin()))
-        .amount(universalTransfer.getAmount())
-        .date(universalTransfer.getTimestamp())
-        .type(Type.INTERNAL_SUB_ACCOUNT_TRANSFER)
-        .status(Status.resolveStatus(universalTransfer.getStatus().name()))
-        .toSubAccount(universalTransfer.getToMember())
-        .fromSubAccount(universalTransfer.getFromMember())
-        .toWallet(universalTransfer.getToAccountType().name())
-        .fromWallet(universalTransfer.getFromAccountType().name())
-        .description(universalTransfer.getFromMember()+"."+universalTransfer.getFromAccountType().name()+"->"+universalTransfer.getToMember()+"."+universalTransfer.getToAccountType().name())
-        .build()));
+    universalTransfers.forEach(
+        universalTransfer ->
+            fundingRecords.add(
+                FundingRecord.builder()
+                    .internalId(universalTransfer.getTransferId())
+                    .currency(Currency.getInstance(universalTransfer.getCoin()))
+                    .amount(universalTransfer.getAmount())
+                    .date(universalTransfer.getTimestamp())
+                    .type(Type.INTERNAL_SUB_ACCOUNT_TRANSFER)
+                    .status(Status.resolveStatus(universalTransfer.getStatus().name()))
+                    .toSubAccount(universalTransfer.getToMember())
+                    .fromSubAccount(universalTransfer.getFromMember())
+                    .toWallet(universalTransfer.getToAccountType().name())
+                    .fromWallet(universalTransfer.getFromAccountType().name())
+                    .description(
+                        universalTransfer.getFromMember()
+                            + "."
+                            + universalTransfer.getFromAccountType().name()
+                            + "->"
+                            + universalTransfer.getToMember()
+                            + "."
+                            + universalTransfer.getToAccountType().name())
+                    .build()));
 
     return fundingRecords;
   }
 
-
-  public static List<FundingRecord> adaptBybitDepositRecords(List<BybitDepositRecord> bybitDepositRecords) {
+  public static List<FundingRecord> adaptBybitDepositRecords(
+      List<BybitDepositRecord> bybitDepositRecords) {
     List<FundingRecord> fundingRecords = new ArrayList<>();
 
-    bybitDepositRecords.forEach(depositRecord -> fundingRecords.add(FundingRecord.builder()
-        .internalId(depositRecord.getTxID())
-        .addressTag(depositRecord.getTag())
-        .address((depositRecord.getToAddress() == null) ? "" : depositRecord.getToAddress())
-        .type(Type.DEPOSIT)
-        .fee((depositRecord.getDepositFee() == null) ? BigDecimal.ZERO : depositRecord.getDepositFee())
-        .blockchainTransactionHash(depositRecord.getBlockHash())
-        .currency(Currency.getInstance(depositRecord.getCoin()))
-        .amount(depositRecord.getAmount())
-        .date(depositRecord.getSuccessAt())
-        .status(Status.resolveStatus(depositRecord.getStatus().name()))
-        .description(depositRecord.getDepositType().name())
-        .build()));
+    bybitDepositRecords.forEach(
+        depositRecord ->
+            fundingRecords.add(
+                FundingRecord.builder()
+                    .internalId(depositRecord.getTxID())
+                    .addressTag(depositRecord.getTag())
+                    .address(
+                        (depositRecord.getToAddress() == null) ? "" : depositRecord.getToAddress())
+                    .type(Type.DEPOSIT)
+                    .fee(
+                        (depositRecord.getDepositFee() == null)
+                            ? BigDecimal.ZERO
+                            : depositRecord.getDepositFee())
+                    .blockchainTransactionHash(depositRecord.getBlockHash())
+                    .currency(Currency.getInstance(depositRecord.getCoin()))
+                    .amount(depositRecord.getAmount())
+                    .date(depositRecord.getSuccessAt())
+                    .status(Status.resolveStatus(depositRecord.getStatus().name()))
+                    .description(depositRecord.getDepositType().name())
+                    .build()));
 
     return fundingRecords;
   }
 
-  public static List<FundingRecord> adaptBybitInternalDepositRecords(List<BybitInternalDepositRecord> bybitInternalDepositRecords) {
+  public static List<FundingRecord> adaptBybitInternalDepositRecords(
+      List<BybitInternalDepositRecord> bybitInternalDepositRecords) {
     List<FundingRecord> fundingRecords = new ArrayList<>();
 
-    bybitInternalDepositRecords.forEach(internalRecord -> fundingRecords.add(FundingRecord.builder()
-        .internalId(internalRecord.getId())
-        .address(internalRecord.getAddress())
-        .type(Type.INTERNAL_DEPOSIT)
-        .currency(Currency.getInstance(internalRecord.getCoin()))
-        .amount(internalRecord.getAmount())
-        .date(internalRecord.getCreatedTime())
-        .status(Status.resolveStatus(internalRecord.getStatus().name()))
-        .build()));
+    bybitInternalDepositRecords.forEach(
+        internalRecord ->
+            fundingRecords.add(
+                FundingRecord.builder()
+                    .internalId(internalRecord.getId())
+                    .address(internalRecord.getAddress())
+                    .type(Type.INTERNAL_DEPOSIT)
+                    .currency(Currency.getInstance(internalRecord.getCoin()))
+                    .amount(internalRecord.getAmount())
+                    .date(internalRecord.getCreatedTime())
+                    .status(Status.resolveStatus(internalRecord.getStatus().name()))
+                    .build()));
 
     return fundingRecords;
   }
@@ -536,8 +597,8 @@ public class BybitAdapters {
   public static BybitTransferStatus convertToBybitStatus(FundingRecord.Status status) {
     BybitTransferStatus bybitStatus = null;
 
-    if(status != null){
-      switch (status){
+    if (status != null) {
+      switch (status) {
         case CANCELLED:
         case FAILED:
           bybitStatus = BybitTransferStatus.FAILED;
@@ -560,17 +621,18 @@ public class BybitAdapters {
     List<FundingRecord> fundingRecords = new ArrayList<>();
 
     list.forEach(
-        bybitTransactionLog -> fundingRecords.add(
-            FundingRecord.builder()
-                .currency(Currency.getInstance(bybitTransactionLog.getCurrency()))
-                .balance(bybitTransactionLog.getCashBalance())
-                .internalId(bybitTransactionLog.getId())
-                .fee(bybitTransactionLog.getFee())
-                .amount(bybitTransactionLog.getChange())
-                .type(convertToFundingRecordType(bybitTransactionLog.getType()))
-                .status(Status.COMPLETE)
-                .date(bybitTransactionLog.getTransactionTime())
-                .build()));
+        bybitTransactionLog ->
+            fundingRecords.add(
+                FundingRecord.builder()
+                    .currency(Currency.getInstance(bybitTransactionLog.getCurrency()))
+                    .balance(bybitTransactionLog.getCashBalance())
+                    .internalId(bybitTransactionLog.getId())
+                    .fee(bybitTransactionLog.getFee())
+                    .amount(bybitTransactionLog.getChange())
+                    .type(convertToFundingRecordType(bybitTransactionLog.getType()))
+                    .status(Status.COMPLETE)
+                    .date(bybitTransactionLog.getTransactionTime())
+                    .build()));
 
     return fundingRecords;
   }
@@ -578,7 +640,7 @@ public class BybitAdapters {
   private static Type convertToFundingRecordType(BybitTransactionLogType type) {
     Type fundingRecordType = null;
 
-    if(type != null){
+    if (type != null) {
       switch (type) {
         case TRANSFER_IN:
         case TRANSFER_IN_INS_LOAN:
@@ -611,7 +673,7 @@ public class BybitAdapters {
         case FEE_REFUND:
         case BORROWED_AMOUNT_INS_LOAN:
           fundingRecordType = Type.OTHER_INFLOW;
-            break;
+          break;
         case AUTO_PRINCIPLE_REPAYMENT_INS_LOAN:
         case PRINCIPLE_REPAYMENT_INS_LOAN:
         case INTEREST_REPAYMENT_INS_LOAN:

@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 public class CoinbaseProStreamingPrivateIntegration {
 
   StreamingExchange exchange;
-  private static final Logger LOG = LoggerFactory.getLogger(CoinbaseProStreamingPrivateIntegration.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(CoinbaseProStreamingPrivateIntegration.class);
   Instrument instrument = new CurrencyPair("BTC/USD");
 
   @Before
@@ -39,16 +40,19 @@ public class CoinbaseProStreamingPrivateIntegration {
     Properties properties = new Properties();
 
     try {
-      properties.load(CoinbaseProStreamingPrivateIntegration.class.getResourceAsStream("/secret.keys"));
+      properties.load(
+          CoinbaseProStreamingPrivateIntegration.class.getResourceAsStream("/secret.keys"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    ExchangeSpecification spec = new CoinbaseProStreamingExchange().getDefaultExchangeSpecification();
+    ExchangeSpecification spec =
+        new CoinbaseProStreamingExchange().getDefaultExchangeSpecification();
 
     spec.setApiKey(properties.getProperty("coinbaseApi"));
     spec.setSecretKey(properties.getProperty("coinbaseSecret"));
-    spec.setExchangeSpecificParametersItem("passphrase", properties.getProperty("coinbasePassphrase"));
+    spec.setExchangeSpecificParametersItem(
+        "passphrase", properties.getProperty("coinbasePassphrase"));
     spec.setExchangeSpecificParametersItem(Exchange.USE_SANDBOX, true);
 
     exchange = StreamingExchangeFactory.INSTANCE.createExchange(spec);
@@ -56,38 +60,46 @@ public class CoinbaseProStreamingPrivateIntegration {
 
   @Test
   public void testUserTrades() throws InterruptedException, IOException {
-    exchange
-        .connect(ProductSubscription.create().addAll(instrument).build())
-        .blockingAwait();
+    exchange.connect(ProductSubscription.create().addAll(instrument).build()).blockingAwait();
 
     List<UserTrade> userTradeList = new ArrayList<>();
 
-    Disposable dis = exchange.getStreamingTradeService().getUserTrades(instrument).subscribe(userTrade -> {
-      LOG.info(userTrade.toString());
-      userTradeList.add(userTrade);
-    });
+    Disposable dis =
+        exchange
+            .getStreamingTradeService()
+            .getUserTrades(instrument)
+            .subscribe(
+                userTrade -> {
+                  LOG.info(userTrade.toString());
+                  userTradeList.add(userTrade);
+                });
     int count = 0;
 
-    while (count < 5){
+    while (count < 5) {
       TimeUnit.SECONDS.sleep(2);
-      exchange.getTradeService().placeMarketOrder(new MarketOrder.Builder(OrderType.BID, instrument)
-          .originalAmount(BigDecimal.valueOf(0.0001))
-          .build());
+      exchange
+          .getTradeService()
+          .placeMarketOrder(
+              new MarketOrder.Builder(OrderType.BID, instrument)
+                  .originalAmount(BigDecimal.valueOf(0.0001))
+                  .build());
       count++;
     }
     dis.dispose();
 
     assertThat(userTradeList.size()).isGreaterThanOrEqualTo(4);
-    userTradeList.forEach(userTrade -> {
-      assertThat(userTrade.getPrice()).isGreaterThan(BigDecimal.ZERO);
-      assertThat(userTrade.getType()).isEqualTo(OrderType.BID);
-      assertThat(userTrade.getInstrument()).isEqualTo(instrument);
-      assertThat(userTrade.getOriginalAmount()).isGreaterThan(BigDecimal.ZERO);
-      assertThat(userTrade.getFeeAmount()).isGreaterThan(BigDecimal.ZERO);
-      assertThat(userTrade.getOrderId()).isNotNull();
-      assertThat(userTrade.getId()).isNotNull();
-      assertThat(userTrade.getFeeCurrency()).isInstanceOf(Currency.class);
-      assertThat(userTrade.getTimestamp()).isAfter(Date.from(Instant.now().minus(5, ChronoUnit.MINUTES)));
-    });
+    userTradeList.forEach(
+        userTrade -> {
+          assertThat(userTrade.getPrice()).isGreaterThan(BigDecimal.ZERO);
+          assertThat(userTrade.getType()).isEqualTo(OrderType.BID);
+          assertThat(userTrade.getInstrument()).isEqualTo(instrument);
+          assertThat(userTrade.getOriginalAmount()).isGreaterThan(BigDecimal.ZERO);
+          assertThat(userTrade.getFeeAmount()).isGreaterThan(BigDecimal.ZERO);
+          assertThat(userTrade.getOrderId()).isNotNull();
+          assertThat(userTrade.getId()).isNotNull();
+          assertThat(userTrade.getFeeCurrency()).isInstanceOf(Currency.class);
+          assertThat(userTrade.getTimestamp())
+              .isAfter(Date.from(Instant.now().minus(5, ChronoUnit.MINUTES)));
+        });
   }
 }

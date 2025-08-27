@@ -16,9 +16,7 @@ import org.knowm.xchange.gateio.config.converter.TimestampSecondsToInstantConver
 @Jacksonized
 public class GateioSubAccountTransfer {
 
-  /**
-   * Main account user ID
-   */
+  /** Main account user ID */
   @JsonProperty("uid")
   Integer mainAccountId;
 
@@ -26,9 +24,7 @@ public class GateioSubAccountTransfer {
   @JsonDeserialize(converter = TimestampSecondsToInstantConverter.class)
   private Instant timestamp;
 
-  /**
-   * Where the operation is initiated from, like "web"
-   */
+  /** Where the operation is initiated from, like "web" */
   @JsonProperty("source")
   String source;
 
@@ -39,15 +35,11 @@ public class GateioSubAccountTransfer {
   @JsonDeserialize(converter = StringToCurrencyConverter.class)
   Currency currency;
 
-  /**
-   * Sub account user ID
-   */
+  /** Sub account user ID */
   @JsonProperty("sub_account")
   Integer subAccountId;
 
-  /**
-   * Transfer direction. to - transfer into sub account; from - transfer out from sub account
-   */
+  /** Transfer direction. to - transfer into sub account; from - transfer out from sub account */
   @JsonProperty("direction")
   String direction;
 
@@ -55,9 +47,9 @@ public class GateioSubAccountTransfer {
   BigDecimal amount;
 
   /**
-   * Target sub user's account. spot - spot account, futures - perpetual contract account, cross_margin - cross margin account, delivery - delivery account
+   * Target sub user's account. spot - spot account, futures - perpetual contract account,
+   * cross_margin - cross margin account, delivery - delivery account
    */
   @JsonProperty("sub_account_type")
   String subAccountType;
-
 }

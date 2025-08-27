@@ -1,12 +1,9 @@
 package org.knowm.xchange.bitget.config.deserializer;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -29,14 +26,16 @@ public class BitgetTransferRecordDtoDeserializer extends JsonDeserializer<Bitget
     Currency currency = converter.convert(currencyString);
 
     String statusString = node.get("status").asText();
-    StringToFundingRecordStatusConverter statusConverter = new StringToFundingRecordStatusConverter();
+    StringToFundingRecordStatusConverter statusConverter =
+        new StringToFundingRecordStatusConverter();
     Status status = statusConverter.convert(statusString);
 
     String toAccountTypeString = node.get("toType").asText();
     BitgetAccountType toAccountType = BitgetAccountType.valueOf(toAccountTypeString.toUpperCase());
 
     String fromAccountTypeString = node.get("fromType").asText();
-    BitgetAccountType fromAccountType = BitgetAccountType.valueOf(fromAccountTypeString.toUpperCase());
+    BitgetAccountType fromAccountType =
+        BitgetAccountType.valueOf(fromAccountTypeString.toUpperCase());
 
     return BitgetTransferRecordDto.builder()
         .clientOid(node.get("clientOid").asText())

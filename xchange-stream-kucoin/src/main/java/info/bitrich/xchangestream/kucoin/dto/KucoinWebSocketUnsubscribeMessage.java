@@ -15,7 +15,7 @@ public class KucoinWebSocketUnsubscribeMessage {
 
   @JsonProperty("response")
   public final boolean response;
-  
+
   public KucoinWebSocketUnsubscribeMessage(String topic, Long id) {
     this.topic = topic;
     this.id = id;

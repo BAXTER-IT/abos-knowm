@@ -11,6 +11,8 @@ import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.HIDDEN;
 import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.ICEBERG;
 import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.POST_ONLY;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Ordering;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -23,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -66,9 +67,6 @@ import org.knowm.xchange.kucoin.dto.response.TradeFeeResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeHistoryResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeResponse;
 import org.knowm.xchange.kucoin.dto.response.WithdrawalResponse;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Ordering;
 
 public class KucoinAdapters {
 
@@ -157,7 +155,9 @@ public class KucoinAdapters {
       FeeTier[] feeTiers = staticMetaData != null ? staticMetaData.getFeeTiers() : null;
       Currency feeCurrency = new Currency(symbol.getFeeCurrency());
 
-      currencyPairs.put(pair, new InstrumentMetaData.Builder()
+      currencyPairs.put(
+          pair,
+          new InstrumentMetaData.Builder()
               .tradingFee(takerTradingFee)
               .minimumAmount(minSize)
               .maximumAmount(maxSize)

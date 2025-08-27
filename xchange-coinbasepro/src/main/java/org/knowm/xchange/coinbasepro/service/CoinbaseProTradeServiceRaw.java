@@ -4,7 +4,6 @@ import static org.knowm.xchange.coinbasepro.CoinbaseProResilience.PRIVATE_REST_E
 
 import java.io.IOException;
 import org.knowm.xchange.client.ResilienceRegistries;
-import org.knowm.xchange.coinbasepro.CoinbaseProAdapters;
 import org.knowm.xchange.coinbasepro.CoinbaseProExchange;
 import org.knowm.xchange.coinbasepro.dto.CoinbasePagedResponse;
 import org.knowm.xchange.coinbasepro.dto.CoinbaseProException;
@@ -12,14 +11,6 @@ import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProFill;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProIdResponse;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProOrder;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProPlaceOrder;
-import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProTradeHistoryParams;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.instrument.Instrument;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrencyPair;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamInstrument;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamLimit;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamTransactionId;
-import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.utils.timestamp.UnixTimestampFactory;
 
 public class CoinbaseProTradeServiceRaw extends CoinbaseProBaseService {
@@ -64,7 +55,15 @@ public class CoinbaseProTradeServiceRaw extends CoinbaseProBaseService {
 
   /** https://docs.pro.coinbase.com/#fills */
   public CoinbasePagedResponse<CoinbaseProFill> getCoinbaseProFills(
-      String orderId, String productId, Integer limit, Integer beforeTradeId, Integer afterTradeId, String marketType, String startDate, String endDate) throws CoinbaseProException, IOException {
+      String orderId,
+      String productId,
+      Integer limit,
+      Integer beforeTradeId,
+      Integer afterTradeId,
+      String marketType,
+      String startDate,
+      String endDate)
+      throws CoinbaseProException, IOException {
 
     try {
       return coinbasePro.getFills(

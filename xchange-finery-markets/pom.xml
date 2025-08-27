@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.knowm.xchange.fork</groupId>
-    <artifactId>xchange-parent</artifactId>
-    <version>6.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.knowm.xchange.fork</groupId>
+        <artifactId>xchange-parent</artifactId>
+        <version>6.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>xchange-finery-markets</artifactId>
+    <artifactId>xchange-finery-markets</artifactId>
 
-  <name>XChange Finery Markets</name>
-  <description>XChange implementation for Finery Markets</description>
+    <name>XChange Finery Markets</name>
+    <description>XChange implementation for Finery Markets</description>
 
-  <url>http://knowm.org/open-source/xchange/</url>
-  <inceptionYear>2022</inceptionYear>
-
-  <organization>
-    <name>Knowm Inc.</name>
     <url>http://knowm.org/open-source/xchange/</url>
-  </organization>
+    <inceptionYear>2022</inceptionYear>
 
-  <!-- Parent provides default configuration for dependencies -->
-  <dependencies>
-    <dependency>
-      <groupId>org.knowm.xchange.fork</groupId>
-      <artifactId>xchange-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <organization>
+        <name>Knowm Inc.</name>
+        <url>http://knowm.org/open-source/xchange/</url>
+    </organization>
 
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-    </dependency>
+    <!-- Parent provides default configuration for dependencies -->
+    <dependencies>
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.12.0</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.12.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.knowm.xchange.fork</groupId>
+            <artifactId>xchange-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

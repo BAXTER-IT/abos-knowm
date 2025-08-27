@@ -230,7 +230,10 @@ public class CoinbaseProWebSocketTransaction {
         .size(size)
         .orderId(taker ? takerOrderId : makerOrderId)
         .createdAt(time)
-        .fee(taker ? price.multiply(size).multiply(takerFeeRate) : price.multiply(size).multiply(makerFeeRate))
+        .fee(
+            taker
+                ? price.multiply(size).multiply(takerFeeRate)
+                : price.multiply(size).multiply(makerFeeRate))
         .side(Side.valueOf(useSide))
         .settled(true)
         .build();

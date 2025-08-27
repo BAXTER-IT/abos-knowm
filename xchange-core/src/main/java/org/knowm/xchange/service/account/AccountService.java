@@ -246,8 +246,8 @@ public interface AccountService extends BaseService {
   }
 
   /**
-   * @return list of internal transfers, that is the transfers within the same account, e.g. sub spot -> sub futures. This should never
-   *     return null.
+   * @return list of internal transfers, that is the transfers within the same account, e.g. sub
+   *     spot -> sub futures. This should never return null.
    * @throws ExchangeException - Indication that the exchange reported some kind of error with the
    *     request or response
    * @throws NotAvailableFromExchangeException - Indication that the exchange does not support the
@@ -256,7 +256,8 @@ public interface AccountService extends BaseService {
    *     requested function or data, but it has not yet been implemented
    * @throws IOException - Indication that a networking error occurred while fetching JSON data
    */
-  default List<FundingRecord> getInternalTransferHistory(FundingRecordParamAll params) throws IOException {
+  default List<FundingRecord> getInternalTransferHistory(FundingRecordParamAll params)
+      throws IOException {
     throw new NotYetImplementedForExchangeException("getInternalTransferHistory");
   }
 
@@ -276,8 +277,8 @@ public interface AccountService extends BaseService {
   }
 
   /**
-   * @return list of deposit history for a subAccount if available or an empty list otherwise. This should never
-   *     return null.
+   * @return list of deposit history for a subAccount if available or an empty list otherwise. This
+   *     should never return null.
    * @throws ExchangeException - Indication that the exchange reported some kind of error with the
    *     request or response
    * @throws NotAvailableFromExchangeException - Indication that the exchange does not support the
@@ -286,7 +287,8 @@ public interface AccountService extends BaseService {
    *     requested function or data, but it has not yet been implemented
    * @throws IOException - Indication that a networking error occurred while fetching JSON data
    */
-  default List<FundingRecord> getSubAccountDepositHistory(FundingRecordParamAll params) throws IOException {
+  default List<FundingRecord> getSubAccountDepositHistory(FundingRecordParamAll params)
+      throws IOException {
     throw new NotYetImplementedForExchangeException("getSubAccountDepositHistory");
   }
 
@@ -306,8 +308,8 @@ public interface AccountService extends BaseService {
   }
 
   /**
-   * @return list of wallet transfers, that is the transfers between accounts, e.g. master -> sub. This should never
-   *     return null.
+   * @return list of wallet transfers, that is the transfers between accounts, e.g. master -> sub.
+   *     This should never return null.
    * @throws ExchangeException - Indication that the exchange reported some kind of error with the
    *     request or response
    * @throws NotAvailableFromExchangeException - Indication that the exchange does not support the
@@ -316,7 +318,8 @@ public interface AccountService extends BaseService {
    *     requested function or data, but it has not yet been implemented
    * @throws IOException - Indication that a networking error occurred while fetching JSON data
    */
-  default List<FundingRecord> getWalletTransferHistory(FundingRecordParamAll params) throws IOException {
+  default List<FundingRecord> getWalletTransferHistory(FundingRecordParamAll params)
+      throws IOException {
     throw new NotYetImplementedForExchangeException("getWalletTransferHistory");
   }
 

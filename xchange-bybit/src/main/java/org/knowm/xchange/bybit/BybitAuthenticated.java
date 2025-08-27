@@ -4,6 +4,7 @@ import static org.knowm.xchange.bybit.service.BybitDigest.X_BAPI_API_KEY;
 import static org.knowm.xchange.bybit.service.BybitDigest.X_BAPI_SIGN;
 import static org.knowm.xchange.bybit.service.BybitDigest.X_BAPI_TIMESTAMP;
 
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
@@ -15,31 +16,29 @@ import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import org.knowm.xchange.bybit.dto.BybitResult;
+import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
 import org.knowm.xchange.bybit.dto.account.BybitDepositRecordsResponse;
+import org.knowm.xchange.bybit.dto.account.BybitFeeRates;
 import org.knowm.xchange.bybit.dto.account.BybitInternalDepositRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse;
-import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
-import org.knowm.xchange.bybit.dto.account.BybitFeeRates;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse;
 import org.knowm.xchange.bybit.dto.account.walletbalance.BybitWalletBalance;
-import org.knowm.xchange.bybit.dto.trade.BybitTradeHistoryResponse;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderResponse;
+import org.knowm.xchange.bybit.dto.trade.BybitTradeHistoryResponse;
 import org.knowm.xchange.bybit.dto.trade.details.BybitOrderDetail;
 import org.knowm.xchange.bybit.dto.trade.details.BybitOrderDetails;
 import org.knowm.xchange.bybit.service.BybitException;
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.SynchronizedValueFactory;
 
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import java.io.IOException;
-
 @Path("/v5")
 @Produces(MediaType.APPLICATION_JSON)
 public interface BybitAuthenticated {
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/account/wallet-balance">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/account/wallet-balance">API</a>
+   */
   @GET
   @Path("/account/wallet-balance")
   BybitResult<BybitWalletBalance> getWalletBalance(
@@ -49,7 +48,9 @@ public interface BybitAuthenticated {
       @QueryParam("accountType") String accountType)
       throws IOException, BybitException;
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/asset/all-balance">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/asset/all-balance">API</a>
+   */
   @GET
   @Path("/asset/transfer/query-account-coins-balance")
   BybitResult<BybitAllCoinsBalance> getAllCoinsBalance(
@@ -57,10 +58,10 @@ public interface BybitAuthenticated {
       @HeaderParam(X_BAPI_SIGN) ParamsDigest signature,
       @HeaderParam(X_BAPI_TIMESTAMP) SynchronizedValueFactory<Long> timestamp,
       @QueryParam("memberId") String memberId,
-      @QueryParam("accountType") String accountType, //required
+      @QueryParam("accountType") String accountType, // required
       @QueryParam("coin") String coin,
-      @QueryParam("withBonus") Integer withBonus
-  ) throws IOException, BybitException;
+      @QueryParam("withBonus") Integer withBonus)
+      throws IOException, BybitException;
 
   @GET
   @Path("/asset/transfer/query-account-coin-balance")
@@ -70,15 +71,17 @@ public interface BybitAuthenticated {
       @HeaderParam(X_BAPI_TIMESTAMP) SynchronizedValueFactory<Long> timestamp,
       @QueryParam("memberId") String memberId,
       @QueryParam("toMemberId") String toMemberId,
-      @QueryParam("accountType") String accountType, //required
+      @QueryParam("accountType") String accountType, // required
       @QueryParam("toAccountType") String toAccountType,
-      @QueryParam("coin") String coin, //required
+      @QueryParam("coin") String coin, // required
       @QueryParam("withBonus") Integer withBonus,
       @QueryParam("withTransferSafeAmount") Integer withTransferSafeAmount,
-      @QueryParam("withLtvTransferSafeAmount") Integer withLtvTransferSafeAmount
-  ) throws IOException, BybitException;
+      @QueryParam("withLtvTransferSafeAmount") Integer withLtvTransferSafeAmount)
+      throws IOException, BybitException;
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/account/fee-rate">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/account/fee-rate">API</a>
+   */
   @GET
   @Path("/account/fee-rate")
   BybitResult<BybitFeeRates> getFeeRates(
@@ -89,7 +92,9 @@ public interface BybitAuthenticated {
       @QueryParam("symbol") String symbol)
       throws IOException, BybitException;
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/order/open-order">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/order/open-order">API</a>
+   */
   @GET
   @Path("/order/realtime")
   BybitResult<BybitOrderDetails<BybitOrderDetail>> getOpenOrders(
@@ -100,7 +105,9 @@ public interface BybitAuthenticated {
       @QueryParam("orderId") String orderId)
       throws IOException, BybitException;
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/order/create-order">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/order/create-order">API</a>
+   */
   @POST
   @Path("/order/create")
   BybitResult<BybitOrderResponse> placeOrder(
@@ -124,13 +131,16 @@ public interface BybitAuthenticated {
       @QueryParam("symbol") String symbol,
       @QueryParam("orderId") String orderId,
       @QueryParam("orderLinkId") String userReferenceId,
-      @QueryParam("baseCoin") String baseCoin, // Base coin. Unified account - inverse and Classic account do not support this param
+      @QueryParam("baseCoin")
+          String
+              baseCoin, // Base coin. Unified account - inverse and Classic account do not support
+                        // this param
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("execType") String execType,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
   @GET
   @Path("/asset/transfer/query-inter-transfer-list")
@@ -144,8 +154,8 @@ public interface BybitAuthenticated {
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
   @GET
   @Path("/asset/transfer/query-universal-transfer-list")
@@ -159,8 +169,8 @@ public interface BybitAuthenticated {
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
   @GET
   @Path("/account/transaction-log")
@@ -176,8 +186,8 @@ public interface BybitAuthenticated {
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
   @GET
   @Path("/asset/withdraw/query-record")
@@ -187,12 +197,13 @@ public interface BybitAuthenticated {
       @HeaderParam(X_BAPI_TIMESTAMP) SynchronizedValueFactory<Long> timestamp,
       @QueryParam("withdrawId") String withdrawID,
       @QueryParam("coin") String coin,
-      @QueryParam("withdrawType") Integer withdrawType, //0(default): on chain. 1: off chain. 2: all
+      @QueryParam("withdrawType")
+          Integer withdrawType, // 0(default): on chain. 1: off chain. 2: all
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
   @GET
   @Path("/asset/deposit/query-record")
@@ -204,12 +215,10 @@ public interface BybitAuthenticated {
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
-  /**
-   * Query the internal transfer records between different account types under the same UID.
-   */
+  /** Query the internal transfer records between different account types under the same UID. */
   @GET
   @Path("/asset/deposit/query-internal-record")
   BybitResult<BybitInternalDepositRecordsResponse> getInternalDepositRecords(
@@ -220,23 +229,21 @@ public interface BybitAuthenticated {
       @QueryParam("endTime") Long endTime,
       @QueryParam("coin") String coin,
       @QueryParam("cursor") String cursor,
-      @QueryParam("limit") Integer limit
-  ) throws IOException, BybitException;
+      @QueryParam("limit") Integer limit)
+      throws IOException, BybitException;
 
-  /**
-   * Query subaccount's deposit records by main UID's API key.
-   */
+  /** Query subaccount's deposit records by main UID's API key. */
   @GET
   @Path("/asset/deposit/query-sub-member-record")
   BybitResult<BybitDepositRecordsResponse> getSubAccountDepositRecords(
       @HeaderParam(X_BAPI_API_KEY) String apiKey,
       @HeaderParam(X_BAPI_SIGN) ParamsDigest signature,
       @HeaderParam(X_BAPI_TIMESTAMP) SynchronizedValueFactory<Long> timestamp,
-      @QueryParam("subMemberId") String subMemberId, //required
+      @QueryParam("subMemberId") String subMemberId, // required
       @QueryParam("coin") String coin,
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 }

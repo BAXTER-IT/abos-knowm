@@ -229,7 +229,7 @@ public class GateioAdapters {
           .fromSubAccount(gateioSubAccountTransfer.getSubAccountId().toString())
           .toWallet(gateioSubAccountTransfer.getMainAccountId().toString())
           .build();
-    } else if("to".equals(gateioSubAccountTransfer.getDirection())){
+    } else if ("to".equals(gateioSubAccountTransfer.getDirection())) {
       return FundingRecord.builder()
           .currency(gateioSubAccountTransfer.getCurrency())
           .date(Date.from(gateioSubAccountTransfer.getTimestamp()))

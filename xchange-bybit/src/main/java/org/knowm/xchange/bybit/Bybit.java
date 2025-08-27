@@ -17,14 +17,18 @@ import org.knowm.xchange.bybit.service.BybitException;
 @Produces(MediaType.APPLICATION_JSON)
 public interface Bybit {
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/market/tickers">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/market/tickers">API</a>
+   */
   @GET
   @Path("/tickers")
   BybitResult<BybitTickers<BybitTicker>> getTicker24h(
       @QueryParam("category") String category, @QueryParam("symbol") String symbol)
       throws IOException, BybitException;
 
-  /** @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/market/instrument">API</a> */
+  /**
+   * @apiSpec <a href="https://bybit-exchange.github.io/docs/v5/market/instrument">API</a>
+   */
   @GET
   @Path("/instruments-info")
   BybitResult<BybitInstrumentsInfo<BybitInstrumentInfo>> getInstrumentsInfo(
@@ -33,14 +37,12 @@ public interface Bybit {
       @QueryParam("status") String status,
       @QueryParam("baseCoin") String baseCoin,
       @QueryParam("limit") Integer limit,
-      @QueryParam("cursor") String cursor
-
-  ) throws IOException, BybitException;
+      @QueryParam("cursor") String cursor)
+      throws IOException, BybitException;
 
   @GET
   @Path("/asset/transfer/query-asset-info")
   BybitResult<String> getAssetsInfo(
-      @QueryParam("accountType") String accountType,
-      @QueryParam("coin") String coin
-  ) throws IOException, BybitException;
+      @QueryParam("accountType") String accountType, @QueryParam("coin") String coin)
+      throws IOException, BybitException;
 }

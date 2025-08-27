@@ -32,17 +32,10 @@ public class BybitMarketDataServiceRaw extends BybitBaseService {
       String status,
       String baseCoin,
       Integer limit,
-      String cursor
-  ) throws IOException {
+      String cursor)
+      throws IOException {
     BybitResult<BybitInstrumentsInfo<BybitInstrumentInfo>> result =
-        bybit.getInstrumentsInfo(
-            category.getValue(),
-            symbol,
-            status,
-            baseCoin,
-            limit,
-            cursor
-        );
+        bybit.getInstrumentsInfo(category.getValue(), symbol, status, baseCoin, limit, cursor);
 
     if (!result.isSuccess()) {
       throw BybitAdapters.createBybitExceptionFromResult(result);
@@ -50,15 +43,8 @@ public class BybitMarketDataServiceRaw extends BybitBaseService {
     return result;
   }
 
-  public BybitResult<String> getAssetsInfo(
-      String accountType,
-      String coin
-  ) throws IOException {
-    BybitResult<String> result =
-        bybit.getAssetsInfo(
-            accountType,
-            coin
-        );
+  public BybitResult<String> getAssetsInfo(String accountType, String coin) throws IOException {
+    BybitResult<String> result = bybit.getAssetsInfo(accountType, coin);
 
     if (!result.isSuccess()) {
       throw BybitAdapters.createBybitExceptionFromResult(result);

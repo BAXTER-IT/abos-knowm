@@ -41,8 +41,7 @@ public class CoinbaseProFill {
       @JsonProperty("settled") boolean settled,
       @JsonProperty("usd_volume") String usdVolume,
       @JsonProperty("market_type") String marketType,
-      @JsonProperty("funding_currency") String fundingCurrency
-  ) {
+      @JsonProperty("funding_currency") String fundingCurrency) {
     this.tradeId = tradeId;
     this.productId = productId;
     this.orderId = orderId;

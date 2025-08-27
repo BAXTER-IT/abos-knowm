@@ -3,7 +3,6 @@ package org.knowm.xchange.luno.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
@@ -100,8 +99,10 @@ public class LunoAccountService extends LunoBaseService implements AccountServic
 
   @Override
   public List<FundingRecord> getFundingHistory(TradeHistoryParams params)
-      throws ExchangeException, NotAvailableFromExchangeException,
-          NotYetImplementedForExchangeException, IOException {
+      throws ExchangeException,
+          NotAvailableFromExchangeException,
+          NotYetImplementedForExchangeException,
+          IOException {
     // currently no support for deposits!
 
     List<FundingRecord> result = new ArrayList<>();

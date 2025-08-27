@@ -26,6 +26,5 @@ public class BybitUserTradeResponseDto {
   private List<BybitUserTradeDto> data;
 
   /* No args constructor for use in serialization */
-  public BybitUserTradeResponseDto() {
-  }
+  public BybitUserTradeResponseDto() {}
 }

@@ -15,9 +15,9 @@ import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProAccount;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProFee;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProFundingHistoryParams;
 import org.knowm.xchange.coinbasepro.dto.account.CoinbaseProLedger;
+import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProSendMoneyResponse;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWallet;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProWalletAddress;
-import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProSendMoneyResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.AddressWithTag;
@@ -90,8 +90,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
   }
 
   public String moveFunds(Currency currency, String address, BigDecimal amount) throws IOException {
-    CoinbaseProAccount[] accounts =
-        getCoinbaseProAccountInfo();
+    CoinbaseProAccount[] accounts = getCoinbaseProAccountInfo();
     String accountId = null;
     for (CoinbaseProAccount account : accounts) {
       if (currency.getCurrencyCode().equals(account.getCurrency())) {
@@ -112,8 +111,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     return null;
   }
 
-  private CoinbaseProWalletAddress accountAddress(Currency currency)
-      throws IOException {
+  private CoinbaseProWalletAddress accountAddress(Currency currency) throws IOException {
     CoinbaseProWallet[] coinbaseAccounts = getCoinbaseAccounts();
     CoinbaseProWallet depositAccount = null;
 
@@ -191,7 +189,8 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
 
   @Override
   public AccountInfo getSubAccountInfo(String subAccountId) throws IOException {
-    return new AccountInfo(CoinbaseProAdapters.adaptWallet(getCoinbaseProAccountById(subAccountId)));
+    return new AccountInfo(
+        CoinbaseProAdapters.adaptWallet(getCoinbaseProAccountById(subAccountId)));
   }
 
   @Override
@@ -205,17 +204,14 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     List<FundingRecord> fundingHistory = new ArrayList<>();
 
     while (true) {
-      CoinbaseProTransfers transfers =
-          getTransfers(
-              null,
-              null,
-              beforeItem,
-              afterItem,
-              maxPageSize);
+      CoinbaseProTransfers transfers = getTransfers(null, null, beforeItem, afterItem, maxPageSize);
 
       fundingHistory.addAll(
           transfers.stream()
-              .filter(transfer -> transfer.getType().equals(Type.INTERNAL_DEPOSIT) || transfer.getType().equals(Type.INTERNAL_WITHDRAWAL))
+              .filter(
+                  transfer ->
+                      transfer.getType().equals(Type.INTERNAL_DEPOSIT)
+                          || transfer.getType().equals(Type.INTERNAL_WITHDRAWAL))
               .map(CoinbaseProAdapters::adaptFundingRecord)
               .collect(Collectors.toList()));
 
@@ -243,11 +239,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     while (true) {
       CoinbaseProTransfers transfers =
           getTransfers(
-              Type.WITHDRAWAL.name().toLowerCase(),
-              null,
-              beforeItem,
-              afterItem,
-              maxPageSize);
+              Type.WITHDRAWAL.name().toLowerCase(), null, beforeItem, afterItem, maxPageSize);
 
       fundingHistory.addAll(
           transfers.stream()
@@ -274,7 +266,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     String afterItem = "";
     int maxPageSize = 100;
 
-    if(params.getSubAccountId() == null || params.getSubAccountId().isEmpty()){
+    if (params.getSubAccountId() == null || params.getSubAccountId().isEmpty()) {
       throw new IllegalArgumentException("You must provide subAccountId for this call.");
     }
 
@@ -317,12 +309,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
 
     while (true) {
       CoinbaseProTransfers transfers =
-          getTransfers(
-              Type.DEPOSIT.name().toLowerCase(),
-              null,
-              beforeItem,
-              afterItem,
-              maxPageSize);
+          getTransfers(Type.DEPOSIT.name().toLowerCase(), null, beforeItem, afterItem, maxPageSize);
 
       fundingHistory.addAll(
           transfers.stream()
@@ -349,7 +336,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     String afterItem = "";
     int maxPageSize = 100;
 
-    if(params.getSubAccountId() == null || params.getSubAccountId().isEmpty()){
+    if (params.getSubAccountId() == null || params.getSubAccountId().isEmpty()) {
       throw new IllegalArgumentException("You must provide subAccountId for this call.");
     }
 
@@ -358,11 +345,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
     while (true) {
       CoinbaseProTransfers transfers =
           getTransfersByAccountId(
-              params.getSubAccountId(),
-              beforeItem,
-              afterItem,
-              maxPageSize,
-              null);
+              params.getSubAccountId(), beforeItem, afterItem, maxPageSize, null);
 
       fundingHistory.addAll(
           transfers.stream()
@@ -386,7 +369,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
   public List<FundingRecord> getLedger(FundingRecordParamAll params) throws IOException {
     int maxPageSize = 100;
 
-    if(params.getSubAccountId() == null || params.getSubAccountId().isEmpty()) {
+    if (params.getSubAccountId() == null || params.getSubAccountId().isEmpty()) {
       throw new IOException("You must provide subAccountId for this call.");
     }
 
@@ -404,8 +387,7 @@ public class CoinbaseProAccountService extends CoinbaseProAccountServiceRaw
               null,
               createdAtFinal,
               params.getLimit(),
-              null
-          );
+              null);
 
       ledgerList.addAll(CoinbaseProAdapters.adaptCoinbaseProLedger(ledger));
 

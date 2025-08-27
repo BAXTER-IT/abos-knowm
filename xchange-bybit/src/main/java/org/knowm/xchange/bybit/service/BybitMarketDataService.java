@@ -75,17 +75,36 @@ public class BybitMarketDataService extends BybitMarketDataServiceRaw implements
   public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
     Map<Instrument, InstrumentMetaData> instrumentsMap = new HashMap<>();
 
-    instrumentsMap.putAll(BybitAdapters.adaptBybitInstruments(getInstrumentsInfo(BybitCategory.SPOT, null, null, null, 1000, null).getResult().getList()));
-    instrumentsMap.putAll(BybitAdapters.adaptBybitInstruments(getInstrumentsInfo(BybitCategory.LINEAR, null, null, null, 1000, null).getResult().getList()));
-    instrumentsMap.putAll(BybitAdapters.adaptBybitInstruments(getInstrumentsInfo(BybitCategory.INVERSE, null, null, null, 1000, null).getResult().getList()));
-    instrumentsMap.putAll(BybitAdapters.adaptBybitInstruments(getInstrumentsInfo(BybitCategory.OPTION, null, null, null, 1000, null).getResult().getList()));
+    instrumentsMap.putAll(
+        BybitAdapters.adaptBybitInstruments(
+            getInstrumentsInfo(BybitCategory.SPOT, null, null, null, 1000, null)
+                .getResult()
+                .getList()));
+    instrumentsMap.putAll(
+        BybitAdapters.adaptBybitInstruments(
+            getInstrumentsInfo(BybitCategory.LINEAR, null, null, null, 1000, null)
+                .getResult()
+                .getList()));
+    instrumentsMap.putAll(
+        BybitAdapters.adaptBybitInstruments(
+            getInstrumentsInfo(BybitCategory.INVERSE, null, null, null, 1000, null)
+                .getResult()
+                .getList()));
+    instrumentsMap.putAll(
+        BybitAdapters.adaptBybitInstruments(
+            getInstrumentsInfo(BybitCategory.OPTION, null, null, null, 1000, null)
+                .getResult()
+                .getList()));
 
     return instrumentsMap;
   }
+
   @Override
   public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
-    return new HashMap<>(BybitAdapters.adaptBybitCurrencies(
-        getInstrumentsInfo(BybitCategory.SPOT, null, null, null, 1000, null).getResult()
-            .getList()));
+    return new HashMap<>(
+        BybitAdapters.adaptBybitCurrencies(
+            getInstrumentsInfo(BybitCategory.SPOT, null, null, null, 1000, null)
+                .getResult()
+                .getList()));
   }
 }

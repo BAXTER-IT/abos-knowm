@@ -14,13 +14,9 @@ public class CoinbaseProTransfersWithHeader {
   private final String cbBefore;
 
   public CoinbaseProTransfersWithHeader(
-      List<FundingRecord> fundingRecords,
-      String cbAfter,
-      String cbBefore
-  ) {
+      List<FundingRecord> fundingRecords, String cbAfter, String cbBefore) {
     this.fundingRecords = fundingRecords;
     this.cbAfter = cbAfter;
     this.cbBefore = cbBefore;
   }
-
 }

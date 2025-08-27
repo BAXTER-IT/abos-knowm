@@ -29,6 +29,7 @@ public class CurrencyMetaData implements Serializable {
 
   @JsonProperty("raw_json")
   private final String rawJson;
+
   /** Wallet health */
   @JsonProperty("wallet_health")
   private WalletHealth walletHealth;
