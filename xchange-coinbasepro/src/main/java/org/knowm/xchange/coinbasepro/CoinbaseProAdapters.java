@@ -324,7 +324,7 @@ public class CoinbaseProAdapters {
       CurrencyPair currencyPair = new CurrencyPair(fill.getProductId().replace('-', '/'));
 
       trades.add(
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(fill.getSide().equals(Side.buy) ? OrderType.BID : OrderType.ASK)
               .originalAmount(fill.getSize())
               .currencyPair(currencyPair)
@@ -333,7 +333,7 @@ public class CoinbaseProAdapters {
               .id(String.valueOf(fill.getTradeId()))
               .orderId(fill.getOrderId())
               .feeAmount(fill.getFee())
-              .feeCurrency(currencyPair.counter)
+              .feeCurrency(currencyPair.getCounter())
               .build());
     }
 
@@ -378,7 +378,9 @@ public class CoinbaseProAdapters {
   public static String adaptProductID(CurrencyPair currencyPair) {
     return currencyPair == null
         ? null
-        : currencyPair.base.getCurrencyCode() + "-" + currencyPair.counter.getCurrencyCode();
+        : currencyPair.getBase().getCurrencyCode()
+            + "-"
+            + currencyPair.getCounter().getCurrencyCode();
   }
 
   public static String adaptProductID(Instrument instrument) {
@@ -573,7 +575,7 @@ public class CoinbaseProAdapters {
 
               map.put(
                   instrument,
-                  new InstrumentMetaData.Builder()
+                  InstrumentMetaData.builder()
                       .tradingFee(new BigDecimal("0.50"))
                       .volumeScale(numberOfDecimals(coinbaseProProduct.getBaseIncrement()))
                       .priceScale(numberOfDecimals(coinbaseProProduct.getQuoteIncrement()))

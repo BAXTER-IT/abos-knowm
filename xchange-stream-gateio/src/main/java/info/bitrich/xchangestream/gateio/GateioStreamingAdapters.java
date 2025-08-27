@@ -57,7 +57,7 @@ public class GateioStreamingAdapters {
   public UserTrade toUserTrade(GateioSingleUserTradeNotification notification) {
     UserTradePayload userTradePayload = notification.getResult();
 
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(userTradePayload.getSide())
         .originalAmount(userTradePayload.getAmount())
         .instrument(userTradePayload.getCurrencyPair())

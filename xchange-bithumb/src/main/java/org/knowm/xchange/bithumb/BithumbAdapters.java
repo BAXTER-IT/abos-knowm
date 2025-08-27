@@ -179,12 +179,12 @@ public final class BithumbAdapters {
   private static UserTrade adaptUserTrade(
       BithumbUserTransaction bithumbTransaction, CurrencyPair currencyPair) {
 
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .currencyPair(currencyPair)
         .originalAmount(bithumbTransaction.getUnits())
         .type(adaptTransactionSearch(bithumbTransaction.getSearch()))
         .feeAmount(bithumbTransaction.getFee())
-        .feeCurrency(currencyPair.counter)
+        .feeCurrency(currencyPair.getCounter())
         .price(bithumbTransaction.getPrice())
         .timestamp(new Date(bithumbTransaction.getTransferDate() / 1000L))
         .build();

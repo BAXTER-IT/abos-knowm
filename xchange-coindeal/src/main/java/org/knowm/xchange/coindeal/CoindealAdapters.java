@@ -32,7 +32,7 @@ public final class CoindealAdapters {
       CurrencyPair currencyPair =
           CurrencyPairDeserializer.getCurrencyPairFromString(coindealTradeHistory.getSymbol());
       userTrades.add(
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(
                   (coindealTradeHistory.getSide().equals("BUY"))
                       ? Order.OrderType.BID
@@ -46,8 +46,8 @@ public final class CoindealAdapters {
               .feeAmount(coindealTradeHistory.getFee())
               .feeCurrency(
                   (coindealTradeHistory.getSide().equals("BUY")
-                      ? currencyPair.base
-                      : currencyPair.counter))
+                      ? currencyPair.getBase()
+                      : currencyPair.getCounter()))
               .build());
     }
 

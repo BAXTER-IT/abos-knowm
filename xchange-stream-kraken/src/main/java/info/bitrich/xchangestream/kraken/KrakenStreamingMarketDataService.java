@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.kraken.dto.enums.KrakenSubscriptionName;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import java.util.TreeSet;
 import org.apache.commons.lang3.ObjectUtils;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -109,7 +109,7 @@ public class KrakenStreamingMarketDataService implements StreamingMarketDataServ
   }
 
   public String getChannelName(KrakenSubscriptionName subscriptionName, CurrencyPair currencyPair) {
-    String pair = currencyPair.base.toString() + "/" + currencyPair.counter.toString();
+    String pair = currencyPair.getBase().toString() + "/" + currencyPair.getCounter().toString();
     return subscriptionName + KRAKEN_CHANNEL_DELIMITER + pair;
   }
 }

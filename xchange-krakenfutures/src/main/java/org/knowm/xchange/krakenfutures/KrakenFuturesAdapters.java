@@ -156,7 +156,7 @@ public class KrakenFuturesAdapters {
   }
 
   public static UserTrade adaptFill(KrakenFuturesFill fill) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(adaptOrderType(fill.getSide()))
         .originalAmount(fill.getSize())
         .instrument(adaptInstrument(fill.getSymbol()))
@@ -216,7 +216,7 @@ public class KrakenFuturesAdapters {
       if (instrument.getSymbol().contains("PI_")) {
         instruments.put(
             adaptInstrument(instrument.getSymbol()),
-            new InstrumentMetaData.Builder()
+            InstrumentMetaData.builder()
                 .volumeScale(instrument.getVolumeScale())
                 .priceScale(instrument.getTickSize().scale())
                 .priceStepSize(instrument.getTickSize())

@@ -23,7 +23,7 @@ public class UpbitTradeServiceRaw extends UpbitBaseService {
   public UpbitOrderResponse limitOrder(LimitOrder limitOrder) throws IOException {
     UpbitOrderRequest upbitOrderRequest = new UpbitOrderRequest();
     String marketId =
-        limitOrder.getCurrencyPair().counter + "-" + limitOrder.getCurrencyPair().base;
+        limitOrder.getCurrencyPair().getCounter() + "-" + limitOrder.getCurrencyPair().getBase();
     upbitOrderRequest.setMarketId(marketId);
     upbitOrderRequest.setVolume(limitOrder.getOriginalAmount().toString());
     upbitOrderRequest.setPrice(limitOrder.getLimitPrice().toString());

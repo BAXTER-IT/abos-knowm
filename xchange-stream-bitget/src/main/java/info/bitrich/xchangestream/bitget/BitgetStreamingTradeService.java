@@ -4,7 +4,7 @@ import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.ChannelType;
 import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.MarketType;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsUserTradeNotification;
 import info.bitrich.xchangestream.core.StreamingTradeService;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import lombok.AllArgsConstructor;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.UserTrade;

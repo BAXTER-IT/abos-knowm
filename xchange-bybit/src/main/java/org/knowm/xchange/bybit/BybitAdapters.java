@@ -220,7 +220,7 @@ public class BybitAdapters {
             BybitSpotInstrumentInfo spotInstrumentInfo = (BybitSpotInstrumentInfo) info;
             map.put(
                 adaptInstrument(spotInstrumentInfo.getSymbol(), BybitCategory.SPOT),
-                new InstrumentMetaData.Builder()
+                InstrumentMetaData.builder()
                     .minimumAmount(spotInstrumentInfo.getLotSizeFilter().getMinOrderQty())
                     .maximumAmount(spotInstrumentInfo.getLotSizeFilter().getMaxOrderQty())
                     .counterMinimumAmount(spotInstrumentInfo.getLotSizeFilter().getMinOrderAmt())
@@ -237,7 +237,7 @@ public class BybitAdapters {
                 (BybitLinearInverseInstrumentInfo) info;
             map.put(
                 adaptInstrument(perpetualInstrumentInfo.getSymbol(), BybitCategory.LINEAR),
-                new InstrumentMetaData.Builder()
+                InstrumentMetaData.builder()
                     .minimumAmount(perpetualInstrumentInfo.getLotSizeFilter().getMinOrderQty())
                     .maximumAmount(perpetualInstrumentInfo.getLotSizeFilter().getMaxOrderQty())
                     .counterMinimumAmount(
@@ -255,7 +255,7 @@ public class BybitAdapters {
             BybitOptionInstrumentInfo optionsInstrumentInfo = (BybitOptionInstrumentInfo) info;
             map.put(
                 adaptInstrument(optionsInstrumentInfo.getSymbol(), BybitCategory.OPTION),
-                new InstrumentMetaData.Builder()
+                InstrumentMetaData.builder()
                     .minimumAmount(optionsInstrumentInfo.getLotSizeFilter().getMinOrderQty())
                     .maximumAmount(optionsInstrumentInfo.getLotSizeFilter().getMaxOrderQty())
                     .counterMinimumAmount(optionsInstrumentInfo.getLotSizeFilter().getMinOrderQty())
@@ -294,17 +294,17 @@ public class BybitAdapters {
     if (instrument instanceof CurrencyPair) {
       if (isMaker && feeRate.compareTo(BigDecimal.ZERO) > 0) {
         return (side.equals(BybitSide.BUY)
-            ? ((CurrencyPair) instrument).base
-            : ((CurrencyPair) instrument).counter);
+            ? ((CurrencyPair) instrument).getBase()
+            : ((CurrencyPair) instrument).getCounter());
       } else {
         if (isMaker) {
           return (side.equals(BybitSide.BUY)
-              ? ((CurrencyPair) instrument).counter
-              : ((CurrencyPair) instrument).base);
+              ? ((CurrencyPair) instrument).getCounter()
+              : ((CurrencyPair) instrument).getBase());
         } else {
           return (side.equals(BybitSide.BUY)
-              ? ((CurrencyPair) instrument).base
-              : ((CurrencyPair) instrument).counter);
+              ? ((CurrencyPair) instrument).getBase()
+              : ((CurrencyPair) instrument).getCounter());
         }
       }
     } else {
@@ -400,7 +400,7 @@ public class BybitAdapters {
       BybitUserTradeDto bybitUserTradeDto, BybitCategory bybitCategory) {
     Instrument instrument =
         BybitAdapters.adaptInstrument(bybitUserTradeDto.getSymbol(), bybitCategory);
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .instrument(instrument)
         .feeAmount(bybitUserTradeDto.getExecFee())
         .type(BybitAdapters.adaptSide(bybitUserTradeDto.getSide()))

@@ -258,7 +258,7 @@ public final class ItBitAdapters {
       Currency feeCcy = adaptCcy(ccy == null ? itBitTrade.getRebateCurrency() : ccy);
 
       UserTrade userTrade =
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(orderType)
               .originalAmount(totalQuantity)
               .currencyPair(currencyPair)
@@ -323,7 +323,8 @@ public final class ItBitAdapters {
 
   public static CurrencyPair adaptCurrencyPairToExchange(CurrencyPair currencyPair) {
     return new CurrencyPair(
-        adaptCurrencyToExchange(currencyPair.base), adaptCurrencyToExchange(currencyPair.counter));
+        adaptCurrencyToExchange(currencyPair.getBase()),
+        adaptCurrencyToExchange(currencyPair.getCounter()));
   }
 
   public static Currency adaptCurrencyToExchange(Currency currency) {

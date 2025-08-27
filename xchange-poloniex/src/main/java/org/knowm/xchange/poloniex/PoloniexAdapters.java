@@ -219,13 +219,13 @@ public class PoloniexAdapters {
     if (orderType == OrderType.ASK) {
       feeAmount =
           amount.multiply(price).multiply(userTrade.getFee()).setScale(8, RoundingMode.DOWN);
-      feeCurrencyCode = currencyPair.counter.getCurrencyCode();
+      feeCurrencyCode = currencyPair.getCounter().getCurrencyCode();
     } else {
       feeAmount = amount.multiply(userTrade.getFee()).setScale(8, RoundingMode.DOWN);
-      feeCurrencyCode = currencyPair.base.getCurrencyCode();
+      feeCurrencyCode = currencyPair.getBase().getCurrencyCode();
     }
 
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(orderType)
         .originalAmount(amount)
         .currencyPair(currencyPair)
@@ -312,16 +312,7 @@ public class PoloniexAdapters {
         .amount(a.getAmount())
         .type(type)
         .status(Status.resolveStatus(a.getStatus()))
-        .description(
-            a.getCategory()
-                + ":"
-                + a.getReason()
-                + "\n"
-                + a.getAdjustmentTitle()
-                + "\n"
-                + a.getAdjustmentDesc()
-                + "\n"
-                + a.getAdjustmentHelp())
+        .description(a.getCategory() + ":" + a.getReason() + "\n" + a.getAdjustmentTitle() + "\n" + a.getAdjustmentDesc() + "\n" + a.getAdjustmentHelp())
         .build();
   }
 

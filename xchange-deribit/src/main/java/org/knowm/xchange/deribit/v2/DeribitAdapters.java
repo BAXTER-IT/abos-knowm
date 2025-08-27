@@ -65,8 +65,8 @@ public class DeribitAdapters {
   }
 
   public static String adaptInstrumentName(FuturesContract future) {
-    return future.getCurrencyPair().base
-        + (future.getCurrencyPair().counter == Currency.USDC ? "_USDC" : "")
+    return future.getCurrencyPair().getBase()
+        + (future.getCurrencyPair().getCounter() == Currency.USDC ? "_USDC" : "")
         + "-"
         + (future.getPrompt() == null ? PERPETUAL : (future.getPrompt()));
   }
@@ -76,7 +76,7 @@ public class DeribitAdapters {
     if (parts.length != 5) {
       throw new IllegalArgumentException("Could not adapt instrument name from '" + option + "'");
     }
-    return option.getCurrencyPair().base
+    return option.getCurrencyPair().getBase()
         + "-"
         + formatDate(option.getExpireDate())
         + "-"
@@ -331,7 +331,7 @@ public class DeribitAdapters {
           BigDecimal.ZERO,
           new Fee(instrument.getMakerCommission(), instrument.getTakerCommission()))
     };
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .tradingFee(instrument.getTakerCommission())
         .feeTiers(feeTiers)
         .minimumAmount(instrument.getMinTradeAmount())
@@ -351,7 +351,7 @@ public class DeribitAdapters {
   }
 
   private static UserTrade adaptUserTrade(org.knowm.xchange.deribit.v2.dto.trade.Trade trade) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(adapt(trade.getDirection()))
         .originalAmount(trade.getAmount())
         .instrument(adaptInstrument(trade.getInstrumentName()))

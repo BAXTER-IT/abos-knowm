@@ -194,7 +194,7 @@ public class QuoineAdapters {
     List<UserTrade> res = new ArrayList<>();
     for (QuoineExecution execution : executions) {
       res.add(
-          new UserTrade.Builder()
+          UserTrade.builder()
               .type(execution.mySide.equals("sell") ? OrderType.ASK : OrderType.BID)
               .originalAmount(execution.quantity)
               .currencyPair(currencyPair)
@@ -208,7 +208,7 @@ public class QuoineAdapters {
   }
 
   public static String toPairString(CurrencyPair currencyPair) {
-    return currencyPair.base.getCurrencyCode() + currencyPair.counter.getCurrencyCode();
+    return currencyPair.getBase().getCurrencyCode() + currencyPair.getCounter().getCurrencyCode();
   }
 
   public static FundingRecord adaptFunding(

@@ -72,8 +72,8 @@ public class BitgetAdapters {
   }
 
   public InstrumentMetaData toInstrumentMetaData(BitgetSymbolDto bitgetSymbolDto) {
-    InstrumentMetaData.Builder builder =
-        new InstrumentMetaData.Builder()
+    InstrumentMetaData.InstrumentMetaDataBuilder builder =
+        InstrumentMetaData.builder()
             .tradingFee(bitgetSymbolDto.getTakerFeeRate())
             .minimumAmount(bitgetSymbolDto.getMinTradeAmount())
             .maximumAmount(bitgetSymbolDto.getMaxTradeAmount())
@@ -268,17 +268,17 @@ public class BitgetAdapters {
   }
 
   public FundingRecord toFundingRecord(BitgetDepositWithdrawRecordDto in) {
-    return new FundingRecord.Builder()
-        .setInternalId(in.getOrderId())
-        .setBlockchainTransactionHash(in.getTradeId())
-        .setCurrency(in.getCurrency())
-        .setType(toFundingRecordType(in))
-        .setAmount(in.getSize())
-        .setFee(in.getFee())
-        .setStatus(in.getStatus())
-        .setAddress(in.getToAddress())
-        .setAddressTag(in.getToAddressTag())
-        .setDate(toDate(in.getUpdatedAt()))
+    return FundingRecord.builder()
+        .internalId(in.getOrderId())
+        .blockchainTransactionHash(in.getTradeId())
+        .currency(in.getCurrency())
+        .type(toFundingRecordType(in))
+        .amount(in.getSize())
+        .fee(in.getFee())
+        .status(in.getStatus())
+        .address(in.getToAddress())
+        .addressTag(in.getToAddressTag())
+        .date(toDate(in.getUpdatedAt()))
         .build();
   }
 

@@ -36,14 +36,17 @@ public class FundingRecordStatusTest {
       FundingRecord.Status expectedStatus,
       String expectedDescription) {
     final FundingRecord fundingRecord =
-        new FundingRecord.Builder()
-            .setCurrency(BTC)
-            .setAmount(ONE)
-            .setType(DEPOSIT)
-            .setStatus(Status.resolveStatus(statusInput))
-            .setFee(ONE)
-            .setBalance(ONE)
-            .setDescription(descriptionInput)
+        FundingRecord.builder()
+            .address("")
+            .currency(BTC)
+            .amount(ONE)
+            .internalId("")
+            .blockchainTransactionHash("")
+            .type(DEPOSIT)
+            .status(Status.resolveStatus(statusInput))
+            .fee(ONE)
+            .balance(ONE)
+            .description(descriptionInput)
             .build();
 
     assertThat(fundingRecord.getStatus()).isEqualTo(expectedStatus);

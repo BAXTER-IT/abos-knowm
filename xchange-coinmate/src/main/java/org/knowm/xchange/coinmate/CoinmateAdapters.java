@@ -195,7 +195,7 @@ public class CoinmateAdapters {
         coinmateTradeHistory.getData().stream()
             .map(
                 entry ->
-                    new UserTrade.Builder()
+                    UserTrade.builder()
                         .type(typeToOrderTypeOrNull(entry.getTransactionType()))
                         .originalAmount(entry.getAmount())
                         .currencyPair(
@@ -220,7 +220,7 @@ public class CoinmateAdapters {
         coinmateTradeHistory.getData().stream()
             .map(
                 entry ->
-                    new UserTrade.Builder()
+                    UserTrade.builder()
                         .type(typeToOrderTypeOrNull(entry.getType()))
                         .originalAmount(entry.getAmount())
                         .currencyPair(CoinmateUtils.getPair(entry.getCurrencyPair()))
@@ -229,7 +229,7 @@ public class CoinmateAdapters {
                         .id(Long.toString(entry.getTransactionId()))
                         .orderId(Long.toString(entry.getOrderId()))
                         .feeAmount(entry.getFee())
-                        .feeCurrency(CoinmateUtils.getPair(entry.getCurrencyPair()).counter)
+                        .feeCurrency(CoinmateUtils.getPair(entry.getCurrencyPair()).getCounter())
                         .build())
             .collect(
                 Collectors.toCollection(

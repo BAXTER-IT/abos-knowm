@@ -43,8 +43,8 @@ public class CoinMarketCapMarketDataService extends CoinMarketCapMarketDataServi
 
   @Override
   public Ticker getTicker(CurrencyPair currencyPair, final Object... args) throws IOException {
-    Currency b = currencyPair.base;
-    Currency c = currencyPair.counter;
+    Currency b = currencyPair.getBase();
+    Currency c = currencyPair.getCounter();
 
     if (!tickers.containsKey(b.getCurrencyCode()) && b.getCurrencyCode().compareTo("USD") != 0)
       throw new IOException("unsupported ISO 4217 Currency: " + b.getCurrencyCode());

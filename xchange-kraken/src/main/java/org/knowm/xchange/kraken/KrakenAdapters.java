@@ -324,7 +324,7 @@ public class KrakenAdapters {
         tradeId,
         krakenTrade.getOrderTxId(),
         krakenTrade.getFee(),
-        pair.counter,
+        pair.getCounter(),
         krakenTrade.getCost());
   }
 
@@ -465,7 +465,7 @@ public class KrakenAdapters {
 
   private static InstrumentMetaData adaptPair(
       KrakenAssetPair krakenPair, InstrumentMetaData OriginalMeta) {
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .tradingFee(krakenPair.getFees().get(0).getPercentFee().divide(new BigDecimal(100)))
         .minimumAmount(krakenPair.getOrderMin())
         .priceScale(krakenPair.getPairScale())
@@ -495,7 +495,7 @@ public class KrakenAdapters {
                 FundingRecord.builder()
                     .date(timestamp)
                     .currency(currency)
-                    .amount(krakenLedger.getTransactionAmount().abs())
+                    .amount(krakenLedger.getTransactionAmount())
                     .internalId(internalId)
                     .type(FundingRecord.Type.fromString(krakenLedger.getLedgerType().name()))
                     .status(Status.COMPLETE)

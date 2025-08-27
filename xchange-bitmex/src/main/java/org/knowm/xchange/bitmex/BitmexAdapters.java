@@ -236,7 +236,7 @@ public class BitmexAdapters {
       BitmexTicker ticker, InstrumentMetaData originalMeta) {
 
     if (originalMeta != null) {
-      return new InstrumentMetaData.Builder()
+      return InstrumentMetaData.builder()
           .tradingFee(ticker.getTakerFee())
           .minimumAmount(originalMeta.getMinimumAmount())
           .maximumAmount(originalMeta.getMaximumAmount())
@@ -244,7 +244,7 @@ public class BitmexAdapters {
           .feeTiers(originalMeta.getFeeTiers())
           .build();
     } else {
-      return new InstrumentMetaData.Builder()
+      return InstrumentMetaData.builder()
           .tradingFee(ticker.getTakerFee())
           .priceScale(Math.max(0, ticker.getTickSize().stripTrailingZeros().scale()))
           .build();
@@ -310,7 +310,7 @@ public class BitmexAdapters {
   public static String adaptCurrencyPairToSymbol(CurrencyPair currencyPair) {
     return currencyPair == null
         ? null
-        : currencyPair.base.getCurrencyCode() + currencyPair.counter.getCurrencyCode();
+        : currencyPair.getBase().getCurrencyCode() + currencyPair.getCounter().getCurrencyCode();
   }
 
   public static CurrencyPair adaptSymbolToCurrencyPair(String bitmexSymbol) {
@@ -354,7 +354,7 @@ public class BitmexAdapters {
     OrderType orderType = convertType(exec.side);
     return orderType == null
         ? null
-        : new UserTrade.Builder()
+        : UserTrade.builder()
             .id(exec.execID)
             .orderId(exec.orderID)
             .currencyPair(pair)

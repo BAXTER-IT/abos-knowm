@@ -85,7 +85,7 @@ public class ThalexAdapters {
   }
 
   public static UserTrade toUserTrade(ThalexTradeDto in) {
-    return new UserTrade.Builder()
+    return UserTrade.builder()
         .type(getOrderType(in))
         .originalAmount(in.getAmount())
         .instrument(getInstrumentFromMap(in.getInstrumentName()))
@@ -252,7 +252,7 @@ public class ThalexAdapters {
   }
 
   static InstrumentMetaData getInstrumentMetaData(ThalexInstrumentDto in) {
-    return new InstrumentMetaData.Builder()
+    return InstrumentMetaData.builder()
         .minimumAmount(in.getMinOrderAmount())
         .priceStepSize(in.getTickSize())
         .amountStepSize(in.getVolumeTickSize())
