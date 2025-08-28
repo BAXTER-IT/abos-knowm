@@ -1,5 +1,6 @@
 package org.knowm.xchange.upbit;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.dto.marketdata.CandleStick;
+import org.knowm.xchange.dto.marketdata.CandleStickData;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
@@ -25,6 +28,7 @@ import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.upbit.dto.account.UpbitBalances;
+import org.knowm.xchange.upbit.dto.marketdata.UpbitCandleStickData;
 import org.knowm.xchange.upbit.dto.marketdata.UpbitMarket;
 import org.knowm.xchange.upbit.dto.marketdata.UpbitOrderBook;
 import org.knowm.xchange.upbit.dto.marketdata.UpbitOrderBookData;
@@ -175,5 +179,24 @@ public final class UpbitAdapters {
                 Collectors.toMap(
                     Function.identity(), cp -> InstrumentMetaData.builder().build()));
     return new ExchangeMetaData(pairMeta, null, null, null, null);
+  }
+
+  public static CandleStickData adaptCandleStickData(
+      List<UpbitCandleStickData> candleStickData, CurrencyPair currencyPair) throws IOException {
+
+    List<CandleStick> candleSticks = new ArrayList<>();
+    for (UpbitCandleStickData it : candleStickData) {
+      candleSticks.add(
+          new CandleStick.Builder()
+              .timestamp(DateUtils.fromISO8601DateString(it.getCandleDateTimeUtc()))
+              .open(it.getOpeningPrice())
+              .high(it.getHighPrice())
+              .low(it.getLowPrice())
+              .close(it.getTracePrice())
+              .volume(it.getCandleAccTradeVolume())
+              .quotaVolume(it.getCandleAccTradePrice())
+              .build());
+    }
+    return new CandleStickData(currencyPair, candleSticks);
   }
 }

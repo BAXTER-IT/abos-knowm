@@ -19,8 +19,7 @@ import org.slf4j.LoggerFactory;
 
 @Ignore
 public class BinancePortfolioMarginStreamPrivateTest {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(BinancePortfolioMarginStreamPrivateTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BinancePortfolioMarginStreamPrivateTest.class);
   private static StreamingExchange exchange;
   BinanceFutureStreamingExchange binanceFutureStreamingExchange;
   private static final Instrument instrument = new FuturesContract("XRP/USDT/PERP");
@@ -39,5 +38,8 @@ public class BinancePortfolioMarginStreamPrivateTest {
 
   // Warning - only main net is supported
   @Test
-  public void getOrderAndPositionChanges() throws IOException {}
+  public void getOrderAndPositionChanges() throws IOException {
+
+  }
+
 }

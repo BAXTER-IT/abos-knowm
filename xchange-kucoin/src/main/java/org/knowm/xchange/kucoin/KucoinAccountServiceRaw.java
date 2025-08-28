@@ -8,6 +8,7 @@ import java.util.List;
 import org.knowm.xchange.client.ResilienceRegistries;
 import org.knowm.xchange.kucoin.dto.request.ApplyWithdrawApiRequest;
 import org.knowm.xchange.kucoin.dto.request.CreateAccountRequest;
+import org.knowm.xchange.kucoin.dto.request.CreateDepositAddressApiRequest;
 import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
 import org.knowm.xchange.kucoin.dto.response.*;
 
@@ -18,19 +19,17 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
     super(exchange, resilienceRegistries);
   }
 
-  public List<AccountBalancesResponse> getKucoinAccounts() throws IOException {
-    checkAuthenticated();
-    return classifyingExceptions(
+  public List<AccountBalancesResponse> getKucoinAccounts(String currency, String accountType)
+      throws IOException {
+    return decorateApiCall(
         () ->
-            decorateApiCall(
-                    () ->
-                        accountApi.getAccountList(
-                            apiKey, digest, nonceFactory, passphrase, "2", null, null))
-                .withRetry(retry("accountList"))
-                .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
-                .call());
+            accountApi.getAccountList(
+                apiKey, digest, nonceFactory, passphrase, "2", currency, accountType))
+        .withRetry(retry("accountList"))
+        .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+        .call()
+        .getData();
   }
-
   public Pagination<SubAccountsResponse> getKucoinSubAccounts(Integer pageSize, Integer currentPage)
       throws IOException {
     checkAuthenticated();
@@ -196,17 +195,14 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
                 .call());
   }
 
-  public DepositAddressResponse createDepositAddress(String currency, String chain)
+  public DepositAddressResponse createDepositAddress(CreateDepositAddressApiRequest request)
       throws IOException {
-    checkAuthenticated();
-    return classifyingExceptions(
-        () ->
-            decorateApiCall(
-                    () ->
-                        depositAPI.createDepositAddress(
-                            apiKey, digest, nonceFactory, passphrase, currency, chain))
-                .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
-                .call());
+    return decorateApiCall(
+            () ->
+                depositAPI.createDepositAddress(apiKey, digest, nonceFactory, passphrase, request))
+        .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+        .call()
+        .getData();
   }
 
   public DepositAddressResponse getDepositAddress(String currency, String chain)
@@ -223,14 +219,11 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
   }
 
   public List<DepositAddressResponse> getDepositAddresses(String currency) throws IOException {
-    checkAuthenticated();
-    return classifyingExceptions(
-        () ->
-            decorateApiCall(
-                    () ->
-                        depositAPI.getDepositAddresses(
-                            apiKey, digest, nonceFactory, passphrase, "2", currency))
-                .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
-                .call());
+    return decorateApiCall(
+            () ->
+                depositAPI.getDepositAddresses(apiKey, digest, nonceFactory, passphrase, "2", currency))
+        .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+        .call()
+        .getData();
   }
 }

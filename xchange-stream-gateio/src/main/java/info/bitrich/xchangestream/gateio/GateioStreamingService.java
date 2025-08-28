@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -56,18 +57,22 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
   }
 
   @Override
-  public Observable<GateioWsNotification> subscribeChannel(String channelName, Object... args) {
+  public String getSubscriptionUniqueId(String channelName, Object... args) {
     final CurrencyPair currencyPair =
         (args.length > 0 && args[0] instanceof CurrencyPair) ? ((CurrencyPair) args[0]) : null;
 
-    String uniqueChannelName =
-        String.format("%s%s%s", channelName, Config.CHANNEL_NAME_DELIMITER, currencyPair);
+    return String.format("%s%s%s", channelName, Config.CHANNEL_NAME_DELIMITER, currencyPair);
+  }
+
+  @Override
+  public Observable<GateioWsNotification> subscribeChannel(String channelName, Object... args) {
+    String uniqueChannelName = getSubscriptionUniqueId(channelName, args);
 
     // Example channel name key: spot.order_book-BTC/USDT
     if (!channels.containsKey(uniqueChannelName) && !subscriptions.containsKey(uniqueChannelName)) {
 
       // subscribe
-      Observable<GateioWsNotification> observable = super.subscribeChannel(uniqueChannelName, args);
+      Observable<GateioWsNotification> observable = super.subscribeChannel(channelName, args);
 
       // cache channel subscribtion
       subscriptions.put(uniqueChannelName, observable);
@@ -110,7 +115,7 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
       case Config.SPOT_TRADES_CHANNEL:
         {
           CurrencyPair currencyPair = (CurrencyPair) ArrayUtils.get(args, 0);
-          Validate.notNull(currencyPair);
+          Objects.requireNonNull(currencyPair);
 
           payload = CurrencyPairPayload.builder().currencyPair(currencyPair).build();
           break;

@@ -70,12 +70,10 @@ import org.knowm.xchange.kucoin.dto.response.WithdrawalResponse;
 
 public class KucoinAdapters {
 
-  private static final String TAKER_FEE_RATE = "takerFeeRate";
-
-  public static String adaptCurrencyPair(CurrencyPair pair) {
-    return pair == null
+  public static String adaptCurrencyPair(Instrument instrument) {
+    return instrument == null
         ? null
-        : pair.getBase().getCurrencyCode() + "-" + pair.getCounter().getCurrencyCode();
+        : instrument.getBase().getCurrencyCode() + "-" + instrument.getCounter().getCurrencyCode();
   }
 
   public static CurrencyPair adaptCurrencyPair(String symbol) {
@@ -107,7 +105,9 @@ public class KucoinAdapters {
                 new Ticker.Builder()
                     .instrument(adaptCurrencyPair(ticker.getSymbol()))
                     .bid(ticker.getBuy())
+                    .bidSize(ticker.getBestBidSize())
                     .ask(ticker.getSell())
+                    .askSize(ticker.getBestAskSize())
                     .last(ticker.getLast())
                     .high(ticker.getHigh())
                     .low(ticker.getLow())
@@ -155,7 +155,7 @@ public class KucoinAdapters {
       int baseScale = symbol.getBaseIncrement().stripTrailingZeros().scale();
       int priceScale = symbol.getQuoteIncrement().stripTrailingZeros().scale();
       FeeTier[] feeTiers = staticMetaData != null ? staticMetaData.getFeeTiers() : null;
-      Currency feeCurrency = new Currency(symbol.getFeeCurrency());
+      Currency feeCurrency = symbol.getFeeCurrency();
 
       currencyPairs.put(
           pair,
@@ -225,26 +225,26 @@ public class KucoinAdapters {
     return walletHealth;
   }
 
-  public static OrderBook adaptOrderBook(CurrencyPair currencyPair, OrderBookResponse kc) {
+  public static OrderBook adaptOrderBook(Instrument instrument, OrderBookResponse kc) {
     Date timestamp = new Date(kc.getTime());
     List<LimitOrder> asks =
         kc.getAsks().stream()
             .map(PriceAndSize::new)
             .sorted(Ordering.natural().onResultOf(s -> s.price))
-            .map(s -> adaptLimitOrder(currencyPair, ASK, s, timestamp))
+            .map(s -> adaptLimitOrder(instrument, ASK, s, timestamp))
             .collect(toCollection(LinkedList::new));
     List<LimitOrder> bids =
         kc.getBids().stream()
             .map(PriceAndSize::new)
             .sorted(Ordering.natural().onResultOf((PriceAndSize s) -> s.price).reversed())
-            .map(s -> adaptLimitOrder(currencyPair, BID, s, timestamp))
+            .map(s -> adaptLimitOrder(instrument, BID, s, timestamp))
             .collect(toCollection(LinkedList::new));
     return new OrderBook(timestamp, asks, bids, true);
   }
 
   private static LimitOrder adaptLimitOrder(
-      CurrencyPair currencyPair, OrderType orderType, PriceAndSize priceAndSize, Date timestamp) {
-    return new LimitOrder.Builder(orderType, currencyPair)
+      Instrument instrument, OrderType orderType, PriceAndSize priceAndSize, Date timestamp) {
+    return new LimitOrder.Builder(orderType, instrument)
         .limitPrice(priceAndSize.price)
         .originalAmount(priceAndSize.size)
         .orderStatus(NEW)
@@ -259,7 +259,8 @@ public class KucoinAdapters {
   }
 
   public static Balance adaptBalance(AccountBalancesResponse a) {
-    return new Balance(Currency.getInstance(a.getCurrency()), a.getBalance(), a.getAvailable());
+    return new Balance(
+        Currency.getInstance(a.getCurrency()), a.getBalance(), a.getAvailable());
   }
 
   private static Trade adaptTrade(CurrencyPair currencyPair, TradeHistoryResponse trade) {
@@ -383,9 +384,22 @@ public class KucoinAdapters {
   }
 
   public static OrderCreateApiRequest adaptMarketOrder(MarketOrder marketOrder) {
-    return ((OrderCreateApiRequest.OrderCreateApiRequestBuilder) adaptOrder(marketOrder))
-        .type("market")
-        .build();
+    OrderCreateApiRequest.OrderCreateApiRequestBuilder builder =
+        ((OrderCreateApiRequest.OrderCreateApiRequestBuilder) adaptOrder(marketOrder))
+            .type("market");
+
+    // on buy order amount corresponds to counter currency
+    if (marketOrder.getType() == BID) {
+      builder.size(null);
+      builder.funds(marketOrder.getOriginalAmount());
+    }
+    // on sell order amount corresponds to base currency
+    else if (marketOrder.getType() == ASK) {
+      builder.size(marketOrder.getOriginalAmount());
+      builder.funds(null);
+    }
+
+    return builder.build();
   }
 
   /**
@@ -403,6 +417,12 @@ public class KucoinAdapters {
         request.timeInForce(((TimeInForce) flag).name());
       }
     }
+
+    if (order.getUserReference() != null) {
+      request.clientOid(order.getUserReference());
+      hasClientId = true;
+    }
+
     if (!hasClientId) {
       request.clientOid(UUID.randomUUID().toString());
     }
@@ -424,7 +444,6 @@ public class KucoinAdapters {
   }
 
   public static FundingRecord adaptFundingRecord(WithdrawalResponse wr) {
-
     return FundingRecord.builder()
         .address(wr.getAddress())
         .amount(wr.getAmount())

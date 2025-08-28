@@ -1,20 +1,25 @@
 package org.knowm.xchange.gateio.service;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.meta.ExchangeHealth;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.gateio.GateioAdapters;
 import org.knowm.xchange.gateio.GateioErrorAdapter;
 import org.knowm.xchange.gateio.GateioExchange;
+import org.knowm.xchange.gateio.config.Config;
 import org.knowm.xchange.gateio.dto.GateioException;
 import org.knowm.xchange.gateio.dto.marketdata.GateioCurrencyInfo;
 import org.knowm.xchange.gateio.dto.marketdata.GateioCurrencyPairDetails;
@@ -32,13 +37,30 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw
   }
 
   @Override
+  public ExchangeHealth getExchangeHealth() {
+    try {
+      Instant serverTime = getGateioServerTime().getTime();
+      Instant localTime = Instant.now(Config.getInstance().getClock());
+
+      // timestamps shouldn't diverge by more than 10 minutes
+      if (Duration.between(serverTime, localTime).toMinutes() < 10) {
+        return ExchangeHealth.ONLINE;
+      }
+    } catch (GateioException | IOException e) {
+      return ExchangeHealth.OFFLINE;
+    }
+
+    return ExchangeHealth.OFFLINE;
+  }
+
+  @Override
   public Ticker getTicker(CurrencyPair currencyPair, Object... args) throws IOException {
     return getTicker((Instrument) currencyPair, args);
   }
 
   @Override
   public Ticker getTicker(Instrument instrument, Object... args) throws IOException {
-    Validate.notNull(instrument);
+    Objects.requireNonNull(instrument);
     try {
       List<GateioTicker> tickers = getGateioTickers(instrument);
       Validate.validState(tickers.size() == 1);
@@ -67,8 +89,12 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw
 
   @Override
   public OrderBook getOrderBook(Instrument instrument, Object... args) throws IOException {
-    GateioOrderBook gateioOrderBook = getGateioOrderBook(instrument);
-    return GateioAdapters.toOrderBook(gateioOrderBook, instrument);
+    try {
+      GateioOrderBook gateioOrderBook = getGateioOrderBook(instrument);
+      return GateioAdapters.toOrderBook(gateioOrderBook, instrument);
+    } catch (GateioException e) {
+      throw GateioErrorAdapter.adapt(e);
+    }
   }
 
   @Override
@@ -77,10 +103,10 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw
       List<GateioCurrencyInfo> currencyInfos = getGateioCurrencyInfos();
       return currencyInfos.stream()
           .filter(gateioCurrencyInfo -> !gateioCurrencyInfo.getDelisted())
-          .map(o -> StringUtils.removeEnd(o.getCurrencyWithChain(), "_" + o.getChain()))
+          .map(GateioCurrencyInfo::getCurrency)
           .distinct()
           .collect(
-              Collectors.toMap(Currency::getInstance, currency -> new CurrencyMetaData(0, null)));
+              Collectors.toMap(Function.identity(), currency -> new CurrencyMetaData(0, null)));
     } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }

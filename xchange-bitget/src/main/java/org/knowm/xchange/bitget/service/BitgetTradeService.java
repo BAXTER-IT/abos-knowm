@@ -10,7 +10,6 @@ import org.knowm.xchange.bitget.BitgetAdapters;
 import org.knowm.xchange.bitget.BitgetErrorAdapter;
 import org.knowm.xchange.bitget.BitgetExchange;
 import org.knowm.xchange.bitget.dto.BitgetException;
-import org.knowm.xchange.bitget.dto.trade.BitgetFillDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetOrderInfoDto;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
@@ -45,9 +44,10 @@ public class BitgetTradeService extends BitgetTradeServiceRaw implements TradeSe
   @Override
   public UserTrades getTradeHistory(TradeHistoryParams params) throws IOException {
     try {
-      List<BitgetFillDto> history = bitgetFills(params);
       List<UserTrade> userTradeList =
-          history.stream().map(BitgetAdapters::toUserTrade).collect(Collectors.toList());
+          bitgetFills(params).stream()
+              .map(BitgetAdapters::toUserTrade)
+              .collect(Collectors.toList());
       return new UserTrades(userTradeList, TradeSortType.SortByID);
     } catch (BitgetException e) {
       throw BitgetErrorAdapter.adapt(e);

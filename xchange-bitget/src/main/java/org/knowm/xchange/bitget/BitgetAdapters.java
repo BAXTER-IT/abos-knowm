@@ -3,6 +3,7 @@ package org.knowm.xchange.bitget;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,10 @@ public class BitgetAdapters {
     List<Balance> balances =
         bitgetBalanceDtos.stream().map(BitgetAdapters::toBalance).collect(Collectors.toList());
 
-    return Wallet.Builder.from(balances).id("spot").build();
+    return Wallet.Builder.from(balances)
+        .id("spot")
+        .features(EnumSet.of(Wallet.WalletFeature.TRADING))
+        .build();
   }
 
   public OrderBook toOrderBook(BitgetMarketDepthDto bitgetMarketDepthDto, Instrument instrument) {
@@ -267,18 +271,18 @@ public class BitgetAdapters {
     return Optional.ofNullable(role).map(Role::getValue).orElse(null);
   }
 
-  public FundingRecord toFundingRecord(BitgetDepositWithdrawRecordDto in) {
+  public FundingRecord toFundingRecord(BitgetDepositWithdrawRecordDto record) {
     return FundingRecord.builder()
-        .internalId(in.getOrderId())
-        .blockchainTransactionHash(in.getTradeId())
-        .currency(in.getCurrency())
-        .type(toFundingRecordType(in))
-        .amount(in.getSize())
-        .fee(in.getFee())
-        .status(in.getStatus())
-        .address(in.getToAddress())
-        .addressTag(in.getToAddressTag())
-        .date(toDate(in.getUpdatedAt()))
+        .internalId(record.getOrderId())
+        .blockchainTransactionHash(record.getTradeId())
+        .currency(record.getCurrency())
+        .type(toFundingRecordType(record))
+        .amount(record.getSize())
+        .fee(record.getFee())
+        .status(record.getStatus())
+        .address(record.getToAddress())
+        .addressTag(record.getToAddressTag())
+        .date(toDate(record.getUpdatedAt()))
         .build();
   }
 
@@ -310,19 +314,20 @@ public class BitgetAdapters {
         .build();
   }
 
-  public FundingRecord.Type toFundingRecordType(BitgetDepositWithdrawRecordDto in) {
-    if (in.getDepositType() == DepositType.ON_CHAIN && in.getType() == RecordType.WITHDRAW) {
+  public FundingRecord.Type toFundingRecordType(BitgetDepositWithdrawRecordDto record) {
+    if (record.getDepositType() == DepositType.ON_CHAIN
+        && record.getType() == RecordType.WITHDRAW) {
       return Type.WITHDRAWAL;
     }
-    if (in.getDepositType() == DepositType.ON_CHAIN && in.getType() == RecordType.DEPOSIT) {
+    if (record.getDepositType() == DepositType.ON_CHAIN && record.getType() == RecordType.DEPOSIT) {
       return Type.DEPOSIT;
     }
-    if (in.getDepositType() == DepositType.INTERNAL_TRANSFER
-        && in.getType() == RecordType.WITHDRAW) {
+    if (record.getDepositType() == DepositType.INTERNAL_TRANSFER
+        && record.getType() == RecordType.WITHDRAW) {
       return Type.INTERNAL_WITHDRAWAL;
     }
-    if (in.getDepositType() == DepositType.INTERNAL_TRANSFER
-        && in.getType() == RecordType.DEPOSIT) {
+    if (record.getDepositType() == DepositType.INTERNAL_TRANSFER
+        && record.getType() == RecordType.DEPOSIT) {
       return Type.INTERNAL_DEPOSIT;
     }
 

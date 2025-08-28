@@ -1,7 +1,12 @@
 package org.knowm.xchange.kraken.service;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
@@ -13,9 +18,9 @@ import org.knowm.xchange.kraken.dto.marketdata.KrakenAssetPair;
 
 public class BaseWiremockTest {
 
-  private static int counter = 8080;
+  @Rule public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
-  @Rule public WireMockRule wireMockRule = new WireMockRule(++counter);
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   public Exchange createExchange() {
     KrakenUtils.setKrakenAssets(ASSETS);
@@ -29,6 +34,11 @@ public class BaseWiremockTest {
     specification.setShouldLoadRemoteMetaData(false);
     exchange.applySpecification(specification);
     return exchange;
+  }
+
+  @SneakyThrows
+  protected byte[] loadFile(String path) {
+    return IOUtils.toByteArray(getClass().getResourceAsStream(path));
   }
 
   public static final ImmutableMap<String, KrakenAsset> ASSETS =

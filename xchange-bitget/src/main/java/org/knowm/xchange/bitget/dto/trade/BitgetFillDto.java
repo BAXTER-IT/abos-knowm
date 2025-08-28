@@ -62,7 +62,7 @@ public class BitgetFillDto {
 
   private String rawJson;
 
-  public enum OrderType {
+  public static enum OrderType {
     @JsonProperty("limit")
     LIMIT,
 
@@ -80,7 +80,7 @@ public class BitgetFillDto {
     }
   }
 
-  public enum TradeScope {
+  public static enum TradeScope {
     @JsonProperty("taker")
     TAKER,
 

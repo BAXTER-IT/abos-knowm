@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -78,10 +79,10 @@ public class Trades implements Serializable {
 
     switch (tradeSortType) {
       case SortByTimestamp:
-        this.trades.sort(TRADE_TIMESTAMP_COMPARATOR);
+        Collections.sort(this.trades, TRADE_TIMESTAMP_COMPARATOR);
         break;
       case SortByID:
-        this.trades.sort(TRADE_ID_COMPARATOR);
+        Collections.sort(this.trades, TRADE_ID_COMPARATOR);
         break;
 
       default:

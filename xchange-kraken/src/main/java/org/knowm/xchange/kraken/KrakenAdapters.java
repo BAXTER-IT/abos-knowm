@@ -18,6 +18,7 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderStatus;
 import org.knowm.xchange.dto.Order.OrderType;
+import org.knowm.xchange.dto.account.AddressWithTag;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Fee;
 import org.knowm.xchange.dto.account.FundingRecord;
@@ -194,6 +195,8 @@ public class KrakenAdapters {
     builder.open(krakenTicker.getOpen());
     builder.ask(krakenTicker.getAsk().getPrice());
     builder.bid(krakenTicker.getBid().getPrice());
+    builder.askSize(krakenTicker.getAsk().getVolume());
+    builder.bidSize(krakenTicker.getBid().getVolume());
     builder.last(krakenTicker.getClose().getPrice());
     builder.high(krakenTicker.get24HourHigh());
     builder.low(krakenTicker.get24HourLow());
@@ -208,7 +211,9 @@ public class KrakenAdapters {
     List<Ticker> tickers = new ArrayList<>();
     for (Entry<String, KrakenTicker> ticker : krakenTickers.entrySet()) {
       CurrencyPair pair = KrakenUtils.translateKrakenCurrencyPair(ticker.getKey());
-      tickers.add(adaptTicker(ticker.getValue(), pair));
+      if (pair != null) {
+        tickers.add(adaptTicker(ticker.getValue(), pair));
+      }
     }
     return tickers;
   }
@@ -333,8 +338,12 @@ public class KrakenAdapters {
     return krakenType.equals(KrakenType.BUY) ? OrderType.BID : OrderType.ASK;
   }
 
-  public static String adaptKrakenDepositAddress(KrakenDepositAddress[] krakenDepositAddress) {
-    return krakenDepositAddress[0].getAddress();
+  public static AddressWithTag adaptKrakenDepositAddress(
+      KrakenDepositAddress[] krakenDepositAddress) {
+    return AddressWithTag.builder()
+        .address(krakenDepositAddress[0].getAddress())
+        .addressTag(krakenDepositAddress[0].getTag())
+        .build();
   }
 
   public static String adaptOrderId(KrakenOrderResponse orderResponse) {

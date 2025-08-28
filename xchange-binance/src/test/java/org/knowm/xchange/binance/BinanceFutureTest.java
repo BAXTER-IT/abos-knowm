@@ -151,6 +151,13 @@ public class BinanceFutureTest {
             openOrders.stream().anyMatch(openOrder -> openOrder.getInstrument().equals(instrument)))
         .isTrue();
 
+    // Get all instruments OpenOrders
+    List<LimitOrder> allOpenOrders =binanceExchange
+        .getTradeService()
+        .getOpenOrders(new DefaultOpenOrdersParamInstrument(null))
+        .getOpenOrders();
+    logger.info("All OpenOrders: " + allOpenOrders);
+
     // Get order
     Collection<Order> order =
         binanceExchange
@@ -172,6 +179,12 @@ public class BinanceFutureTest {
             + binanceExchange
                 .getTradeService()
                 .cancelOrder(new BinanceCancelOrderParams(instrument, orderId, userReference)));
+    // Cancel all orders
+//    logger.info(
+//        "CancelAllOrder: "
+//            +
+//            binanceExchange.getTradeService().cancelAllOrders(new DefaultCancelAllOrdersByInstrument(instrument)));
+
     // set Leverage
     boolean isChanged =
         ((BinanceAccountService) binanceExchange.getAccountService()).setLeverage(instrument, 10);

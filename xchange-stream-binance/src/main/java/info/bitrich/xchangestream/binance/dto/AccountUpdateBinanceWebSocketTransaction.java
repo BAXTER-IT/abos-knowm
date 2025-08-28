@@ -107,8 +107,8 @@ public class AccountUpdateBinanceWebSocketTransaction extends BaseBinanceWebSock
       return new OpenPosition.Builder()
           .instrument(adaptSymbol(symbol, isFuture))
           .price(entryPrice)
-          .size(positionAmount)
-          .type(positionSide.equals("LONG") ? OpenPosition.Type.LONG : OpenPosition.Type.SHORT)
+          .size(positionAmount.abs())
+          .type(positionAmount.compareTo(BigDecimal.ZERO) >= 0 ? OpenPosition.Type.LONG : OpenPosition.Type.SHORT)
           .unRealisedPnl(unrealizedPnl)
           .build();
     }

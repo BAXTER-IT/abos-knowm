@@ -12,9 +12,16 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.List;
+import org.knowm.xchange.kucoin.dto.KucoinException;
 import org.knowm.xchange.kucoin.dto.request.CreateAccountRequest;
 import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
-import org.knowm.xchange.kucoin.dto.response.*;
+import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
+import org.knowm.xchange.kucoin.dto.response.AccountLedgersResponse;
+import org.knowm.xchange.kucoin.dto.response.AccountResponse;
+import org.knowm.xchange.kucoin.dto.response.InternalTransferResponse;
+import org.knowm.xchange.kucoin.dto.response.KucoinResponse;
+import org.knowm.xchange.kucoin.dto.response.Pagination;
+import org.knowm.xchange.kucoin.dto.response.SubAccountsResponse;
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.SynchronizedValueFactory;
 
@@ -44,7 +51,7 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @QueryParam("currency") String currency,
       @QueryParam("type") String type)
-      throws IOException;
+      throws IOException, KucoinException;
 
   @POST
   @Path("v1/accounts")
@@ -66,7 +73,7 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
       @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
       InnerTransferRequest req)
-      throws IOException;
+      throws IOException, KucoinException;
 
   @GET
   @Path("v1/accounts/{accountId}/ledgers")

@@ -1,5 +1,7 @@
 package org.knowm.xchange.gateio;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +37,8 @@ import org.knowm.xchange.instrument.Instrument;
 
 @UtilityClass
 public class GateioAdapters {
+
+  public final BigDecimal PARTIALLY_FILLED_SCALE = new BigDecimal("0.1");
 
   public String toString(Instrument instrument) {
     if (instrument == null) {
@@ -99,18 +103,29 @@ public class GateioAdapters {
     }
   }
 
-  public OrderStatus toOrderStatus(String gateioOrderStatus) {
-    switch (gateioOrderStatus) {
+  public OrderStatus toOrderStatus(GateioOrder gateioOrder) {
+    switch (gateioOrder.getStatus()) {
       case "open":
         return OrderStatus.OPEN;
-      case "filled":
+
       case "closed":
+        // if more than `PARTIALLY_FILLED_SCALE` left to fill -> set to `PARTIALLY_FILLED`
+        if (gateioOrder.getAmountLeftToFill().compareTo(gateioOrder.getAmount().multiply(PARTIALLY_FILLED_SCALE)) > 0) {
+          return OrderStatus.PARTIALLY_FILLED;
+        }
+        else {
+          return OrderStatus.FILLED;
+        }
+
+      case "filled":
         return OrderStatus.FILLED;
+
       case "cancelled":
       case "stp":
         return OrderStatus.CANCELED;
+
       default:
-        throw new IllegalArgumentException("Can't map " + gateioOrderStatus);
+        throw new IllegalArgumentException("Can't map " + gateioOrder.getStatus());
     }
   }
 
@@ -140,28 +155,44 @@ public class GateioAdapters {
   }
 
   public Order toOrder(GateioOrder gateioOrder) {
-    Order.Builder order;
+    Order.Builder builder;
     Instrument instrument = gateioOrder.getCurrencyPair();
     OrderType orderType = gateioOrder.getSide();
 
     switch (gateioOrder.getType()) {
       case "market":
-        order = new MarketOrder.Builder(orderType, instrument);
+        builder = new MarketOrder.Builder(orderType, instrument);
         break;
       case "limit":
-        order = new LimitOrder.Builder(orderType, instrument).limitPrice(gateioOrder.getPrice());
+        builder = new LimitOrder.Builder(orderType, instrument).limitPrice(gateioOrder.getPrice());
         break;
       default:
         throw new IllegalArgumentException("Can't map " + gateioOrder.getType());
     }
 
-    return order
+    // if filled then calculate amounts
+    OrderStatus status = toOrderStatus(gateioOrder);
+
+    if (status == OrderStatus.FILLED || status == OrderStatus.PARTIALLY_FILLED) {
+      if (orderType == OrderType.BID) {
+        builder.cumulativeAmount(gateioOrder.getFilledTotalQuote());
+      } else if (orderType == OrderType.ASK) {
+        BigDecimal filledAssetAmount =
+            gateioOrder
+                .getFilledTotalQuote()
+                .divide(gateioOrder.getAvgDealPrice(), MathContext.DECIMAL32);
+        builder.cumulativeAmount(filledAssetAmount);
+      } else {
+        throw new IllegalArgumentException("Can't map " + orderType);
+      }
+    }
+
+    return builder
         .id(gateioOrder.getId())
         .originalAmount(gateioOrder.getAmount())
         .userReference(gateioOrder.getClientOrderId())
         .timestamp(Date.from(gateioOrder.getCreatedAt()))
-        .orderStatus(toOrderStatus(gateioOrder.getStatus()))
-        .cumulativeAmount(gateioOrder.getFilledTotalQuote())
+        .orderStatus(status)
         .averagePrice(gateioOrder.getAvgDealPrice())
         .fee(gateioOrder.getFee())
         .build();
@@ -198,7 +229,9 @@ public class GateioAdapters {
         .instrument(gateioTicker.getCurrencyPair())
         .last(gateioTicker.getLastPrice())
         .bid(gateioTicker.getHighestBid())
+        .bidSize(gateioTicker.getHighestBidSize())
         .ask(gateioTicker.getLowestAsk())
+        .askSize(gateioTicker.getLowestAskSize())
         .high(gateioTicker.getMaxPrice24h())
         .low(gateioTicker.getMinPrice24h())
         .volume(gateioTicker.getAssetVolume())

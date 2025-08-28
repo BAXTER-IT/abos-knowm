@@ -9,6 +9,7 @@ import org.knowm.xchange.gateio.dto.marketdata.GateioCurrencyChain;
 import org.knowm.xchange.gateio.dto.marketdata.GateioCurrencyInfo;
 import org.knowm.xchange.gateio.dto.marketdata.GateioCurrencyPairDetails;
 import org.knowm.xchange.gateio.dto.marketdata.GateioOrderBook;
+import org.knowm.xchange.gateio.dto.marketdata.GateioServerTime;
 import org.knowm.xchange.gateio.dto.marketdata.GateioTicker;
 import org.knowm.xchange.instrument.Instrument;
 
@@ -16,6 +17,10 @@ public class GateioMarketDataServiceRaw extends GateioBaseService {
 
   public GateioMarketDataServiceRaw(GateioExchange exchange) {
     super(exchange);
+  }
+
+  public GateioServerTime getGateioServerTime() throws IOException {
+    return gateio.getServerTime();
   }
 
   public List<GateioTicker> getGateioTickers(Instrument instrument) throws IOException {

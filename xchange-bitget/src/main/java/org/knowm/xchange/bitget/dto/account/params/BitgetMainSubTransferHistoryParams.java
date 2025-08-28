@@ -31,7 +31,7 @@ public class BitgetMainSubTransferHistoryParams {
 
   @Getter
   @AllArgsConstructor
-  public enum Role {
+  public static enum Role {
     INITIATOR("initiator"),
 
     @JsonProperty

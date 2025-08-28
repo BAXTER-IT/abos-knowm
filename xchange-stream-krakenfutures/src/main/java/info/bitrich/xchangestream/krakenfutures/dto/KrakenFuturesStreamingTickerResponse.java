@@ -26,6 +26,7 @@ public class KrakenFuturesStreamingTickerResponse {
   private final BigDecimal openInterest;
   private final Date nextFundingRateTime;
   private final BigDecimal volumeQuote;
+  private final BigDecimal markPrice;
 
   public KrakenFuturesStreamingTickerResponse(
       @JsonProperty("time") Date time,
@@ -43,7 +44,8 @@ public class KrakenFuturesStreamingTickerResponse {
       @JsonProperty("funding_rate_prediction") BigDecimal funding_rate_prediction,
       @JsonProperty("openInterest") BigDecimal openInterest,
       @JsonProperty("next_funding_rate_time") Date nextFundingRateTime,
-      @JsonProperty("volumeQuote") BigDecimal volumeQuote) {
+      @JsonProperty("volumeQuote") BigDecimal volumeQuote,
+      @JsonProperty("markPrice") BigDecimal markPrice) {
     this.time = time;
     this.feed = feed;
     this.product_id = product_id;
@@ -60,5 +62,6 @@ public class KrakenFuturesStreamingTickerResponse {
     this.openInterest = openInterest;
     this.nextFundingRateTime = nextFundingRateTime;
     this.volumeQuote = volumeQuote;
+    this.markPrice = markPrice;
   }
 }
