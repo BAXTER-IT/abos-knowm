@@ -11,7 +11,6 @@ import org.knowm.xchange.bitget.BitgetFuturesAdapters;
 import org.knowm.xchange.bitget.BitgetFuturesExchange;
 import org.knowm.xchange.bitget.config.Config;
 import org.knowm.xchange.bitget.dto.BitgetException;
-import org.knowm.xchange.bitget.dto.marketdata.BitgetContractDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetFuturesTickerDto;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.derivative.FuturesContract;
@@ -27,20 +26,6 @@ public class BitgetFuturesMarketDataService extends BitgetFuturesMarketDataServi
   public BitgetFuturesMarketDataService(BitgetFuturesExchange exchange) {
     super(exchange);
   }
-
-//  public List<Instrument> getInstruments() throws IOException {
-//    try {
-//      List<BitgetContractDto> metadata = getBitgetContractDtos(null);
-//
-//      return metadata.stream()
-//          .filter(details -> details.getSymbolStatus() == BitgetContractDto.SymbolStatus.NORMAL)
-//          .map(BitgetContractDto::getFuturesContract)
-//          .distinct()
-//          .collect(Collectors.toList());
-//    } catch (BitgetException e) {
-//      throw BitgetErrorAdapter.adapt(e);
-//    }
-//  }
 
   @Override
   public ExchangeHealth getExchangeHealth() {

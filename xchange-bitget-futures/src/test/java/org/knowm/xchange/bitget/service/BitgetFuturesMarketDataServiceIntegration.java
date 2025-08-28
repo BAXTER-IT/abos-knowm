@@ -12,7 +12,6 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.derivative.FuturesContract;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.exceptions.InstrumentNotValidException;
-import org.knowm.xchange.instrument.Instrument;
 
 class BitgetFuturesMarketDataServiceIntegration extends BitgetFuturesIntegrationTestParent {
 
@@ -27,15 +26,6 @@ class BitgetFuturesMarketDataServiceIntegration extends BitgetFuturesIntegration
       assertThat(ticker.getBid()).isLessThan(ticker.getAsk());
     }
   }
-
-//  @Test
-//  void valid_instruments() throws IOException {
-//    List<Instrument> instruments =
-//        ((BitgetFuturesMarketDataService) exchange.getMarketDataService()).getInstruments();
-//
-//    assertThat(instruments).isNotEmpty();
-//    assertThat(instruments.stream().distinct().count()).isEqualTo(instruments.size());
-//  }
 
   @Test
   void check_exceptions() {

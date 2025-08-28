@@ -9,9 +9,7 @@ import org.knowm.xchange.bitmex.BitmexExchange;
 import org.knowm.xchange.bitmex.dto.account.BitmexTicker;
 import org.knowm.xchange.bitmex.dto.account.BitmexTicker.State;
 import org.knowm.xchange.bitmex.dto.account.BitmexTicker.SymbolType;
-import org.knowm.xchange.bitmex.dto.marketdata.BitmexAsset;
 import org.knowm.xchange.bitmex.dto.marketdata.BitmexPublicTrade;
-import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
@@ -107,17 +105,4 @@ public class BitmexMarketDataService extends BitmexMarketDataServiceRaw
     return BitmexAdapters.adaptTrades(trades, currencyPair);
   }
 
-//  public List<Currency> getCurrencies() {
-//    return getAssets().stream()
-//        .filter(BitmexAsset::getEnabled)
-//        .map(BitmexAsset::getAsset)
-//        .collect(Collectors.toList());
-//  }
-//
-//  public List<Instrument> getInstruments() {
-//    return getActiveTickers().stream()
-//        .filter(bitmexTicker -> bitmexTicker.getSymbolType() != SymbolType.UNKNOWN)
-//        .map(BitmexAdapters::toInstrument)
-//        .collect(Collectors.toList());
-//  }
 }
