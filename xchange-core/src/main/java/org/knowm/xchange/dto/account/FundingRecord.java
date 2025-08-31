@@ -126,7 +126,10 @@ public class FundingRecord implements Serializable {
 
     ORDER_FEE(false),
 
-    FEE(false);
+    FEE(false),
+
+    /** Used for withdrawal fees **/
+    WITHDRAWAL_FEE(false);
 
     private static final Map<String, Type> fromString = new HashMap<>();
 

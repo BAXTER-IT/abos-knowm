@@ -199,7 +199,7 @@ public class ThalexAdapters {
   static OpenPosition toOpenPosition(ThalexPortfolioDto portfolio) {
     BigDecimal size = portfolio.getPosition();
     Type type = size.compareTo(BigDecimal.ZERO) >= 0 ? LONG : SHORT;
-    return new OpenPosition.Builder()
+    return OpenPosition.builder()
         .price(portfolio.getAveragePrice())
         .size(size)
         .type(type)

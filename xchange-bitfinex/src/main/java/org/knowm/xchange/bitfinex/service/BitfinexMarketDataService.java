@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.knowm.xchange.bitfinex.BitfinexErrorAdapter;
 import org.knowm.xchange.bitfinex.BitfinexExchange;
@@ -12,13 +13,19 @@ import org.knowm.xchange.bitfinex.v1.BitfinexUtils;
 import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexDepth;
 import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexLendDepth;
 import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexTrade;
+import org.knowm.xchange.bitfinex.v2.dto.BitfinexExceptionV2;
 import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTicker;
+import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTickerTraidingPair;
 import org.knowm.xchange.client.ResilienceRegistries;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.LoanOrderBook;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trades;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
+import org.knowm.xchange.dto.meta.ExchangeHealth;
+import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.FixedRateLoanOrder;
 import org.knowm.xchange.dto.trade.FloatingRateLoanOrder;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -68,6 +75,21 @@ public class BitfinexMarketDataService extends BitfinexMarketDataServiceRaw
     } catch (BitfinexException e) {
       throw BitfinexErrorAdapter.adapt(e);
     }
+  }
+
+  @Override
+  public ExchangeHealth getExchangeHealth() {
+    try {
+      Integer[] platformStatus = getBitfinexPlatformStatus();
+
+      if (platformStatus.length == 1 && platformStatus[0] == 1) {
+        return ExchangeHealth.ONLINE;
+      }
+    } catch (BitfinexExceptionV2 | IOException | ExchangeException e) {
+      return ExchangeHealth.OFFLINE;
+    }
+
+    return ExchangeHealth.OFFLINE;
   }
 
   @Override
@@ -251,10 +273,22 @@ public class BitfinexMarketDataService extends BitfinexMarketDataServiceRaw
               : getBitfinexTickers(null);
 
       return Arrays.stream(bitfinexTickers)
+          .filter(bitfinexTicker -> bitfinexTicker instanceof BitfinexTickerTraidingPair)
           .map(BitfinexAdapters::adaptTicker)
           .collect(Collectors.toList());
     } catch (BitfinexException e) {
       throw BitfinexErrorAdapter.adapt(e);
     }
+  }
+
+
+  @Override
+  public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
+      return exchange.getExchangeMetaData().getCurrencies();
+  }
+
+  @Override
+  public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
+    return exchange.getExchangeMetaData().getInstruments();
   }
 }

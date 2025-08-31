@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.knowm.xchange.bitfinex.BitfinexExchange;
 import org.knowm.xchange.bitfinex.dto.BitfinexException;
 import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexDepth;
@@ -17,6 +18,8 @@ import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexSymbolDetail;
 import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexTicker;
 import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexTrade;
 import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexCandle;
+import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexCurrencyChain;
+import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexCurrencyPairInfo;
 import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexFundingOrder;
 import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexFundingRawOrder;
 import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexPublicFundingTrade;
@@ -351,4 +354,61 @@ public class BitfinexMarketDataServiceRaw extends BitfinexBaseService {
         .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
         .call();
   }
+
+
+  public List<BitfinexCurrencyChain> allChains() throws IOException {
+    List<List<BitfinexCurrencyChain>> list =
+        decorateApiCall(bitfinexV2::allChains)
+        .withRetry(retry("market-allChains"))
+        .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+        .call();
+
+    return list.isEmpty() ? Collections.emptyList() : list.get(0);
+  }
+
+
+  public List<Currency> allCurrencies() throws IOException {
+    List<List<String>> list =
+        decorateApiCall(bitfinexV2::allCurrencies)
+        .withRetry(retry("market-allCurrencies"))
+        .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+        .call();
+
+    if (list.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    return list.get(0).stream()
+        .map(BitfinexAdapters::toCurrency)
+        .collect(Collectors.toList());
+  }
+
+
+  public List<CurrencyPair> allCurrencyPairs() throws IOException {
+    List<List<String>> list =
+        decorateApiCall(bitfinexV2::allCurrencyPairs)
+        .withRetry(retry("market-allCurrencyPairInfos"))
+        .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+        .call();
+
+    if (list.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    return list.get(0).stream()
+        .map(BitfinexAdapters::adaptCurrencyPair)
+        .collect(Collectors.toList());
+  }
+
+
+  public List<BitfinexCurrencyPairInfo> allCurrencyPairInfos() throws IOException {
+    List<List<BitfinexCurrencyPairInfo>> list =
+        decorateApiCall(bitfinexV2::allCurrencyPairInfos)
+        .withRetry(retry("market-allCurrencyPairInfos"))
+        .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+        .call();
+
+    return list.isEmpty() ? Collections.emptyList() : list.get(0);
+  }
+
 }
