@@ -26,7 +26,7 @@ public class BitfinexMarketDataServiceIntegration extends BitfinexIntegrationTes
         ((BitfinexMarketDataService) exchange.getMarketDataService()).getCurrencies().keySet();
 
     assertThat(currencies).isNotEmpty();
-    assertThat(currencies).contains(Currency.USDT, Currency.BTC, Currency.ETH);
+    assertThat(currencies).contains(Currency.BTC, Currency.ETH, Currency.USDT);
   }
 
   @Test
