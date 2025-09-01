@@ -12,6 +12,7 @@ import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.meta.ExchangeHealth;
+import org.knowm.xchange.instrument.Instrument;
 
 public class BitfinexMarketDataServiceIntegration extends BitfinexIntegrationTestParent {
 
@@ -22,8 +23,8 @@ public class BitfinexMarketDataServiceIntegration extends BitfinexIntegrationTes
 
   @Test
   void valid_currencies() throws IOException {
-    var currencies =
-        ((BitfinexMarketDataService) exchange.getMarketDataService()).getCurrencies().keySet();
+    List<Currency> currencies =
+        ((BitfinexMarketDataService) exchange.getMarketDataService()).getCurrencies();
 
     assertThat(currencies).isNotEmpty();
     assertThat(currencies).contains(Currency.BTC, Currency.ETH, Currency.USDT);
@@ -31,8 +32,8 @@ public class BitfinexMarketDataServiceIntegration extends BitfinexIntegrationTes
 
   @Test
   void valid_instruments() throws IOException {
-    var instruments =
-        ((BitfinexMarketDataService) exchange.getMarketDataService()).getInstruments().keySet();
+    List<Instrument> instruments =
+        ((BitfinexMarketDataService) exchange.getMarketDataService()).getInstruments();
 
     assertThat(instruments).isNotEmpty();
     assertThat(instruments).contains(CurrencyPair.BTC_USDT, CurrencyPair.ETH_USDT);

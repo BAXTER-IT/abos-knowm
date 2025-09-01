@@ -121,8 +121,8 @@ public class CoinbaseProExchange extends BaseExchange {
   public void remoteInit() throws IOException {
     exchangeMetaData =
         new ExchangeMetaData(
-            marketDataService.getInstruments(),
-            marketDataService.getCurrencies(),
+            ((CoinbaseProMarketDataService) marketDataService).getInstruments(),
+            ((CoinbaseProMarketDataService) marketDataService).getCurrencies(),
             exchangeMetaData == null ? null : exchangeMetaData.getPublicRateLimits(),
             exchangeMetaData == null ? null : exchangeMetaData.getPrivateRateLimits(),
             true);

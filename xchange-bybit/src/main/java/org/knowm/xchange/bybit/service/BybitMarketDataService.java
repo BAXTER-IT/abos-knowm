@@ -71,7 +71,6 @@ public class BybitMarketDataService extends BybitMarketDataServiceRaw implements
     return getTicker((Instrument) currencyPair, args);
   }
 
-  @Override
   public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
     Map<Instrument, InstrumentMetaData> instrumentsMap = new HashMap<>();
 
@@ -99,7 +98,6 @@ public class BybitMarketDataService extends BybitMarketDataServiceRaw implements
     return instrumentsMap;
   }
 
-  @Override
   public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
     return new HashMap<>(
         BybitAdapters.adaptBybitCurrencies(

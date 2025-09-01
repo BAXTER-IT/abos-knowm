@@ -48,8 +48,8 @@ public class FineryMarketsExchange extends BaseExchange {
     // initialize currency pairs & currencies
     exchangeMetaData =
         new ExchangeMetaData(
-            marketDataService.getInstruments(),
-            marketDataService.getCurrencies(),
+            ((FineryMarketsMarketDataService) marketDataService).getInstruments(),
+            ((FineryMarketsMarketDataService) marketDataService).getCurrencies(),
             null,
             null,
             true);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.knowm.xchange.bitget.BitgetAdapters;
@@ -20,9 +19,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
-import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.ExchangeHealth;
-import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.marketdata.params.Params;
@@ -34,31 +31,26 @@ public class BitgetMarketDataService extends BitgetMarketDataServiceRaw
     super(exchange);
   }
 
-  @Override
-  public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
+  public List<Currency> getCurrencies() throws IOException {
     try {
       return getBitgetCoinDtoList(null).stream()
           .map(BitgetCoinDto::getCurrency)
           .distinct()
-          .collect(
-              Collectors.toMap(
-                  currency -> currency, currency -> CurrencyMetaData.builder().build()));
+          .collect(Collectors.toList());
     } catch (BitgetException e) {
       throw BitgetErrorAdapter.adapt(e);
     }
   }
 
-  @Override
-  public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
+  public List<Instrument> getInstruments() throws IOException {
     try {
       List<BitgetSymbolDto> metadata = getBitgetSymbolDtos(null);
 
       return metadata.stream()
           .filter(details -> details.getStatus() == Status.ONLINE)
+          .map(BitgetSymbolDto::getCurrencyPair)
           .distinct()
-          .collect(
-              Collectors.toMap(
-                  BitgetSymbolDto::getCurrencyPair, (BitgetAdapters::toInstrumentMetaData)));
+          .collect(Collectors.toList());
     } catch (BitgetException e) {
       throw BitgetErrorAdapter.adapt(e);
     }
