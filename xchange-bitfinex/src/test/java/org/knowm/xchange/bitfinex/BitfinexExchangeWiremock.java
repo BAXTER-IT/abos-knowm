@@ -17,7 +17,6 @@ public abstract class BitfinexExchangeWiremock {
   protected static BitfinexExchange exchange;
 
   private static final boolean IS_RECORDING = false;
-//  private static final boolean IS_RECORDING = true;
 
   private static WireMockServer wireMockServer;
 
