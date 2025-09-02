@@ -17,12 +17,10 @@ public class FineryMarketsMarketDataService extends FineryMarketsMarketDataServi
     super(exchange);
   }
 
-  @Override
   public Map<Currency, CurrencyMetaData> getCurrencies() {
     return adaptCurrencies(getFineryMarketsInstruments());
   }
 
-  @Override
   public Map<Instrument, InstrumentMetaData> getInstruments() {
     return adaptInstruments(getFineryMarketsInstruments());
   }

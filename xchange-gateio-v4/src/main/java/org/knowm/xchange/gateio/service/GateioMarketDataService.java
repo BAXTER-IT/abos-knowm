@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
 import org.knowm.xchange.currency.Currency;
@@ -14,7 +13,6 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.meta.ExchangeHealth;
-import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.gateio.GateioAdapters;
 import org.knowm.xchange.gateio.GateioErrorAdapter;
@@ -97,25 +95,26 @@ public class GateioMarketDataService extends GateioMarketDataServiceRaw
     }
   }
 
-  @Override
-  public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
+  public List<Currency> getCurrencies() throws IOException {
     try {
       List<GateioCurrencyInfo> currencyInfos = getGateioCurrencyInfos();
       return currencyInfos.stream()
           .filter(gateioCurrencyInfo -> !gateioCurrencyInfo.getDelisted())
           .map(GateioCurrencyInfo::getCurrency)
-          .distinct()
-          .collect(
-              Collectors.toMap(Function.identity(), currency -> new CurrencyMetaData(0, null)));
+          .collect(Collectors.toList());
     } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }
   }
 
-  @Override
-  public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
+  public List<CurrencyPair> getCurrencyPairs() throws IOException {
     try {
-      return GateioAdapters.toInstruments(getCurrencyPairDetails());
+      List<GateioCurrencyPairDetails> metadata = getCurrencyPairDetails();
+
+      return metadata.stream()
+          .filter(details -> "tradable".equals(details.getTradeStatus()))
+          .map(details -> new CurrencyPair(details.getAsset(), details.getQuote()))
+          .collect(Collectors.toList());
     } catch (GateioException e) {
       throw GateioErrorAdapter.adapt(e);
     }

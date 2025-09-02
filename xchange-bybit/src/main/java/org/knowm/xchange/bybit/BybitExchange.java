@@ -48,8 +48,8 @@ public class BybitExchange extends BaseExchange {
     // initialize currency pairs & currencies
     exchangeMetaData =
         new ExchangeMetaData(
-            marketDataService.getInstruments(),
-            marketDataService.getCurrencies(),
+            ((BybitMarketDataService) marketDataService).getInstruments(),
+            ((BybitMarketDataService) marketDataService).getCurrencies(),
             null,
             null,
             true);

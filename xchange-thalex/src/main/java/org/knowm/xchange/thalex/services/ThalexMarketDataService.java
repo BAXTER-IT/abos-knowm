@@ -17,7 +17,6 @@ public class ThalexMarketDataService extends ThalexMarketDataServiceRaw
     super(exchange);
   }
 
-  @Override
   public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
     List<ThalexInstrumentDto> thalexInstruments = getThalexInstrument();
     return ThalexAdapters.toInstrumentsMap(thalexInstruments);

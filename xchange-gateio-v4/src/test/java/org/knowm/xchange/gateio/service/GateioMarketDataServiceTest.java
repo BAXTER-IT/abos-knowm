@@ -8,18 +8,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
-import org.knowm.xchange.dto.meta.CurrencyMetaData;
-import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.gateio.GateioExchangeWiremock;
-import org.knowm.xchange.instrument.Instrument;
 
 public class GateioMarketDataServiceTest extends GateioExchangeWiremock {
 
@@ -94,17 +90,16 @@ public class GateioMarketDataServiceTest extends GateioExchangeWiremock {
 
   @Test
   void getCurrencies_valid() throws IOException {
-    Map<Currency, CurrencyMetaData> actual = gateioMarketDataService.getCurrencies();
+    List<Currency> actual = gateioMarketDataService.getCurrencies();
 
-    assertThat(actual.keySet()).containsOnly(Currency.BTC, Currency.ETH);
+    assertThat(actual).containsOnly(Currency.BTC, Currency.ETH);
   }
 
   @Test
   void getCurrencyPairs_valid() throws IOException {
-    Map<Instrument, InstrumentMetaData> actual = gateioMarketDataService.getInstruments();
+    List<CurrencyPair> actual = gateioMarketDataService.getCurrencyPairs();
 
     assertThat(actual)
-        .containsOnlyKeys(
-            CurrencyPair.BTC_USDT, CurrencyPair.ETH_USDT, new CurrencyPair("CHZ/USDT"));
+        .containsOnly(CurrencyPair.BTC_USDT, CurrencyPair.ETH_USDT, new CurrencyPair("CHZ/USDT"));
   }
 }

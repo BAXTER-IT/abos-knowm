@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.knowm.xchange.bitfinex.BitfinexErrorAdapter;
 import org.knowm.xchange.bitfinex.BitfinexExchange;
@@ -23,9 +22,7 @@ import org.knowm.xchange.dto.marketdata.LoanOrderBook;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trades;
-import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.ExchangeHealth;
-import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.FixedRateLoanOrder;
 import org.knowm.xchange.dto.trade.FloatingRateLoanOrder;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -282,13 +279,23 @@ public class BitfinexMarketDataService extends BitfinexMarketDataServiceRaw
   }
 
 
-  @Override
-  public Map<Currency, CurrencyMetaData> getCurrencies() throws IOException {
-      return exchange.getExchangeMetaData().getCurrencies();
+  public List<Currency> getCurrencies() throws IOException {
+    try {
+      return allCurrencies();
+
+    } catch (BitfinexException e) {
+      throw BitfinexErrorAdapter.adapt(e);
+    }
   }
 
-  @Override
-  public Map<Instrument, InstrumentMetaData> getInstruments() throws IOException {
-    return exchange.getExchangeMetaData().getInstruments();
+  public List<Instrument> getInstruments() throws IOException {
+    try {
+
+      return allCurrencyPairs().stream()
+          .map(Instrument.class::cast)
+          .collect(Collectors.toList());
+    } catch (BitfinexException e) {
+      throw BitfinexErrorAdapter.adapt(e);
+    }
   }
 }
