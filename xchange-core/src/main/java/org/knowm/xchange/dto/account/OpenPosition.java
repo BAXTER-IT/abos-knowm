@@ -1,5 +1,6 @@
 package org.knowm.xchange.dto.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -11,38 +12,56 @@ import org.knowm.xchange.instrument.Instrument;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class OpenPosition implements Serializable {
 
   private String id;
 
-  /** The instrument */
+  /**
+   * The instrument
+   */
   private Instrument instrument;
 
-  /** Is this a long or a short position */
+  /**
+   * Is this a long or a short position
+   */
   private Type type;
 
   private MarginMode marginMode;
 
-  /** The size of the position */
+  /**
+   * The size of the position
+   */
   private BigDecimal size;
 
-  /** The average entry price for the position */
+  /**
+   * The average entry price for the position
+   */
+  @JsonIgnore
   private BigDecimal price;
 
-  /** The estimated liquidation price */
+  /**
+   * The estimated liquidation price
+   */
+  @JsonIgnore
   private BigDecimal liquidationPrice;
 
-  /** The unrealised pnl of the position */
+  /**
+   * The unrealised pnl of the position
+   */
+  @JsonIgnore
   private BigDecimal unRealisedPnl;
 
-  /** Timestamp of creation */
+  /**
+   * Timestamp of creation
+   */
   private Instant createdAt;
 
-  /** Timestamp of update */
+  /**
+   * Timestamp of update
+   */
   private Instant updatedAt;
-
 
   public enum Type {
     LONG,
