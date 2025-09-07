@@ -27,11 +27,7 @@ public class TradeResponse {
     return this.side == null ? null : this.side.toLowerCase();
   }
 
-  private String liquidity;
-
-  public String getLiquidity() {
-    return this.liquidity == null ? null : this.liquidity.toLowerCase();
-  }
+  private Liquidity liquidity;
 
   private boolean forceTaker;
 
@@ -58,4 +54,13 @@ public class TradeResponse {
   private Date tradeCreatedAt;
 
   private String displayType;
+
+  public static enum Liquidity {
+    @JsonProperty("taker")
+    TAKER,
+
+    @JsonProperty("maker")
+    MAKER
+  }
+
 }

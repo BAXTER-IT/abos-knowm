@@ -116,19 +116,19 @@ class BitgetTradeServiceTest extends BitgetExchangeWiremock {
     assertThat(userTrades.getUserTrades()).hasSize(1);
 
     UserTrade expected =
-        new UserTrade(
-            OrderType.BID,
-            new BigDecimal("0.000246"),
-            BTC_USDT,
-            new BigDecimal("60775.01"),
-            Date.from(Instant.ofEpochMilli(1727902077419L)),
-            "1225475622852575236",
-            "1225475622585147396",
-            new BigDecimal("0.000000246"),
-            Currency.BTC,
-            null,
-            MarketParticipant.TAKER,
-            "{\"userId\":\"1548914322\",\"symbol\":\"BTCUSDT\",\"orderId\":\"1225475622585147396\",\"tradeId\":\"1225475622852575236\",\"orderType\":\"market\",\"side\":\"buy\",\"priceAvg\":\"60775.01\",\"size\":\"0.000246\",\"amount\":\"14.95065246\",\"feeDetail\":{\"deduction\":\"no\",\"feeCoin\":\"BTC\",\"totalDeductionFee\":\"\",\"totalFee\":\"-0.000000246\"},\"tradeScope\":\"taker\",\"cTime\":\"1727902077401\",\"uTime\":\"1727902077419\"}");
+        UserTrade.builder()
+            .type(OrderType.BID)
+            .originalAmount(new BigDecimal("0.000246"))
+            .instrument(BTC_USDT)
+            .price(new BigDecimal("60775.01"))
+            .timestamp(Date.from(Instant.ofEpochMilli(1727902077419L)))
+            .id("1225475622852575236")
+            .orderId("1225475622585147396")
+            .feeAmount(new BigDecimal("0.000000246"))
+            .feeCurrency(Currency.BTC)
+            .marketParticipant(MarketParticipant.TAKER)
+            .rawJson("{\"userId\":\"1548914322\",\"symbol\":\"BTCUSDT\",\"orderId\":\"1225475622585147396\",\"tradeId\":\"1225475622852575236\",\"orderType\":\"market\",\"side\":\"buy\",\"priceAvg\":\"60775.01\",\"size\":\"0.000246\",\"amount\":\"14.95065246\",\"feeDetail\":{\"deduction\":\"no\",\"feeCoin\":\"BTC\",\"totalDeductionFee\":\"\",\"totalFee\":\"-0.000000246\"},\"tradeScope\":\"taker\",\"cTime\":\"1727902077401\",\"uTime\":\"1727902077419\"}")
+            .build();
 
     assertThat(userTrades.getUserTrades()).first().usingRecursiveComparison().isEqualTo(expected);
   }

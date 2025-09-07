@@ -237,30 +237,33 @@ public class BitgetAdapters {
   }
 
   public UserTrade toUserTrade(BitgetFillDto bitgetFillDto) {
-    MarketParticipant marketParticipant;
-    switch (bitgetFillDto.getTradeScope()) {
-      case TAKER:
-        marketParticipant = MarketParticipant.TAKER;
-        break;
-      case MAKER:
-        marketParticipant = MarketParticipant.MAKER;
-        break;
-      default:
-        throw new IllegalArgumentException("Can't map " + bitgetFillDto.getTradeScope());
+    return UserTrade.builder()
+        .type(bitgetFillDto.getOrderSide())
+        .originalAmount(bitgetFillDto.getAssetAmount())
+        .instrument(toCurrencyPair(bitgetFillDto.getSymbol()))
+        .price(bitgetFillDto.getPrice())
+        .timestamp(toDate(bitgetFillDto.getUpdatedAt()))
+        .id(bitgetFillDto.getTradeId())
+        .orderId(bitgetFillDto.getOrderId())
+        .feeAmount(bitgetFillDto.getFeeDetail().getTotalFee().abs())
+        .feeCurrency(bitgetFillDto.getFeeDetail().getCurrency())
+        .marketParticipant(toMarketParticipant(bitgetFillDto.getTradeScope()))
+        .rawJson(bitgetFillDto.getRawJson())
+        .build();
+  }
+
+  public MarketParticipant toMarketParticipant(BitgetFillDto.TradeScope tradeScope) {
+    if (tradeScope == null) {
+      return null;
     }
-    return new UserTrade(
-        bitgetFillDto.getOrderSide(),
-        bitgetFillDto.getAssetAmount(),
-        toCurrencyPair(bitgetFillDto.getSymbol()),
-        bitgetFillDto.getPrice(),
-        toDate(bitgetFillDto.getUpdatedAt()),
-        bitgetFillDto.getTradeId(),
-        bitgetFillDto.getOrderId(),
-        bitgetFillDto.getFeeDetail().getTotalFee().abs(),
-        bitgetFillDto.getFeeDetail().getCurrency(),
-        null,
-        marketParticipant,
-        bitgetFillDto.getRawJson());
+    switch (tradeScope) {
+      case TAKER:
+        return MarketParticipant.TAKER;
+      case MAKER:
+        return MarketParticipant.MAKER;
+      default:
+        return null;
+    }
   }
 
   public String toString(BitgetAccountType bitgetAccountType) {

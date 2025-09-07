@@ -50,6 +50,7 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.StopOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.kucoin.KucoinTradeService.KucoinOrderFlags;
@@ -264,7 +265,7 @@ public class KucoinAdapters {
   }
 
   private static Trade adaptTrade(CurrencyPair currencyPair, TradeHistoryResponse trade) {
-    return new Trade.Builder()
+    return Trade.builder()
         .instrument(currencyPair)
         .originalAmount(trade.getSize())
         .price(trade.getPrice())
@@ -337,7 +338,7 @@ public class KucoinAdapters {
 
   public static UserTrade adaptUserTrade(TradeResponse trade) {
     return UserTrade.builder()
-        .currencyPair(adaptCurrencyPair(trade.getSymbol()))
+        .instrument(adaptCurrencyPair(trade.getSymbol()))
         .feeAmount(trade.getFee())
         .feeCurrency(Currency.getInstance(trade.getFeeCurrency()))
         .id(trade.getTradeId())
@@ -346,14 +347,28 @@ public class KucoinAdapters {
         .price(trade.getPrice())
         .timestamp(trade.getTradeCreatedAt())
         .type(adaptSide(trade.getSide()))
-        .marketParticipant(trade.getLiquidity())
+        .marketParticipant(toMarketParticipant(trade.getLiquidity()))
         .build();
+  }
+
+  public static MarketParticipant toMarketParticipant(TradeResponse.Liquidity liquidity) {
+    if (liquidity == null) {
+      return null;
+    }
+    switch (liquidity) {
+      case TAKER:
+        return MarketParticipant.TAKER;
+      case MAKER:
+        return MarketParticipant.MAKER;
+      default:
+        return null;
+    }
   }
 
   public static UserTrade adaptHistOrder(HistOrdersResponse histOrder) {
     CurrencyPair currencyPair = adaptCurrencyPair(histOrder.getSymbol());
     return UserTrade.builder()
-        .currencyPair(currencyPair)
+        .instrument(currencyPair)
         .feeAmount(histOrder.getFee())
         .feeCurrency(currencyPair.getBase())
         .id(histOrder.getId())
