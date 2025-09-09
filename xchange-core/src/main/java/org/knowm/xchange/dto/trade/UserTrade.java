@@ -11,7 +11,7 @@ import org.knowm.xchange.enums.MarketParticipant;
 
 /** Data object representing a user trade */
 @Data
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTrade extends Trade {
