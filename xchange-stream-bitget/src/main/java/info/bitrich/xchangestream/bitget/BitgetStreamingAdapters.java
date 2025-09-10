@@ -128,24 +128,23 @@ public class BitgetStreamingAdapters {
       default:
         throw new IllegalArgumentException("Can't map " + bitgetFillData.getTradeScope());
     }
-    return new UserTrade(
-        bitgetFillData.getOrderSide(),
-        bitgetFillData.getAssetAmount(),
-        BitgetAdapters.toCurrencyPair(bitgetFillData.getSymbol()),
-        bitgetFillData.getPrice(),
-        BitgetAdapters.toDate(bitgetFillData.getUpdatedAt()),
-        bitgetFillData.getTradeId(),
-        bitgetFillData.getOrderId(),
-        bitgetFillData.getFeeDetails().stream()
+    return UserTrade.builder()
+        .type(bitgetFillData.getOrderSide())
+        .originalAmount(bitgetFillData.getAssetAmount())
+        .instrument(BitgetAdapters.toCurrencyPair(bitgetFillData.getSymbol()))
+        .price(bitgetFillData.getPrice())
+        .timestamp(BitgetAdapters.toDate(bitgetFillData.getUpdatedAt()))
+        .id(bitgetFillData.getTradeId())
+        .orderId(bitgetFillData.getOrderId())
+        .feeAmount(bitgetFillData.getFeeDetails().stream()
             .map(FeeDetail::getTotalFee)
             .map(BigDecimal::abs)
-            .reduce(BigDecimal.ZERO, BigDecimal::add),
-        bitgetFillData.getFeeDetails().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add))
+        .feeCurrency(bitgetFillData.getFeeDetails().stream()
             .map(FeeDetail::getCurrency)
             .findFirst()
-            .orElse(null),
-        null,
-        marketParticipant,
-        null);
+            .orElse(null))
+        .marketParticipant(marketParticipant)
+        .build();
   }
 }

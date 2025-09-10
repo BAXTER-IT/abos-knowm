@@ -23,7 +23,7 @@ public class UserTradesTest {
     userTradeList.add(
         UserTrade.builder()
             .timestamp(Date.from(Instant.now()))
-            .currencyPair(CurrencyPair.BTC_USD)
+            .instrument(CurrencyPair.BTC_USD)
             .price(BigDecimal.ONE)
             .originalAmount(BigDecimal.ONE)
             .marketParticipant(MarketParticipant.MAKER)
@@ -31,7 +31,7 @@ public class UserTradesTest {
     userTradeList.add(
         UserTrade.builder()
             .timestamp(Date.from(Instant.now()))
-            .currencyPair(CurrencyPair.BTC_USD)
+            .instrument(CurrencyPair.BTC_USD)
             .id("id")
             .price(BigDecimal.ONE)
             .originalAmount(BigDecimal.ONE)
@@ -40,12 +40,12 @@ public class UserTradesTest {
     userTradeList.add(
         UserTrade.builder()
             .timestamp(Date.from(Instant.now()))
-            .currencyPair(CurrencyPair.BTC_USD)
+            .instrument(CurrencyPair.BTC_USD)
             .id("id")
             .instrument(CurrencyPair.BTC_USD)
             .price(BigDecimal.ONE)
             .originalAmount(BigDecimal.ONE)
-            .marketParticipant("taker")
+            .marketParticipant(MarketParticipant.TAKER)
             .build());
 
     UserTrades userTrades = new UserTrades(userTradeList, Trades.TradeSortType.SortByTimestamp);

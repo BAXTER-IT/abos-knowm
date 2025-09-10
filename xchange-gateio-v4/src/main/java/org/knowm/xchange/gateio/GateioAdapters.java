@@ -21,6 +21,7 @@ import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.enums.MarketParticipant;
 import org.knowm.xchange.gateio.dto.account.GateioAccountBookRecord;
 import org.knowm.xchange.gateio.dto.account.GateioDepositRecord;
 import org.knowm.xchange.gateio.dto.account.GateioOrder;
@@ -30,8 +31,8 @@ import org.knowm.xchange.gateio.dto.account.GateioWithdrawalRequest;
 import org.knowm.xchange.gateio.dto.marketdata.GateioCurrencyPairDetails;
 import org.knowm.xchange.gateio.dto.marketdata.GateioOrderBook;
 import org.knowm.xchange.gateio.dto.marketdata.GateioTicker;
-import org.knowm.xchange.gateio.dto.trade.GateioUserTrade;
 import org.knowm.xchange.gateio.dto.trade.GateioUserTradeRaw;
+import org.knowm.xchange.gateio.dto.trade.Role;
 import org.knowm.xchange.gateio.service.params.GateioWithdrawFundsParams;
 import org.knowm.xchange.instrument.Instrument;
 
@@ -199,18 +200,34 @@ public class GateioAdapters {
   }
 
   public UserTrade toUserTrade(GateioUserTradeRaw gateioUserTradeRaw) {
-    return new GateioUserTrade(
-        gateioUserTradeRaw.getSide(),
-        gateioUserTradeRaw.getAmount(),
-        gateioUserTradeRaw.getCurrencyPair(),
-        gateioUserTradeRaw.getPrice(),
-        Date.from(gateioUserTradeRaw.getTimeMs()),
-        String.valueOf(gateioUserTradeRaw.getId()),
-        String.valueOf(gateioUserTradeRaw.getOrderId()),
-        gateioUserTradeRaw.getFee(),
-        gateioUserTradeRaw.getFeeCurrency(),
-        gateioUserTradeRaw.getRemark(),
-        gateioUserTradeRaw.getRole());
+    return UserTrade.builder()
+        .type(gateioUserTradeRaw.getSide())
+        .originalAmount(gateioUserTradeRaw.getAmount())
+        .instrument(gateioUserTradeRaw.getCurrencyPair())
+        .price(gateioUserTradeRaw.getPrice())
+        .timestamp(Date.from(gateioUserTradeRaw.getTimeMs()))
+        .id(String.valueOf(gateioUserTradeRaw.getId()))
+        .orderId(String.valueOf(gateioUserTradeRaw.getOrderId()))
+        .feeAmount(gateioUserTradeRaw.getFee())
+        .feeCurrency(gateioUserTradeRaw.getFeeCurrency())
+        .orderUserReference(gateioUserTradeRaw.getRemark())
+        .marketParticipant(toMarketParticipant(gateioUserTradeRaw.getRole()))
+        .build();
+  }
+
+  public MarketParticipant toMarketParticipant(Role role) {
+    if (role == null) {
+      return null;
+    }
+    switch (role) {
+      case TAKER:
+        return MarketParticipant.TAKER;
+      case MAKER:
+        return MarketParticipant.MAKER;
+      default:
+        return null;
+    }
+
   }
 
   public GateioWithdrawalRequest toGateioWithdrawalRequest(GateioWithdrawFundsParams p) {
