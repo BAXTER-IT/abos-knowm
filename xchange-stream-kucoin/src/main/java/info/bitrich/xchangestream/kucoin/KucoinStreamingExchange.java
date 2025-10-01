@@ -41,7 +41,7 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
       complete = complete.doOnComplete(() -> {
         WebsocketResponse connectionDetails = getPublicWebsocketConnectionDetails();
         WebsocketResponse.InstanceServer instanceServer = connectionDetails.getInstanceServers().get(0);
-        String url = instanceServer.getEndpoint() + "?token=" + connectionDetails.getToken();
+        String url = "ws://127.0.0.1:9100/test-exchange" + "?token=" + connectionDetails.getToken();
 
         publicStreamingService = new KucoinStreamingService(url, instanceServer.getPingInterval(), false);
         applyStreamingSpecification(getExchangeSpecification(), publicStreamingService);
@@ -60,7 +60,7 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
       complete = complete.doOnComplete(() -> {
         WebsocketResponse connectionDetails = getPrivateWebsocketConnectionDetails();
         WebsocketResponse.InstanceServer instanceServer = connectionDetails.getInstanceServers().get(0);
-        String url = instanceServer.getEndpoint() + "?token=" + connectionDetails.getToken();
+        String url = "ws://127.0.0.1:9100/test-exchange" + "?token=" + connectionDetails.getToken();
 
         privateStreamingService = new KucoinStreamingService(url, instanceServer.getPingInterval(), true);
         applyStreamingSpecification(getExchangeSpecification(), privateStreamingService);
