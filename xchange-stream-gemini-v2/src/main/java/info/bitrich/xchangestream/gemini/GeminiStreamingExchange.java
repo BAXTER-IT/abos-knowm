@@ -8,7 +8,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
-import org.knowm.xchange.gemini.v1.GeminiExchange;
+import org.knowm.xchange.gemini.GeminiExchange;
 
 /** Adapted from V1 by Max Gao on 01-09-2021 */
 public class GeminiStreamingExchange extends GeminiExchange implements StreamingExchange {
