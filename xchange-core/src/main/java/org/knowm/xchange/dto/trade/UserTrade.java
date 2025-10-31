@@ -1,12 +1,12 @@
 package org.knowm.xchange.dto.trade;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.enums.MarketParticipant;
@@ -15,7 +15,9 @@ import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 
 /** Data object representing a user trade */
-@JsonDeserialize(builder = UserTrade.Builder.class)
+@Jacksonized
+@SuperBuilder
+@RequiredArgsConstructor
 public class UserTrade extends Trade {
 
   private static final long serialVersionUID = -3021617981214969292L;
@@ -74,10 +76,6 @@ public class UserTrade extends Trade {
     this.marketParticipant = marketParticipant;
   }
 
-  public static UserTrade.Builder builder() {
-    return new UserTrade.Builder();
-  }
-
   public String getOrderId() {
     return orderId;
   }
@@ -134,134 +132,4 @@ public class UserTrade extends Trade {
     return Objects.hash(super.hashCode(), orderId, feeAmount, feeCurrency);
   }
 
-  @JsonPOJOBuilder(withPrefix = "")
-  public static class Builder extends Trade.Builder {
-
-    protected String orderId;
-    protected BigDecimal feeAmount;
-    protected Currency feeCurrency;
-    protected String orderUserReference;
-    protected MarketParticipant marketParticipant;
-
-    public static Builder from(UserTrade trade) {
-      return new Builder()
-          .type(trade.getType())
-          .originalAmount(trade.getOriginalAmount())
-          .instrument(trade.getInstrument())
-          .price(trade.getPrice())
-          .timestamp(trade.getTimestamp())
-          .id(trade.getId())
-          .orderId(trade.getOrderId())
-          .feeAmount(trade.getFeeAmount())
-          .feeCurrency(trade.getFeeCurrency())
-          .marketParticipant(trade.getMarketParticipant());
-    }
-
-    @Override
-    public Builder type(OrderType type) {
-      return (Builder) super.type(type);
-    }
-
-    @Override
-    public Builder originalAmount(BigDecimal originalAmount) {
-      return (Builder) super.originalAmount(originalAmount);
-    }
-
-    @Override
-    public Builder instrument(Instrument instrument) {
-      return (Builder) super.instrument(instrument);
-    }
-
-    @Override
-    public Builder currencyPair(CurrencyPair currencyPair) {
-      return (Builder) super.currencyPair(currencyPair);
-    }
-
-    @Override
-    public Builder price(BigDecimal price) {
-      return (Builder) super.price(price);
-    }
-
-    @Override
-    public Builder timestamp(Date timestamp) {
-      return (Builder) super.timestamp(timestamp);
-    }
-
-    @Override
-    public Builder id(String id) {
-      return (Builder) super.id(id);
-    }
-
-    @Override
-    public Builder makerOrderId(String makerOrderId) {
-      return (Builder) super.makerOrderId(makerOrderId);
-    }
-
-    @Override
-    public Builder takerOrderId(String takerOrderId) {
-      return (Builder) super.takerOrderId(takerOrderId);
-    }
-
-    @Override
-    public Builder rawJson(String rawJson) {
-      return (Builder) super.rawJson(rawJson);
-    }
-
-    public Builder orderId(String orderId) {
-      this.orderId = orderId;
-      return this;
-    }
-
-    public Builder feeAmount(BigDecimal feeAmount) {
-      this.feeAmount = feeAmount;
-      return this;
-    }
-
-    public Builder feeCurrency(Currency feeCurrency) {
-      this.feeCurrency = feeCurrency;
-      return this;
-    }
-
-    public Builder orderUserReference(String orderUserReference) {
-      this.orderUserReference = orderUserReference;
-      return this;
-    }
-
-    public Builder marketParticipant(MarketParticipant marketParticipant) {
-      this.marketParticipant = marketParticipant;
-      return this;
-    }
-
-    public Builder marketParticipant(String marketParticipant) {
-      switch (marketParticipant.toLowerCase().trim()) {
-        case "taker":
-          this.marketParticipant = MarketParticipant.TAKER;
-          break;
-        case "maker":
-          this.marketParticipant = MarketParticipant.MAKER;
-          break;
-        default:
-          throw new IllegalArgumentException(
-              "Not valid market participant provided. " + marketParticipant + " was provided.");
-      }
-      return this;
-    }
-
-    @Override
-    public UserTrade build() {
-      return new UserTrade(
-          type,
-          originalAmount,
-          instrument,
-          price,
-          timestamp,
-          id,
-          orderId,
-          feeAmount,
-          feeCurrency,
-          orderUserReference,
-          marketParticipant,
-          rawJson);
-    }
-  }
 }

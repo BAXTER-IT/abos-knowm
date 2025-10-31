@@ -3,7 +3,7 @@ package info.bitrich.xchangestream.gemini;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.gemini.dto.trade.GeminiWsTradeResponse;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.dto.trade.UserTrade;
 

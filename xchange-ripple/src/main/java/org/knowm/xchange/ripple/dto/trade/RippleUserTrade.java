@@ -1,18 +1,14 @@
 package org.knowm.xchange.ripple.dto.trade;
 
 import java.math.BigDecimal;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.trade.UserTrade;
 
 @Data
 @SuperBuilder
-@AllArgsConstructor
-@NoArgsConstructor
 public class RippleUserTrade extends UserTrade {
 
   @Builder.Default

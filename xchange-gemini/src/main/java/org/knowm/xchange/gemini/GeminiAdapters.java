@@ -28,7 +28,6 @@ import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
-import org.knowm.xchange.dto.marketdata.Trade.Builder;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
@@ -87,7 +86,7 @@ public final class GeminiAdapters {
 
   public static String adaptCurrencyPair(CurrencyPair pair) {
 
-    return (pair.base.getCurrencyCode() + pair.counter.getCurrencyCode()).toLowerCase();
+    return (pair.getBase().getCurrencyCode() + pair.getCounter().getCurrencyCode()).toLowerCase();
   }
 
   public static OrderBook adaptOrderBook(GeminiDepth btceDepth, CurrencyPair currencyPair) {
@@ -298,10 +297,10 @@ public final class GeminiAdapters {
     Date date =
         DateUtils.fromMillisUtc(trade.getTimestamp() * 1000L); // Gemini uses Unix timestamps
     final String tradeId = String.valueOf(trade.getTradeId());
-    return new Builder()
+    return UserTrade.builder()
         .type(orderType)
         .originalAmount(amount)
-        .currencyPair(currencyPair)
+        .instrument(currencyPair)
         .price(price)
         .timestamp(date)
         .id(tradeId)
@@ -368,7 +367,7 @@ public final class GeminiAdapters {
   private static OpenPosition toPosition(GeminiPositionsResponse in) {
     Instrument instrument = GeminiAdapters.adaptInstrument(in.getSymbol());
     Type type = in.getQuantity().compareTo(BigDecimal.ZERO) >= 0 ? Type.LONG : Type.SHORT;
-    return new OpenPosition.Builder()
+    return OpenPosition.builder()
         .instrument(instrument)
         .type(type)
         .size(in.getQuantity())
@@ -448,8 +447,7 @@ public final class GeminiAdapters {
       OrderType orderType = GeminiTradeType.BUY.equals(trade.getType()) ? OrderType.BID : OrderType.ASK;
       Date date = new Date(trade.getTimestampms());
       final BigDecimal fee = trade.getFeeAmount();
-      pastTrades.add(
-          new UserTrade.Builder()
+      pastTrades.add(UserTrade.builder()
               .type(orderType)
               .originalAmount(trade.getAmount())
               .instrument(adaptInstrument(trade.getSymbol()))
@@ -481,11 +479,11 @@ public final class GeminiAdapters {
       if (!pairsMap.containsKey(c)) {
         pairsMap.put(c, null);
       }
-      if (!currenciesMap.containsKey(c.base)) {
-        currenciesMap.put(c.base, null);
+      if (!currenciesMap.containsKey(c.getBase())) {
+        currenciesMap.put(c.getBase(), null);
       }
-      if (!currenciesMap.containsKey(c.counter)) {
-        currenciesMap.put(c.counter, null);
+      if (!currenciesMap.containsKey(c.getCounter())) {
+        currenciesMap.put(c.getCounter(), null);
       }
     }
 
