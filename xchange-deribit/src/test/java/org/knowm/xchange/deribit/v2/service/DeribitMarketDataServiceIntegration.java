@@ -122,7 +122,7 @@ public class DeribitMarketDataServiceIntegration extends DeribitIntegrationTestP
       assertThat(trade.getInstrument()).isEqualTo(CurrencyPair.BTC_USDT);
       assertThat(trade.getPrice()).isPositive();
       assertThat(trade.getOriginalAmount()).isPositive();
-      assertThat(trade).hasNoNullFieldsOrPropertiesExcept("makerOrderId", "takerOrderId");
+      assertThat(trade).hasNoNullFieldsOrPropertiesExcept("makerOrderId", "takerOrderId", "rawJson");
     });
   }
 
@@ -137,7 +137,7 @@ public class DeribitMarketDataServiceIntegration extends DeribitIntegrationTestP
       assertThat(trade.getInstrument()).isEqualTo(futuresContract);
       assertThat(trade.getPrice()).isPositive();
       assertThat(trade.getOriginalAmount()).isPositive();
-      assertThat(trade).hasNoNullFieldsOrPropertiesExcept("makerOrderId", "takerOrderId");
+      assertThat(trade).hasNoNullFieldsOrPropertiesExcept("makerOrderId", "takerOrderId", "rawJson");
     });
   }
 
