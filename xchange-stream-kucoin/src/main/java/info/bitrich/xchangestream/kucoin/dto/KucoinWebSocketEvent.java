@@ -1,14 +1,26 @@
 package info.bitrich.xchangestream.kucoin.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class KucoinWebSocketEvent {
-    @JsonProperty("type")
-    public String type;
 
-    @JsonProperty("topic")
-    public String topic;
+  @JsonProperty("id")
+  private String id;
 
-    @JsonProperty("subject")
-    public String subject;
+  @JsonProperty("userId")
+  private String userId;
+
+  @JsonProperty("type")
+  private String type;
+
+  @JsonProperty("topic")
+  private String topic;
+
+  @JsonProperty("subject")
+  private String subject;
+
+  @JsonProperty("channelType")
+  private String channelType;
 }

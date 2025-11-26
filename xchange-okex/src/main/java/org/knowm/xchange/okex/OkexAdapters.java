@@ -1,5 +1,18 @@
 package org.knowm.xchange.okex;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -11,24 +24,43 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.OpenPosition;
 import org.knowm.xchange.dto.account.OpenPositions;
 import org.knowm.xchange.dto.account.Wallet;
-import org.knowm.xchange.dto.marketdata.*;
+import org.knowm.xchange.dto.marketdata.CandleStick;
+import org.knowm.xchange.dto.marketdata.CandleStickData;
+import org.knowm.xchange.dto.marketdata.FundingRate;
+import org.knowm.xchange.dto.marketdata.OrderBook;
+import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.marketdata.Trade;
+import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
 import org.knowm.xchange.dto.meta.WalletHealth;
-import org.knowm.xchange.dto.trade.*;
+import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.instrument.Instrument;
-import org.knowm.xchange.okex.dto.OkexInstType;
-import org.knowm.xchange.okex.dto.account.*;
-import org.knowm.xchange.okex.dto.marketdata.*;
 import org.knowm.xchange.okex.dto.OkexResponse;
-import org.knowm.xchange.okex.dto.trade.*;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.knowm.xchange.okex.dto.account.OkexAccountPositionRisk;
+import org.knowm.xchange.okex.dto.account.OkexAssetBalance;
+import org.knowm.xchange.okex.dto.account.OkexPosition;
+import org.knowm.xchange.okex.dto.account.OkexTradeFee;
+import org.knowm.xchange.okex.dto.account.OkexWalletBalance;
+import org.knowm.xchange.okex.dto.enums.OkexInstrumentType;
+import org.knowm.xchange.okex.dto.marketdata.OkexCandleStick;
+import org.knowm.xchange.okex.dto.marketdata.OkexCurrency;
+import org.knowm.xchange.okex.dto.marketdata.OkexFundingRate;
+import org.knowm.xchange.okex.dto.marketdata.OkexInstrument;
+import org.knowm.xchange.okex.dto.marketdata.OkexOrderbook;
+import org.knowm.xchange.okex.dto.marketdata.OkexPublicOrder;
+import org.knowm.xchange.okex.dto.marketdata.OkexTicker;
+import org.knowm.xchange.okex.dto.marketdata.OkexTrade;
+import org.knowm.xchange.okex.dto.trade.OkexAmendOrderRequest;
+import org.knowm.xchange.okex.dto.trade.OkexOrderDetails;
+import org.knowm.xchange.okex.dto.trade.OkexOrderFlags;
+import org.knowm.xchange.okex.dto.trade.OkexOrderRequest;
+import org.knowm.xchange.okex.dto.trade.OkexOrderType;
 
 /** Author: Max Gao (gaamox@tutanota.com) Created: 08-06-2021 */
 public class OkexAdapters {
@@ -310,13 +342,13 @@ public class OkexAdapters {
           pair,
           new InstrumentMetaData.Builder()
                   .tradingFee(new BigDecimal(makerFee).negate())
-                  .minimumAmount((instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))
+                  .minimumAmount((instrument.getInstrumentType().equals(OkexInstrumentType.SWAP.name()))
                           ? convertContractSizeToVolume(instrument.getMinSize(), pair, new BigDecimal(instrument.getContractValue()))
                           : new BigDecimal(instrument.getMinSize()))
-                  .volumeScale((instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))
+                  .volumeScale((instrument.getInstrumentType().equals(OkexInstrumentType.SWAP.name()))
                           ? convertContractSizeToVolume(instrument.getMinSize(), pair, new BigDecimal(instrument.getContractValue())).scale()
                           : Math.max(numberOfDecimals(new BigDecimal(instrument.getMinSize())),0))
-                  .contractValue((instrument.getInstrumentType().equals(OkexInstType.SWAP.name())) ? new BigDecimal(instrument.getContractValue()): null)
+                  .contractValue((instrument.getInstrumentType().equals(OkexInstrumentType.SWAP.name())) ? new BigDecimal(instrument.getContractValue()): null)
                   .priceScale(numberOfDecimals(new BigDecimal(instrument.getTickSize())))
                   .tradingFeeCurrency(Objects.requireNonNull(pair).getCounter())
                   .marketOrderEnabled(true)
@@ -351,13 +383,13 @@ public class OkexAdapters {
     if (!okexWalletBalanceList.isEmpty()) {
       OkexWalletBalance okexWalletBalance = okexWalletBalanceList.get(0);
       balances =
-          Arrays.stream(okexWalletBalance.getDetails())
+          okexWalletBalance.getDetails().stream()
               .map(
                   detail ->
                       new Balance.Builder()
                           .currency(new Currency(detail.getCurrency()))
-                          .total(new BigDecimal(detail.getCashBalance()))
-                          .available(checkForEmpty(detail.getAvailableBalance()))
+                          .total(detail.getCashBalance())
+                          .available(detail.getAvailableBalance())
                           .timestamp(new Date())
                           .build())
               .collect(Collectors.toList());
@@ -413,25 +445,29 @@ public class OkexAdapters {
     return candleStickData;
   }
 
-  public static OpenPositions adaptOpenPositions(OkexResponse<List<OkexPosition>> positions, ExchangeMetaData exchangeMetaData) {
+  public static OpenPositions adaptOpenPositions(List<OkexPosition> positions, ExchangeMetaData exchangeMetaData) {
     List<OpenPosition> openPositions = new ArrayList<>();
 
-    positions.getData().forEach(okexPosition -> openPositions.add(new OpenPosition.Builder()
-            .instrument(adaptOkexInstrumentId(okexPosition.getInstrumentId()))
-                    .liquidationPrice(okexPosition.getLiquidationPrice())
-                    .price(okexPosition.getAverageOpenPrice())
-                    .type(adaptOpenPositionType(okexPosition))
-                    .size(okexPosition.getPosition().abs().multiply(exchangeMetaData.getInstruments().get(adaptOkexInstrumentId(okexPosition.getInstrumentId())).getContractValue()))
-                    .unRealisedPnl(okexPosition.getUnrealizedPnL())
-            .build()));
+    positions.forEach(okexPosition -> openPositions.add(adaptOpenPosition(okexPosition, exchangeMetaData)));
     return new OpenPositions(openPositions);
+  }
+
+  public static OpenPosition adaptOpenPosition(OkexPosition okexPosition, ExchangeMetaData exchangeMetaData) {
+    return new OpenPosition.Builder()
+        .instrument(adaptOkexInstrumentId(okexPosition.getInstrumentId()))
+        .liquidationPrice(okexPosition.getLiquidationPrice())
+        .price(okexPosition.getAverageOpenPrice())
+        .type(adaptOpenPositionType(okexPosition))
+        .size(okexPosition.getPositionSize().abs().multiply(exchangeMetaData.getInstruments().get(adaptOkexInstrumentId(okexPosition.getInstrumentId())).getContractValue()))
+        .unRealisedPnl(okexPosition.getUnrealizedProfitAndLoss())
+        .build();
   }
 
   public static OpenPosition.Type adaptOpenPositionType(OkexPosition okexPosition){
     switch(okexPosition.getPositionSide()){
-      case "long": return OpenPosition.Type.LONG;
-      case "short": return OpenPosition.Type.SHORT;
-      case "net": return (okexPosition.getPosition().compareTo(BigDecimal.ZERO) >= 0) ? OpenPosition.Type.LONG : OpenPosition.Type.SHORT;
+      case LONG: return OpenPosition.Type.LONG;
+      case SHORT: return OpenPosition.Type.SHORT;
+      case NET: return (okexPosition.getPositionSize().compareTo(BigDecimal.ZERO) >= 0) ? OpenPosition.Type.LONG : OpenPosition.Type.SHORT;
       default: throw new UnsupportedOperationException();
     }
   }

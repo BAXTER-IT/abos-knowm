@@ -11,6 +11,8 @@ import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.HIDDEN;
 import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.ICEBERG;
 import static org.knowm.xchange.kucoin.dto.KucoinOrderFlags.POST_ONLY;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Ordering;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -21,9 +23,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -35,6 +37,7 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
+import org.knowm.xchange.dto.account.OpenPosition;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
@@ -66,9 +69,6 @@ import org.knowm.xchange.kucoin.dto.response.TradeFeeResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeHistoryResponse;
 import org.knowm.xchange.kucoin.dto.response.TradeResponse;
 import org.knowm.xchange.kucoin.dto.response.WithdrawalResponse;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Ordering;
 
 public class KucoinAdapters {
 
@@ -282,9 +282,9 @@ public class KucoinAdapters {
     CurrencyPair currencyPair = adaptCurrencyPair(order.getSymbol());
 
     OrderStatus status;
-    if (order.isCancelExist()) {
+    if (order.getCancelExist()) {
       status = CANCELED;
-    } else if (order.isActive()) {
+    } else if (order.getIsActive()) {
       if (order.getDealSize().signum() == 0) {
         status = NEW;
       } else {
@@ -406,6 +406,35 @@ public class KucoinAdapters {
         .symbol(adaptCurrencyPair((CurrencyPair) order.getInstrument()))
         .size(order.getOriginalAmount())
         .side(adaptSide(order.getType()));
+  }
+
+  public static List<OpenPosition> adaptOpenPositions(List<OrderResponse> in) {
+    return in.stream()
+        .map(KucoinAdapters::adaptOpenPosition)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
+  public static OpenPosition adaptOpenPosition(OrderResponse order) {
+    if (order == null) {
+      return null;
+    }
+
+    Instrument instrument = new CurrencyPair(order.getSymbol());
+
+    OpenPosition.Type type =
+        "buy".equalsIgnoreCase(order.getSide())
+            ? OpenPosition.Type.LONG
+            : OpenPosition.Type.SHORT;
+
+    return new OpenPosition(
+        instrument,
+        type,
+        order.getSize(),
+        order.getPrice(),
+        null,
+        null
+    );
   }
 
   private static final class PriceAndSize {

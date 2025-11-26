@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import info.bitrich.xchangestream.bitget.config.Config;
 import info.bitrich.xchangestream.bitget.dto.common.Action;
 import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel;
+import info.bitrich.xchangestream.bitget.dto.common.BitgetChannelWithCoin;
 import info.bitrich.xchangestream.bitget.dto.common.Operation;
 import info.bitrich.xchangestream.bitget.dto.request.BitgetWsRequest;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetEventNotification;
@@ -78,11 +79,15 @@ public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotifi
 
   /**
    * @param channelName name of channel
-   * @param args array with [{@code MarketType}, {@code Instrument}, ...]
+   * @param args array with [channelType, instType, instrument, true if use "coin" instead of "instId", ...]
    * @return subscription id in form of "marketType_channelName_instrument1_instrumentX"
    */
   @Override
   public String getSubscriptionUniqueId(String channelName, Object... args) {
+    if (args.length > 3 && args[3] != null && (Boolean) args[3]) {
+      BitgetChannelWithCoin bitgetChannelWithCoin = BitgetStreamingAdapters.toBitgetChannelWithCoin(args);
+      return BitgetStreamingAdapters.toSubscriptionId(bitgetChannelWithCoin);
+    }
     BitgetChannel bitgetChannel = BitgetStreamingAdapters.toBitgetChannel(args);
 
     return BitgetStreamingAdapters.toSubscriptionId(bitgetChannel);

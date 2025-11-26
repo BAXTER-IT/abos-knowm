@@ -35,6 +35,8 @@ public class KucoinBaseService extends BaseResilientExchangeService<KucoinExchan
   protected final WebsocketAPI websocketAPI;
   protected final TradingFeeAPI tradingFeeAPI;
 
+  protected final KucoinAuthenticated kucoinAuthenticated;
+
   protected KucoinDigest digest;
   protected String apiKey;
   protected String passphrase;
@@ -53,6 +55,8 @@ public class KucoinBaseService extends BaseResilientExchangeService<KucoinExchan
     this.fillApi = service(exchange, FillAPI.class);
     this.histOrdersApi = service(exchange, HistOrdersAPI.class);
     this.websocketAPI = service(exchange, WebsocketAPI.class);
+    this.tradingFeeAPI = service(exchange, TradingFeeAPI.class);
+    kucoinAuthenticated = service(exchange, KucoinAuthenticated.class);
 
     this.digest = KucoinDigest.createInstance(exchange.getExchangeSpecification().getSecretKey());
     this.apiKey = exchange.getExchangeSpecification().getApiKey();
@@ -61,7 +65,6 @@ public class KucoinBaseService extends BaseResilientExchangeService<KucoinExchan
             exchange.getExchangeSpecification().getExchangeSpecificParametersItem("passphrase");
     this.nonceFactory = exchange.getNonceFactory();
 
-    this.tradingFeeAPI = service(exchange, TradingFeeAPI.class);
   }
 
   private <T> T service(KucoinExchange exchange, Class<T> clazz) {

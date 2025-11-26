@@ -1,16 +1,17 @@
 package info.bitrich.xchangestream.bybit;
 
 import static info.bitrich.xchangestream.bybit.BybitStreamingTradeService.EXECUTION_CHANNEL;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.knowm.xchange.Exchange.USE_SANDBOX;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.bitrich.xchangestream.bybit.dto.BybitUserTradeResponseDto;
+import info.bitrich.xchangestream.bybit.dto.BybitWsResponseDto;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
@@ -24,6 +25,7 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.bybit.BybitExchange;
 import org.knowm.xchange.bybit.config.BybitJacksonObjectMapperFactory;
 import org.knowm.xchange.bybit.dto.trade.BybitOrderType;
+import org.knowm.xchange.bybit.dto.trade.BybitUserTradeDto;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -91,10 +93,12 @@ public class BybitStreamingTradeServiceTest {
 
     String json = IOUtils.resourceToString("/websocketTrade.json", StandardCharsets.UTF_8);
 
-    BybitUserTradeResponseDto bybitUserTradeResponseDto =
-        objectMapper.treeToValue(createJsonNode(json), BybitUserTradeResponseDto.class);
-    assertEquals(BybitOrderType.MARKET, bybitUserTradeResponseDto.getData().get(0).getOrderType());
-    assertEquals(BybitOrderType.UNKNOWN, bybitUserTradeResponseDto.getData().get(0).getStopOrderType());
+    BybitWsResponseDto<BybitUserTradeDto> bybitWsResponseDto =
+        objectMapper.convertValue(createJsonNode(json),
+            new TypeReference<>() {
+            });
+    assertEquals(BybitOrderType.MARKET, bybitWsResponseDto.getData().get(0).getOrderType());
+    assertEquals(BybitOrderType.UNKNOWN, bybitWsResponseDto.getData().get(0).getStopOrderType());
   }
 
   private JsonNode createJsonNode(String json) throws IOException {

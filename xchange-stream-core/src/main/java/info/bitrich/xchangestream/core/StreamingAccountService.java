@@ -3,8 +3,11 @@ package info.bitrich.xchangestream.core;
 import io.reactivex.Observable;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.Balance;
+import org.knowm.xchange.dto.account.FundingRecord;
+import org.knowm.xchange.dto.account.OpenPosition;
 import org.knowm.xchange.exceptions.ExchangeSecurityException;
 import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 
 public interface StreamingAccountService {
@@ -31,5 +34,17 @@ public interface StreamingAccountService {
    */
   default Observable<Balance> getBalanceChanges(Currency currency, Object... args) {
     throw new NotYetImplementedForExchangeException("getBalanceChanges");
+  }
+
+  default Observable<OpenPosition> getPositionChanges(Instrument instrument, Object... args) {
+    throw new NotYetImplementedForExchangeException("getPositionChanges");
+  }
+
+  default Observable<FundingRecord> getSpotLedgerChanges(Instrument instrument, Object... args) {
+    throw new NotYetImplementedForExchangeException("getSpotLedgerChanges");
+  }
+
+  default Observable<FundingRecord> getFuturesLedgerChanges(Instrument instrument, Object... args) {
+    throw new NotYetImplementedForExchangeException("getFuturesLedgerChanges");
   }
 }

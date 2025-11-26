@@ -1,5 +1,10 @@
 package org.knowm.xchange.okex.service;
 
+import static org.knowm.xchange.okex.OkexAdapters.OPTION;
+import static org.knowm.xchange.okex.OkexAdapters.SPOT;
+import static org.knowm.xchange.okex.OkexAdapters.SWAP;
+
+import jakarta.ws.rs.NotSupportedException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,11 +23,11 @@ import org.knowm.xchange.exceptions.FundsExceededException;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.okex.OkexAdapters;
 import org.knowm.xchange.okex.OkexExchange;
-import org.knowm.xchange.okex.dto.trade.OkexOrderResponse;
 import org.knowm.xchange.okex.dto.OkexException;
 import org.knowm.xchange.okex.dto.OkexResponse;
 import org.knowm.xchange.okex.dto.trade.OkexCancelOrderRequest;
 import org.knowm.xchange.okex.dto.trade.OkexOrderDetails;
+import org.knowm.xchange.okex.dto.trade.OkexOrderResponse;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
 import org.knowm.xchange.service.trade.params.CancelOrderByInstrument;
@@ -34,10 +39,6 @@ import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
 import org.knowm.xchange.service.trade.params.orders.OrderQueryParamInstrument;
 import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 
-import jakarta.ws.rs.NotSupportedException;
-
-import static org.knowm.xchange.okex.OkexAdapters.*;
-
 /** Author: Max Gao (gaamox@tutanota.com) Created: 08-06-2021 */
 public class OkexTradeService extends OkexTradeServiceRaw implements TradeService {
   public OkexTradeService(OkexExchange exchange, ResilienceRegistries resilienceRegistries) {
@@ -46,7 +47,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
   @Override
   public OpenPositions getOpenPositions() throws IOException {
-    return OkexAdapters.adaptOpenPositions(getPositions(null,null,null), exchange.getExchangeMetaData());
+    return OkexAdapters.adaptOpenPositions(getPositions(null,null,null).getData(), exchange.getExchangeMetaData());
   }
 
   @Override

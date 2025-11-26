@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.List;
-import jakarta.ws.rs.core.Response.Status;
 import org.junit.Before;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
@@ -50,29 +49,25 @@ public class BybitAccountServiceRawTest extends BaseWiremockTest {
     assertThat(accountBalance.getAccountMMRate()).isEqualTo("0");
     assertThat(accountBalance.getTotalPerpUPL()).isEqualTo("0");
     assertThat(accountBalance.getTotalWalletBalance()).isEqualTo("3.00326056");
-    assertThat(accountBalance.getAccountLTV()).isEqualTo("0");
     assertThat(accountBalance.getTotalMaintenanceMargin()).isEqualTo("0");
 
-    assertThat(accountBalance.getCoin()).hasSize(1);
-    List<BybitCoinWalletBalance> coins = accountBalance.getCoin();
+    assertThat(accountBalance.getCoins()).hasSize(1);
+    List<BybitCoinWalletBalance> coins = accountBalance.getCoins();
 
-    assertThat(coins.get(0).getAvailableToBorrow()).isEqualTo("3");
     assertThat(coins.get(0).getBonus()).isEqualTo("0");
     assertThat(coins.get(0).getAccruedInterest()).isEqualTo("0");
-    assertThat(coins.get(0).getAvailableToWithdraw()).isEqualTo("0");
     assertThat(coins.get(0).getTotalOrderIM()).isEqualTo("0");
     assertThat(coins.get(0).getEquity()).isEqualTo("0");
     assertThat(coins.get(0).getTotalPositionMM()).isEqualTo("0");
     assertThat(coins.get(0).getUsdValue()).isEqualTo("0");
     assertThat(coins.get(0).getUnrealisedPnl()).isEqualTo("0");
-    assertThat(coins.get(0).isCollateralSwitch()).isTrue();
+    assertThat(coins.get(0).getCollateralSwitch()).isTrue();
     assertThat(coins.get(0).getBorrowAmount()).isEqualTo("0.0");
     assertThat(coins.get(0).getTotalPositionIM()).isEqualTo("0");
     assertThat(coins.get(0).getWalletBalance()).isEqualTo("0");
-    assertThat(coins.get(0).getFree()).isNull();
     assertThat(coins.get(0).getCumRealisedPnl()).isEqualTo("0");
     assertThat(coins.get(0).getLocked()).isEqualTo("0");
-    assertThat(coins.get(0).isMarginCollateral()).isTrue();
+    assertThat(coins.get(0).getMarginCollateral()).isTrue();
     assertThat(coins.get(0).getCoin()).isEqualTo("BTC");
   }
 

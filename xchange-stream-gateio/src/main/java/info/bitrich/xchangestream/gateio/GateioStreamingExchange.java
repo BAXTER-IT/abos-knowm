@@ -13,31 +13,54 @@ import org.knowm.xchange.gateio.GateioExchange;
 public class GateioStreamingExchange extends GateioExchange implements StreamingExchange {
 
   private GateioStreamingService streamingService;
+  private GateioStreamingService perpetualFuturesStreamingService;
+  private GateioStreamingService deliveryFuturesStreamingService;
   private StreamingMarketDataService streamingMarketDataService;
   private StreamingTradeService streamingTradeService;
   private StreamingAccountService streamingAccountService;
 
-  public GateioStreamingExchange() {}
+  public GateioStreamingExchange() {
+  }
 
   @Override
   public Completable connect(ProductSubscription... args) {
-    streamingService = new GateioStreamingService(exchangeSpecification.getSslUri(), exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
+    streamingService = new GateioStreamingService(exchangeSpecification.getSslUri(),
+        exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
     applyStreamingSpecification(exchangeSpecification, streamingService);
+    perpetualFuturesStreamingService = new GateioStreamingService(
+        Config.WS_URL_V4_PERPETUAL_FUTURES_USDT, exchangeSpecification.getApiKey(),
+        exchangeSpecification.getSecretKey());
+    applyStreamingSpecification(exchangeSpecification, perpetualFuturesStreamingService);
+    deliveryFuturesStreamingService = new GateioStreamingService(
+        Config.WS_URL_V4_DELIVERY_FUTURES_USDT, exchangeSpecification.getApiKey(),
+        exchangeSpecification.getSecretKey());
+    applyStreamingSpecification(exchangeSpecification, deliveryFuturesStreamingService);
     streamingMarketDataService = new GateioStreamingMarketDataService(streamingService);
     streamingTradeService = new GateioStreamingTradeService(streamingService);
-    streamingAccountService = new GateioStreamingAccountService(streamingService);
-
-    return streamingService.connect();
+    streamingAccountService = new GateioStreamingAccountService(streamingService, perpetualFuturesStreamingService, deliveryFuturesStreamingService);
+    return Completable.mergeArray(
+        streamingService.connect(),
+        perpetualFuturesStreamingService.connect(),
+        deliveryFuturesStreamingService.connect()
+    ).retry();
   }
 
   @Override
   public Completable disconnect() {
     GateioStreamingService service = streamingService;
+    GateioStreamingService perpetualFuturesService = perpetualFuturesStreamingService;
+    GateioStreamingService deliveryFuturesService = deliveryFuturesStreamingService;
     streamingService = null;
+    perpetualFuturesStreamingService = null;
+    deliveryFuturesStreamingService = null;
     streamingMarketDataService = null;
     streamingTradeService = null;
     streamingAccountService = null;
-    return service.disconnect();
+    return Completable.mergeArray(
+        service.disconnect(),
+        perpetualFuturesService.disconnect(),
+        deliveryFuturesService.disconnect()
+    );
   }
 
   @Override
@@ -69,7 +92,7 @@ public class GateioStreamingExchange extends GateioExchange implements Streaming
   public ExchangeSpecification getDefaultExchangeSpecification() {
     ExchangeSpecification specification = super.getDefaultExchangeSpecification();
     specification.setShouldLoadRemoteMetaData(false);
-    specification.setSslUri(Config.V4_URL);
+    specification.setSslUri(Config.WS_URL_V4_SPOT);
     return specification;
   }
 }

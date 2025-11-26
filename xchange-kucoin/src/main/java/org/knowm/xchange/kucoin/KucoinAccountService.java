@@ -11,10 +11,14 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
+import org.knowm.xchange.dto.account.OpenPosition;
 import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.dto.account.Wallet.Builder;
 import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
+import org.knowm.xchange.kucoin.dto.response.OrderResponse;
 import org.knowm.xchange.kucoin.dto.response.Pagination;
 import org.knowm.xchange.kucoin.dto.response.SubAccountsResponse;
+import org.knowm.xchange.kucoin.dto.response.SymbolsWithActiveOrder;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.HistoryParamsFundingType;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrency;
@@ -30,20 +34,31 @@ public class KucoinAccountService extends KucoinAccountServiceRaw implements Acc
   @Override
   public AccountInfo getAccountInfo() throws IOException {
     List<AccountBalancesResponse> accounts = getKucoinAccounts();
-    return new AccountInfo(
-        accounts.stream()
-            .map(AccountBalancesResponse::getType)
-            .distinct()
-            .map(
-                type ->
-                    Wallet.Builder.from(
-                            accounts.stream()
-                                .filter(a -> a.getType().equals(type))
-                                .map(KucoinAdapters::adaptBalance)
-                                .collect(toList()))
-                        .id(type)
-                        .build())
-            .collect(toList()));
+    List<Wallet> wallets = accounts.stream()
+        .map(AccountBalancesResponse::getType)
+        .distinct()
+        .map(
+            type ->
+                Builder.from(
+                        accounts.stream()
+                            .filter(a -> a.getType().equals(type))
+                            .map(KucoinAdapters::adaptBalance)
+                            .collect(toList()))
+                    .id(type)
+                    .build())
+        .collect(toList());
+    List<OpenPosition> activePositions = getActivePositions();
+    return new AccountInfo(wallets, activePositions);
+  }
+
+  private List<OpenPosition> getActivePositions() throws IOException {
+    List<OpenPosition> openPositions = new ArrayList<>();
+    SymbolsWithActiveOrder symbolsWithActiveOrder = getKucoinSymbolsWithActiveOrder();
+    for (String symbol : symbolsWithActiveOrder.getSymbols()) {
+      List<OrderResponse> kucoinActiveOrders = getKucoinActiveOrders(symbol);
+      openPositions.addAll(KucoinAdapters.adaptOpenPositions(kucoinActiveOrders));
+    }
+    return openPositions;
   }
 
   public List<SubAccountsResponse> getSubAccountsInfo() throws IOException {

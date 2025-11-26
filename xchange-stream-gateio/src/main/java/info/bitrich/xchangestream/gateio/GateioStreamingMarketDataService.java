@@ -37,7 +37,7 @@ public class GateioStreamingMarketDataService implements StreamingMarketDataServ
     Integer orderBookLevel = (Integer) ArrayUtils.get(args, 0, MAX_DEPTH_DEFAULT);
     Duration updateSpeed = (Duration) ArrayUtils.get(args, 1, UPDATE_INTERVAL_DEFAULT);
     return service
-        .subscribeChannel(Config.SPOT_ORDERBOOK_CHANNEL, new Object[]{currencyPair, orderBookLevel, updateSpeed})
+        .subscribeChannel(Config.CHANNEL_SPOT_ORDER_BOOK, new Object[]{currencyPair, orderBookLevel, updateSpeed})
         .map(GateioOrderBookNotification.class::cast)
         .map(GateioStreamingAdapters::toOrderBook);
   }
@@ -46,7 +46,7 @@ public class GateioStreamingMarketDataService implements StreamingMarketDataServ
   @Override
   public Observable<Ticker> getTicker(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(Config.SPOT_TICKERS_CHANNEL, currencyPair)
+        .subscribeChannel(Config.CHANNEL_SPOT_TICKERS, currencyPair)
         .map(GateioTickerNotification.class::cast)
         .map(GateioStreamingAdapters::toTicker);
   }
@@ -55,7 +55,7 @@ public class GateioStreamingMarketDataService implements StreamingMarketDataServ
   @Override
   public Observable<Trade> getTrades(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(Config.SPOT_TRADES_CHANNEL, currencyPair)
+        .subscribeChannel(Config.CHANNEL_SPOT_TRADES, currencyPair)
         .map(GateioTradeNotification.class::cast)
         .map(GateioStreamingAdapters::toTrade);
   }

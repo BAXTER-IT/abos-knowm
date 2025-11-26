@@ -34,6 +34,7 @@ public class BitgetStreamingExchange extends BitgetExchange implements Streaming
               exchangeSpecification.getSecretKey(),
               exchangeSpecification.getPassword());
       streamingTradeService = new BitgetStreamingTradeService(privateStreamingService);
+      streamingAccountService = new BitgetStreamingAccountService(privateStreamingService);
       privateStreamingService.connect().blockingAwait();
     }
     applyStreamingSpecification(exchangeSpecification, publicStreamingService);
