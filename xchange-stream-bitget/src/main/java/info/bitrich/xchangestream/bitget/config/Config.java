@@ -24,7 +24,7 @@ public final class Config {
 
     objectMapper = new ObjectMapper();
 
-    // by default read and write timetamps as milliseconds
+    // by default read and write timestamps as milliseconds
     objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
     objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
 

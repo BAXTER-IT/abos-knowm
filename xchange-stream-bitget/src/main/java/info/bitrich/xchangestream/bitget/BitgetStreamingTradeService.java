@@ -1,7 +1,7 @@
 package info.bitrich.xchangestream.bitget;
 
 import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.ChannelType;
-import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.MarketType;
+import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.InstType;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsUserTradeNotification;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import io.reactivex.rxjava3.core.Observable;
@@ -17,7 +17,7 @@ public class BitgetStreamingTradeService implements StreamingTradeService {
   @Override
   public Observable<UserTrade> getUserTrades(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(null, ChannelType.FILL, MarketType.SPOT, currencyPair)
+        .subscribeChannel(null, ChannelType.FILL, InstType.SPOT, currencyPair)
         .map(BitgetWsUserTradeNotification.class::cast)
         .map(BitgetStreamingAdapters::toUserTrade);
   }

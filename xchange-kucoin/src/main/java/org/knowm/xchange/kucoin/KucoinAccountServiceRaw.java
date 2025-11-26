@@ -10,7 +10,17 @@ import org.knowm.xchange.kucoin.dto.request.ApplyWithdrawApiRequest;
 import org.knowm.xchange.kucoin.dto.request.CreateAccountRequest;
 import org.knowm.xchange.kucoin.dto.request.CreateDepositAddressApiRequest;
 import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
-import org.knowm.xchange.kucoin.dto.response.*;
+import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
+import org.knowm.xchange.kucoin.dto.response.AccountLedgersResponse;
+import org.knowm.xchange.kucoin.dto.response.ApplyWithdrawResponse;
+import org.knowm.xchange.kucoin.dto.response.DepositAddressResponse;
+import org.knowm.xchange.kucoin.dto.response.DepositResponse;
+import org.knowm.xchange.kucoin.dto.response.InternalTransferResponse;
+import org.knowm.xchange.kucoin.dto.response.OrderResponse;
+import org.knowm.xchange.kucoin.dto.response.Pagination;
+import org.knowm.xchange.kucoin.dto.response.SubAccountsResponse;
+import org.knowm.xchange.kucoin.dto.response.SymbolsWithActiveOrder;
+import org.knowm.xchange.kucoin.dto.response.WithdrawalResponse;
 
 public class KucoinAccountServiceRaw extends KucoinBaseService {
 
@@ -225,5 +235,13 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
         .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
         .call()
         .getData();
+  }
+
+  public SymbolsWithActiveOrder getKucoinSymbolsWithActiveOrder() throws IOException {
+    return kucoinAuthenticated.getSymbolsWithActiveOrders(apiKey, digest, nonceFactory, passphrase, "2").getData();
+  }
+
+  public List<OrderResponse> getKucoinActiveOrders(String symbol) throws IOException {
+    return kucoinAuthenticated.getActiveSpotOrders(apiKey, digest, nonceFactory, passphrase, "2", symbol).getData();
   }
 }

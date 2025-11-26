@@ -5,6 +5,11 @@ import static org.knowm.xchange.okex.dto.OkexInstType.SPOT;
 import static org.knowm.xchange.okex.dto.OkexInstType.SWAP;
 
 import jakarta.ws.rs.NotSupportedException;
+import static org.knowm.xchange.okex.OkexAdapters.OPTION;
+import static org.knowm.xchange.okex.OkexAdapters.SPOT;
+import static org.knowm.xchange.okex.OkexAdapters.SWAP;
+
+import jakarta.ws.rs.NotSupportedException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +34,7 @@ import org.knowm.xchange.okex.dto.trade.OkexCancelOrderRequest;
 import org.knowm.xchange.okex.dto.trade.OkexOrderDetails;
 import org.knowm.xchange.okex.dto.trade.OkexOrderResponse;
 import org.knowm.xchange.okex.dto.trade.OkexTradeParams;
+import org.knowm.xchange.okex.dto.trade.OkexOrderResponse;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
 import org.knowm.xchange.service.trade.params.CancelOrderByInstrument;
@@ -49,8 +55,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
   @Override
   public OpenPositions getOpenPositions() throws IOException {
-    return OkexAdapters.adaptOpenPositions(
-        getPositions(null, null, null).getData(), exchange.getExchangeMetaData());
+    return OkexAdapters.adaptOpenPositions(getPositions(null,null,null).getData(), exchange.getExchangeMetaData());
   }
 
   @Override

@@ -10,9 +10,9 @@ import info.bitrich.xchangestream.gateio.dto.request.GateioWsRequest.AuthInfo;
 import info.bitrich.xchangestream.gateio.dto.request.payload.CurrencyPairLevelIntervalPayload;
 import info.bitrich.xchangestream.gateio.dto.request.payload.CurrencyPairPayload;
 import info.bitrich.xchangestream.gateio.dto.request.payload.EmptyPayload;
+import info.bitrich.xchangestream.gateio.dto.request.payload.OrderedListPayload;
 import info.bitrich.xchangestream.gateio.dto.request.payload.StringPayload;
 import info.bitrich.xchangestream.gateio.dto.response.GateioWsNotification;
-import info.bitrich.xchangestream.gateio.dto.response.balance.GateioMultipleSpotBalanceNotification;
 import info.bitrich.xchangestream.gateio.dto.response.usertrade.GateioMultipleUserTradeNotification;
 import info.bitrich.xchangestream.gateio.dto.response.usertrade.GateioSingleUserTradeNotification;
 import info.bitrich.xchangestream.service.netty.NettyStreamingService;
@@ -22,6 +22,7 @@ import io.reactivex.rxjava3.core.Observable;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +35,9 @@ import org.knowm.xchange.currency.CurrencyPair;
 public class GateioStreamingService extends NettyStreamingService<GateioWsNotification> {
 
   private static final String USERTRADES_BROADCAST_CHANNEL_NAME =
-      Config.SPOT_USER_TRADES_CHANNEL + Config.CHANNEL_NAME_DELIMITER + "null";
+      Config.CHANNEL_SPOT_USER_TRADES + Config.CHANNEL_NAME_DELIMITER + "null";
+
+  private static final List<String> PINGABLE_CHANNELS = List.of(Config.CHANNEL_FUTURES_PING);
 
   private final Map<String, Observable<GateioWsNotification>> subscriptions =
       new ConcurrentHashMap<>();
@@ -65,7 +68,10 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
   }
 
   @Override
-  public Observable<GateioWsNotification> subscribeChannel(String channelName, Object... args) {
+  public String getSubscriptionUniqueId(String channelName, Object... args) {
+    final CurrencyPair currencyPair =
+        (args.length > 0 && args[0] instanceof CurrencyPair) ? ((CurrencyPair) args[0]) : null;
+
     String uniqueChannelName = getSubscriptionUniqueId(channelName, args);
 
     // Example channel name key: spot.order_book-BTC/USDT
@@ -85,7 +91,7 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
    * Returns a JSON String containing the subscription message.
    *
    * @param uniqueChannelName e.g. spot.order_book-BTC/USDT
-   * @param args CurrencyPair to subscribe and additional channel-specific arguments
+   * @param args              CurrencyPair to subscribe and additional channel-specific arguments
    * @return subscription message
    */
   @Override
@@ -139,16 +145,28 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
         }
 
       // channel requires currency pair or default value for all
-      case Config.SPOT_USER_TRADES_CHANNEL:
-        {
-          CurrencyPair currencyPair = (CurrencyPair) ArrayUtils.get(args, 0);
-          if (currencyPair == null) {
-            payload = StringPayload.builder().data("!all").build();
-          } else {
-            payload = CurrencyPairPayload.builder().currencyPair(currencyPair).build();
-          }
-          break;
+      case Config.CHANNEL_SPOT_USER_TRADES: {
+        CurrencyPair currencyPair = (CurrencyPair) ArrayUtils.get(args, 0);
+        if (currencyPair == null) {
+          payload = StringPayload.builder()
+              .data("!all")
+              .build();
+        } else {
+          payload = CurrencyPairPayload.builder()
+              .currencyPair(currencyPair)
+              .build();
         }
+        break;
+      }
+
+      case Config.CHANNEL_FUTURES_POSITIONS: {
+        CurrencyPair currencyPair = (CurrencyPair) ArrayUtils.get(args, 0);
+        payload = OrderedListPayload.builder()
+            .item("") // From docs: User id (This field is deprecated and is only used as a placeholder)
+            .item(currencyPair == null ? "!all" : currencyPair.toString().replace("/", "_"))
+            .build();
+        break;
+      }
 
       default:
         payload = EmptyPayload.builder().build();
@@ -181,7 +199,7 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
    * Returns a JSON String containing the unsubscribe message.
    *
    * @param uniqueChannelName e.g. spot.order_book-BTC/USDT
-   * @param args CurrencyPair to subscribe and additional channel-specific arguments
+   * @param args              CurrencyPair to subscribe and additional channel-specific arguments
    * @return unsubscribe message
    */
   @Override
@@ -198,9 +216,20 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
     // Parse incoming message
     try {
 
-      // process only update messages
       JsonNode jsonNode = objectMapper.readTree(message);
-      String event = jsonNode.path("event") != null ? jsonNode.path("event").asText() : "";
+
+      // for futures channels server is actively pinging, needs to pong to prevent disconnection
+      if (PINGABLE_CHANNELS.contains(jsonNode.path("channel").asText(""))) {
+        GateioWsRequest request = GateioWsRequest.builder()
+            .channel(Config.CHANNEL_FUTURES_PONG)
+            .time(Instant.now(Config.getInstance().getClock()))
+            .build();
+        sendMessage(objectMapper.writeValueAsString(request));
+        return;
+      }
+
+      // process only update messages
+      String event = jsonNode.path("event").asText("");
       if (!"update".equals(event)) {
         return;
       }

@@ -1,41 +1,51 @@
 package org.knowm.xchange.bybit.dto.account.walletbalance;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
+import org.knowm.xchange.currency.Currency;
 
 @Builder
 @Jacksonized
 @Value
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BybitCoinWalletBalance {
 
   @JsonProperty("coin")
-  String coin;
+  Currency coin;
 
   @JsonProperty("equity")
-  String equity;
+  BigDecimal equity;
 
   @JsonProperty("usdValue")
-  String usdValue;
+  BigDecimal usdValue;
 
   @JsonProperty("walletBalance")
-  String walletBalance;
-
-  @JsonProperty("free")
-  String free;
+  BigDecimal walletBalance;
 
   @JsonProperty("locked")
-  String locked;
+  BigDecimal locked;
 
+  /**
+   * Spot asset qty that is used as hedge (portfolio margin).
+   */
+  @JsonProperty("spotHedgingQty")
+  String spotHedgingQty;
+
+  /**
+   * Total liabilities from spot + derivatives.
+   */
   @JsonProperty("borrowAmount")
   String borrowAmount;
 
-  @JsonProperty("availableToBorrow")
-  String availableToBorrow;
-
-  @JsonProperty("availableToWithdraw")
-  String availableToWithdraw;
+  /**
+   * Borrow amount from spot margin/manual borrow (not deprecated).
+   */
+  @JsonProperty("spotBorrow")
+  String spotBorrow;
 
   @JsonProperty("accruedInterest")
   String accruedInterest;
@@ -58,9 +68,15 @@ public class BybitCoinWalletBalance {
   @JsonProperty("bonus")
   String bonus;
 
+  /**
+   * Platform-level collateral eligibility.
+   */
   @JsonProperty("collateralSwitch")
-  boolean collateralSwitch;
+  Boolean collateralSwitch;
 
+  /**
+   * User-level collateral switch.
+   */
   @JsonProperty("marginCollateral")
-  boolean marginCollateral;
+  Boolean marginCollateral;
 }

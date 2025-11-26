@@ -1,10 +1,12 @@
 package info.bitrich.xchangestream.bybit;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.bitrich.xchangestream.bybit.dto.BybitUserTradeResponseDto;
+import info.bitrich.xchangestream.bybit.dto.BybitWsResponseDto;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.rxjava3.core.Observable;
+import org.knowm.xchange.bybit.dto.trade.BybitUserTradeDto;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.instrument.Instrument;
@@ -12,9 +14,8 @@ import org.knowm.xchange.instrument.Instrument;
 public class BybitStreamingTradeService implements StreamingTradeService {
 
   static final String EXECUTION_CHANNEL = "execution";
-  BybitStreamingService streamingService;
-
   private final ObjectMapper objectMapper = StreamingObjectMapperHelper.getObjectMapper();
+  BybitStreamingService streamingService;
 
   public BybitStreamingTradeService(BybitStreamingService streamingService) {
     this.streamingService = streamingService;

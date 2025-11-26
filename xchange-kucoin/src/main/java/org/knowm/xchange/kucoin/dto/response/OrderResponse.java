@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
-
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderResponse {
 
   private String id;
+
+  private String clientOid;
 
   private String symbol;
 
@@ -19,15 +20,7 @@ public class OrderResponse {
 
   private String type;
 
-  public String getType() {
-    return this.type == null ? null : this.type.toLowerCase();
-  }
-
   private String side;
-
-  public String getSide() {
-    return this.side == null ? null : this.side.toLowerCase();
-  }
 
   private BigDecimal price;
 
@@ -35,9 +28,9 @@ public class OrderResponse {
 
   private BigDecimal funds;
 
-  private BigDecimal dealFunds;
-
   private BigDecimal dealSize;
+
+  private BigDecimal dealFunds;
 
   private BigDecimal fee;
 
@@ -45,23 +38,13 @@ public class OrderResponse {
 
   private String stp;
 
-  private String stop;
-
-  public String getStop() {
-    return this.stop == null ? null : this.stop.toLowerCase();
-  }
-
-  private Boolean stopTriggered;
-
-  private BigDecimal stopPrice;
-
   private String timeInForce;
 
-  private boolean postOnly;
+  private Boolean postOnly;
 
-  private boolean hidden;
+  private Boolean hidden;
 
-  private boolean iceberg;
+  private Boolean iceberg;
 
   private BigDecimal visibleSize;
 
@@ -69,16 +52,50 @@ public class OrderResponse {
 
   private String channel;
 
-  private String clientOid;
-
   private String remark;
 
   private String tags;
 
-  @JsonProperty("isActive")
-  private boolean isActive;
+  private Boolean cancelExist;
 
-  private boolean cancelExist;
+  private String tradeType;
+
+  private Boolean inOrderBook;
+
+  private BigDecimal cancelledSize;
+
+  private BigDecimal cancelledFunds;
+
+  private BigDecimal remainSize;
+
+  private BigDecimal remainFunds;
+
+  private BigDecimal tax;
+
+  @JsonProperty("active")
+  private Boolean isActive;
 
   private Date createdAt;
+
+  private Date lastUpdatedAt;
+
+  private String stop;
+
+  private Boolean stopTriggered;
+
+  private BigDecimal stopPrice;
+
+
+
+  public String getType() {
+    return this.type == null ? null : this.type.toLowerCase();
+  }
+
+  public String getSide() {
+    return this.side == null ? null : this.side.toLowerCase();
+  }
+
+  public String getStop() {
+    return this.stop == null ? null : this.stop.toLowerCase();
+  }
 }

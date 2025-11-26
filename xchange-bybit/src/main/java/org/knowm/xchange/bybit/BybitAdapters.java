@@ -19,11 +19,13 @@ import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance;
 import org.knowm.xchange.bybit.dto.account.BybitAllCoinsBalance.BybitCoinBalance;
 import org.knowm.xchange.bybit.dto.account.BybitDepositRecordsResponse.BybitDepositRecord;
 import org.knowm.xchange.bybit.dto.account.BybitInternalDepositRecordsResponse.BybitInternalDepositRecord;
+import org.knowm.xchange.bybit.dto.account.BybitPosition;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse.BybitTransactionLog;
 import org.knowm.xchange.bybit.dto.account.BybitTransactionLogResponse.BybitTransactionLog.BybitTransactionLogType;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse.BybitTransfer;
 import org.knowm.xchange.bybit.dto.account.BybitTransfersResponse.BybitTransferStatus;
 import org.knowm.xchange.bybit.dto.account.BybitWithdrawRecordsResponse.BybitWithdrawRecord;
+import org.knowm.xchange.bybit.dto.account.walletbalance.BybitCoinWalletBalance;
 import org.knowm.xchange.bybit.dto.marketdata.instruments.BybitInstrumentInfo;
 import org.knowm.xchange.bybit.dto.marketdata.instruments.BybitInstrumentInfo.InstrumentStatus;
 import org.knowm.xchange.bybit.dto.marketdata.instruments.linear.BybitLinearInverseInstrumentInfo;
@@ -51,6 +53,7 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
+import org.knowm.xchange.dto.account.OpenPosition;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.account.Wallet.WalletFeature;
 import org.knowm.xchange.dto.marketdata.Ticker;
@@ -685,5 +688,46 @@ public class BybitAdapters {
       }
     }
     return fundingRecordType;
+  }
+
+  public static OpenPosition adaptBybitPosition(BybitPosition in) {
+    if (in == null) {
+      return null;
+    }
+
+    return new OpenPosition.Builder()
+        .instrument(BybitAdapters.adaptInstrument(in.getSymbol(), in.getCategory()))
+        .type(adaptType(in.getSide()))
+        .size(in.getSize())
+        .price(in.getEntryPrice())
+        .liquidationPrice(in.getLiquidationPrice())
+        .unRealisedPnl(in.getUnrealisedProfitAndLoss())
+        .build();
+  }
+
+  private static OpenPosition.Type adaptType(BybitSide side) {
+    if (side == null) {
+      return null;
+    }
+    switch (side) {
+      case BUY:
+        return OpenPosition.Type.LONG;
+      case SELL:
+        return OpenPosition.Type.SHORT;
+      case EMPTY:
+      default:
+        return null;
+    }
+  }
+
+  public static FundingRecord adaptBybitAccountBalance(BybitCoinWalletBalance in) {
+    if (in == null) {
+      return null;
+    }
+
+    return FundingRecord.builder()
+        .currency(in.getCoin())
+        .balance(in.getWalletBalance())
+        .build();
   }
 }

@@ -1,5 +1,6 @@
 package org.knowm.xchange.simulated;
 
+import jakarta.annotation.Generated;
 import org.knowm.xchange.dto.marketdata.Trade;
 
 /**

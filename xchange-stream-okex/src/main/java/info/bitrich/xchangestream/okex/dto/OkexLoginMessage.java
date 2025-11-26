@@ -7,13 +7,14 @@ import lombok.Data;
 
 @Data
 public class OkexLoginMessage {
-  private String op = "login";
 
   List<LoginArg> args = new LinkedList<>();
+  private String op = "login";
 
   @Data
   @AllArgsConstructor
   public static class LoginArg {
+
     private String apiKey;
     private String passphrase;
     // Unix Epoch time, the unit is seconds

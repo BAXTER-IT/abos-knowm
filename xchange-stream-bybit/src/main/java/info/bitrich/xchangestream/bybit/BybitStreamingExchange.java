@@ -5,12 +5,16 @@ import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.service.netty.ConnectionStateModel;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import lombok.Getter;
+
 import org.knowm.xchange.bybit.BybitExchange;
 
+@Getter
 public class BybitStreamingExchange extends BybitExchange implements StreamingExchange {
 
   BybitStreamingService streamingService;
   private BybitStreamingTradeService streamingTradeService;
+  private BybitStreamingAccountService streamingAccountService;
 
   @Override
   protected void initServices() {
@@ -30,7 +34,7 @@ public class BybitStreamingExchange extends BybitExchange implements StreamingEx
           new BybitStreamingService(
               getBybitURI(useSandbox(exchangeSpecification), true, ""), exchangeSpecification);
       streamingTradeService = new BybitStreamingTradeService(streamingService);
-
+      streamingAccountService = new BybitStreamingAccountService(streamingService);
     } else {
       streamingService =
           new BybitStreamingService(
@@ -54,11 +58,6 @@ public class BybitStreamingExchange extends BybitExchange implements StreamingEx
   @Override
   public boolean isAlive() {
     return streamingService != null && streamingService.isSocketOpen();
-  }
-
-  @Override
-  public BybitStreamingTradeService getStreamingTradeService() {
-    return streamingTradeService;
   }
 
   @Override

@@ -44,7 +44,7 @@ public class GateioStreamingMarketDataService implements StreamingMarketDataServ
   @Override
   public Observable<Ticker> getTicker(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(Config.SPOT_TICKERS_CHANNEL, currencyPair)
+        .subscribeChannel(Config.CHANNEL_SPOT_TICKERS, currencyPair)
         .map(GateioTickerNotification.class::cast)
         .map(GateioStreamingAdapters::toTicker);
   }
@@ -52,7 +52,7 @@ public class GateioStreamingMarketDataService implements StreamingMarketDataServ
   @Override
   public Observable<Trade> getTrades(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(Config.SPOT_TRADES_CHANNEL, currencyPair)
+        .subscribeChannel(Config.CHANNEL_SPOT_TRADES, currencyPair)
         .map(GateioTradeNotification.class::cast)
         .map(GateioStreamingAdapters::toTrade);
   }

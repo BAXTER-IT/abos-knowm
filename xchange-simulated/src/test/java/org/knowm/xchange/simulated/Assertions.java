@@ -1,5 +1,7 @@
 package org.knowm.xchange.simulated;
 
+import jakarta.annotation.Generated;
+
 /**
  * Entry point for assertions of different data types. Each method in this class is a static factory
  * for the type-specific assertion objects.
