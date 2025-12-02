@@ -146,7 +146,7 @@ public class GateioStreamingAdapters {
         .amount(amount)
         .type(type)
         .status(Status.COMPLETE)
-        .balance(in.getTotal())
+        .balance(in.getAvailable())
         .fee(fee)
         .description(buildSpotDescription(in))
         .build();
@@ -165,7 +165,6 @@ public class GateioStreamingAdapters {
     return FundingRecord.builder()
         .date(extractDate(in))
         .currency(Currency.getInstance(in.getText().split("_")[0]))
-        .amount(in.getBalance().abs())
         .type(type)
         .status(Status.COMPLETE)
         .balance(in.getBalance())

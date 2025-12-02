@@ -151,7 +151,7 @@ public class KucoinStreamingAdapters {
         .blockchainTransactionHash(null)
         .type(Type.OTHER_INFLOW)
         .status(Status.COMPLETE)
-        .balance(in.getWalletBalance())
+        .balance(in.getAvailableBalance())
         .build();
   }
 
