@@ -171,16 +171,15 @@
 
     <distributionManagement>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>nexus-stable-repository</id>
+            <name>Artifactory Release Repository</name>
+            <url>https://nexus.baxtech.hu/repository/baxter-releases</url>
         </repository>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>nexus-snapshot-repository</id>
+            <name>Artifactory Snapshot Repository</name>
+            <url>https://nexus.baxtech.hu/repository/baxter-snapshots</url>
         </snapshotRepository>
-        <downloadUrl>https://oss.sonatype.org/content/groups/public/org/knowm/xchange</downloadUrl>
     </distributionManagement>
 
     <properties>
