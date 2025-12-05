@@ -28,10 +28,15 @@ import org.knowm.xchange.coincall.dtos.account.CoincallFuturesPositionDto;
 import org.knowm.xchange.coincall.dtos.account.CoincallSubaccountTransferRecordDto;
 import org.knowm.xchange.coincall.dtos.account.CoincallSystemTransferDto;
 import org.knowm.xchange.coincall.dtos.account.CoincallTransactionDto;
+import org.knowm.xchange.coincall.dtos.enums.CoincallSystemTransferSide;
+import org.knowm.xchange.coincall.dtos.enums.CoincallSystemTransferState;
+import org.knowm.xchange.coincall.dtos.enums.CoincallSystemTransferType;
 import org.knowm.xchange.coincall.dtos.enums.CoincallTradeSide;
 import org.knowm.xchange.coincall.dtos.enums.CoincallTransactionSide;
 import org.knowm.xchange.coincall.dtos.enums.CoincallTransactionStatus;
 import org.knowm.xchange.coincall.dtos.marketdata.CoincallFuturesInstrumentDto;
+import org.knowm.xchange.coincall.dtos.marketdata.CoincallLotSizeFilter;
+import org.knowm.xchange.coincall.dtos.marketdata.CoincallPriceFilter;
 import org.knowm.xchange.coincall.dtos.marketdata.CoincallSpotInstrumentDto;
 import org.knowm.xchange.coincall.dtos.trade.CoincallFuturesTransactionDetail;
 import org.knowm.xchange.coincall.dtos.trade.CoincallOptionTransactionDetail;
@@ -57,24 +62,72 @@ import org.knowm.xchange.instrument.Instrument;
 @UtilityClass
 public class CoincallAdapters {
 
-  public static Map<Instrument, InstrumentMetaData> toInstumentsMap(
-      List<CoincallFuturesInstrumentDto> in) {
-    return in.stream().map(CoincallAdapters::toInstrumentsMapEntry)
+  public static Map<Instrument, InstrumentMetaData> toInstrumentsMap(
+      List<CoincallSpotInstrumentDto> in) {
+    return in.stream()
+        .filter(CoincallSpotInstrumentDto::isEnableTrading)
+        .map(CoincallAdapters::toInstrumentsMapEntry)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  public static Map<Instrument, InstrumentMetaData> toInstrumentsMap(
-      List<CoincallSpotInstrumentDto> in) {
-    return in.stream().map(CoincallAdapters::toInstrumentsMapEntry)
+  public static Map<Instrument, InstrumentMetaData> toInstumentsMap(
+      List<CoincallFuturesInstrumentDto> in) {
+    return in.stream()
+        .map(CoincallAdapters::toInstrumentsMapEntry)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   static SimpleEntry<Instrument, InstrumentMetaData> toInstrumentsMapEntry(
       CoincallSpotInstrumentDto in) {
     CurrencyPair currencyPair = new CurrencyPair(in.getBaseCoin(), in.getQuoteCoin());
-    InstrumentMetaData instrumentMetaData = new InstrumentMetaData.Builder().build();
+    InstrumentMetaData instrumentMetaData = buildSpotMeta(in);
 
     return new SimpleEntry<>(currencyPair, instrumentMetaData);
+  }
+
+  static InstrumentMetaData buildSpotMeta(CoincallSpotInstrumentDto dto) {
+    InstrumentMetaData.Builder b = new InstrumentMetaData.Builder();
+
+    CoincallLotSizeFilter lot = dto.getLotSizeFilter();
+    CoincallPriceFilter price = dto.getPriceFilter();
+
+    if (lot != null) {
+      // Quantity limits
+      if (lot.getMinQuantity() != null) {
+        b.minimumAmount(lot.getMinQuantity());
+      }
+      if (lot.getMaxQuantity() != null) {
+        b.maximumAmount(lot.getMaxQuantity());
+      }
+
+      // Counter limit (often notional size)
+      if (lot.getMaxOrderSize() != null) {
+        b.counterMaximumAmount(lot.getMaxOrderSize());
+      }
+
+      // Precision / scales
+      b.volumeScale(lot.getBasePrecision());
+      b.priceScale(lot.getQuotePrecision());
+
+      // amount step size = 10^-basePrecision
+      BigDecimal amountStep = BigDecimal.ONE.movePointLeft(lot.getBasePrecision());
+      b.amountStepSize(amountStep);
+    }
+
+    if (price != null && price.getTickSize() != null) {
+      b.priceStepSize(price.getTickSize());
+    }
+
+    // Trading fee currency = quote
+    try {
+      b.tradingFeeCurrency(Currency.getInstance(dto.getQuoteCoin()));
+    } catch (Exception ignored) {
+    }
+
+    // Market order support → use enableTrading flag
+    b.marketOrderEnabled(dto.isEnableTrading());
+
+    return b.build();
   }
 
   static SimpleEntry<Instrument, InstrumentMetaData> toInstrumentsMapEntry(
@@ -82,9 +135,44 @@ public class CoincallAdapters {
     CurrencyPair currencyPair = new CurrencyPair(in.getBaseCurrency(), in.getQuoteCurrency());
     FuturesContract futuresContract = new FuturesContract(currencyPair,
         in.getProductType().toUpperCase());
-    InstrumentMetaData instrumentMetaData = new InstrumentMetaData.Builder().build();
+    InstrumentMetaData instrumentMetaData = buildFuturesMeta(in);
 
     return new SimpleEntry<>(futuresContract, instrumentMetaData);
+  }
+
+  static InstrumentMetaData buildFuturesMeta(CoincallFuturesInstrumentDto dto) {
+    InstrumentMetaData.Builder b = new InstrumentMetaData.Builder();
+
+    // Infer price scale from last/index/contract price
+    Integer priceScale = null;
+    if (dto.getLastPrice() != null) {
+      priceScale = dto.getLastPrice().scale();
+    } else if (dto.getIndexPrice() != null) {
+      priceScale = dto.getIndexPrice().scale();
+    } else if (dto.getContractPrice() != null) {
+      priceScale = dto.getContractPrice().scale();
+    }
+
+    if (priceScale != null) {
+      b.priceScale(priceScale);
+      b.priceStepSize(BigDecimal.ONE.movePointLeft(priceScale));
+    }
+
+    // Infer volume scale from baseVolume formatting
+    if (dto.getBaseVolume() != null) {
+      b.volumeScale(Math.max(0, dto.getBaseVolume().scale()));
+    }
+
+    // Trading fees in quote currency by convention
+    try {
+      b.tradingFeeCurrency(Currency.getInstance(dto.getQuoteCurrency()));
+    } catch (Exception ignored) {
+    }
+
+    // Futures normally allow market orders
+    b.marketOrderEnabled(true);
+
+    return b.build();
   }
 
   public static UserTrade toUserTrade(CoincallSpotFillDto in) {
@@ -440,7 +528,88 @@ public class CoincallAdapters {
   }
 
   public static FundingRecord toFundingRecord(CoincallSystemTransferDto in) {
-    return null;
+    if (in == null) {
+      return null;
+    }
+
+    // Date from epoch millis
+    Date date = in.getTime() != null ? new Date(in.getTime()) : null;
+
+    // Currency from coin symbol (e.g. "BTC", "USDT")
+    Currency currency = Currency.getInstance(in.getCoin());
+
+    // Amount is already absolute in DTO
+    BigDecimal amount = in.getCreditChange();
+
+    FundingRecord.Type type = mapFundingType(in.getType(), in.getSide());
+    FundingRecord.Status status = mapFundingStatus(in.getState());
+
+    return FundingRecord.builder()
+        .date(date)
+        .currency(currency)
+        .amount(amount)
+        .internalId(in.getTxId())
+        .type(type)
+        .status(status)
+        .description(in.getNote())
+        .build();
+  }
+
+  static FundingRecord.Type mapFundingType(
+      CoincallSystemTransferType type,
+      CoincallSystemTransferSide side) {
+
+    if (type == null) {
+      // Fall back to generic inflow/outflow based on side (if we have it)
+      return side == CoincallSystemTransferSide.INCREASE
+          ? FundingRecord.Type.OTHER_INFLOW
+          : FundingRecord.Type.OTHER_OUTFLOW;
+    }
+
+    switch (type) {
+      case CREDIT:
+      case TRIAL_BONUS:
+        // Generic internal inflows/outflows
+        return side == CoincallSystemTransferSide.DECREASE
+            ? FundingRecord.Type.OTHER_OUTFLOW
+            : FundingRecord.Type.OTHER_INFLOW;
+
+      case REWARDS:
+        // Treat rewards as airdrop-like inflows, outflows as generic
+        return side == CoincallSystemTransferSide.DECREASE
+            ? FundingRecord.Type.OTHER_OUTFLOW
+            : FundingRecord.Type.AIRDROP;
+
+      case TRANSFER:
+        // Internal transfer between exchange accounts
+        return side == CoincallSystemTransferSide.DECREASE
+            ? FundingRecord.Type.INTERNAL_WITHDRAWAL
+            : FundingRecord.Type.INTERNAL_DEPOSIT;
+
+      case RELEASE_TRIAL_BONUS:
+        // Reversing previously granted bonus – outflow from user perspective
+        return FundingRecord.Type.OTHER_OUTFLOW;
+
+      default:
+        // Safe generic mapping
+        return side == CoincallSystemTransferSide.DECREASE
+            ? FundingRecord.Type.OTHER_OUTFLOW
+            : FundingRecord.Type.OTHER_INFLOW;
+    }
+  }
+
+  static FundingRecord.Status mapFundingStatus(CoincallSystemTransferState state) {
+    if (state == null) {
+      return null;
+    }
+    switch (state) {
+      case UNSETTLED:
+        return FundingRecord.Status.PROCESSING;
+      case SETTLED:
+        return FundingRecord.Status.COMPLETE;
+      default:
+        return null;
+    }
   }
 
   static class ParsedOptionSymbol {

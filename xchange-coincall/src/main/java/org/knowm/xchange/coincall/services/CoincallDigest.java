@@ -37,7 +37,7 @@ import si.mazi.rescu.RestInvocation;
  */
 public class CoincallDigest extends BaseParamsDigest {
 
-  private static final ObjectMapper MAPPER = new ObjectMapper();
+  static final ObjectMapper MAPPER = new ObjectMapper();
 
   static {
     MAPPER.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
@@ -56,7 +56,7 @@ public class CoincallDigest extends BaseParamsDigest {
    * alphabetically. - POST with application/json body: convert JSON to sorted key=value pairs
    * (nulls removed), arrays/objects as compact JSON. - POST with query string (rare): same as GET.
    */
-  private static String canonicalParams(RestInvocation inv) {
+  static String canonicalParams(RestInvocation inv) {
     String method = inv.getHttpMethod().toUpperCase(Locale.ROOT);
 
     if ("GET".equals(method)) {
@@ -75,7 +75,7 @@ public class CoincallDigest extends BaseParamsDigest {
   }
 
 
-  private static String sortQueryString(String qs) {
+  static String sortQueryString(String qs) {
     if (qs == null || qs.isEmpty()) {
       return "";
     }
@@ -91,7 +91,7 @@ public class CoincallDigest extends BaseParamsDigest {
     return String.join("&", pairs);
   }
 
-  private static String jsonBodyToCanonicalPairs(String body) {
+  static String jsonBodyToCanonicalPairs(String body) {
     try {
       JsonNode root = MAPPER.readTree(body);
       // root should be an object; if array, we treat it as a single parameter 'data=[...]'
@@ -134,7 +134,7 @@ public class CoincallDigest extends BaseParamsDigest {
     }
   }
 
-  private static ObjectNode pruneNulls(ObjectNode obj) {
+  static ObjectNode pruneNulls(ObjectNode obj) {
     ObjectNode out = MAPPER.createObjectNode();
     List<String> names = new ArrayList<>();
     obj.fieldNames().forEachRemaining(names::add);
@@ -154,7 +154,7 @@ public class CoincallDigest extends BaseParamsDigest {
     return out;
   }
 
-  private static ArrayNode pruneNulls(ArrayNode arr) {
+  static ArrayNode pruneNulls(ArrayNode arr) {
     ArrayNode out = MAPPER.createArrayNode();
     for (JsonNode v : arr) {
       if (v == null || v.isNull()) {
@@ -171,7 +171,7 @@ public class CoincallDigest extends BaseParamsDigest {
     return out;
   }
 
-  private static String compactJson(JsonNode node) {
+  static String compactJson(JsonNode node) {
     // Ensure objects have sorted keys and nulls removed
     if (node.isObject()) {
       node = pruneNulls((ObjectNode) node);

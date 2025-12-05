@@ -3,12 +3,16 @@ package org.knowm.xchange.coincall.dtos.trade;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import org.knowm.xchange.coincall.dtos.enums.CoincallTradeSide;
 import org.knowm.xchange.coincall.dtos.enums.CoincallTradeType;
 import org.knowm.xchange.utils.jackson.RawJsonAware;
 
 @Data
+@Builder
+@Jacksonized
 public class CoincallOptionTransactionDetail implements RawJsonAware {
 
   @JsonProperty("id")

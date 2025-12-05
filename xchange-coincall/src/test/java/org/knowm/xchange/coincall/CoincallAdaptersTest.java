@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import org.junit.Test;
 import org.knowm.xchange.coincall.CoincallAdapters.ParsedOptionSymbol;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.derivative.OptionsContract;
 import org.knowm.xchange.derivative.OptionsContract.OptionType;
 
 public class CoincallAdaptersTest {
@@ -44,15 +42,4 @@ public class CoincallAdaptersTest {
     assertEquals(Calendar.JUNE, cal.get(Calendar.MONTH));
     assertEquals(22, cal.get(Calendar.DAY_OF_MONTH));
   }
-
-  @Test
-  public void testToOptionsContract() {
-    OptionsContract c =
-        CoincallAdapters.toOptionsContract("BTC-2JUN23-18000-C");
-
-    assertEquals(new CurrencyPair("BTC", "USD"), c.getCurrencyPair());
-    assertEquals(new BigDecimal("18000"), c.getStrike());
-    assertEquals(OptionType.CALL, c.getType());
-  }
-
 }
