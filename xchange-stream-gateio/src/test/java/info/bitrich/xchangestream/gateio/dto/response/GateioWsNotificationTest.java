@@ -39,12 +39,6 @@ public class GateioWsNotificationTest {
     assertThat(notification).isInstanceOf(GateioMultipleUserTradeNotification.class);
   }
 
-  @Test
-  void deserialize_balances() throws Exception {
-    GateioWsNotification notification = readNotification("spot.balance.update.json");
-    assertThat(notification).isInstanceOf(GateioMultipleSpotBalanceNotification.class);
-  }
-
   private GateioWsNotification readNotification(String resourceName) throws IOException {
     return objectMapper.readValue(
         getClass().getClassLoader().getResourceAsStream(resourceName), GateioWsNotification.class);

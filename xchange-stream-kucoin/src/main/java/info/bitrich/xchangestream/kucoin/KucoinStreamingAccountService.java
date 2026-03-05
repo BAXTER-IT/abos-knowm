@@ -6,7 +6,7 @@ import info.bitrich.xchangestream.kucoin.dto.account.KucoinWsFuturesBalanceEvent
 import info.bitrich.xchangestream.kucoin.dto.account.KucoinWsPositionsEvent;
 import info.bitrich.xchangestream.kucoin.dto.account.KucoinWsSpotBalanceEvent;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.OpenPosition;

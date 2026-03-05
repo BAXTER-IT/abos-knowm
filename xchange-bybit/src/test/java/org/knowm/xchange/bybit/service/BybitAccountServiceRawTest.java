@@ -17,6 +17,7 @@ import org.knowm.xchange.bybit.dto.account.walletbalance.BybitAccountBalance;
 import org.knowm.xchange.bybit.dto.account.walletbalance.BybitAccountType;
 import org.knowm.xchange.bybit.dto.account.walletbalance.BybitCoinWalletBalance;
 import org.knowm.xchange.bybit.dto.account.walletbalance.BybitWalletBalance;
+import org.knowm.xchange.currency.Currency;
 
 public class BybitAccountServiceRawTest extends BaseWiremockTest {
 
@@ -68,7 +69,7 @@ public class BybitAccountServiceRawTest extends BaseWiremockTest {
     assertThat(coins.get(0).getCumRealisedPnl()).isEqualTo("0");
     assertThat(coins.get(0).getLocked()).isEqualTo("0");
     assertThat(coins.get(0).getMarginCollateral()).isTrue();
-    assertThat(coins.get(0).getCoin()).isEqualTo("BTC");
+    assertThat(coins.get(0).getCoin()).isEqualTo(Currency.BTC);
   }
 
   @Test

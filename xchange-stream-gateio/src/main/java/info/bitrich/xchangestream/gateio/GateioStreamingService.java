@@ -67,26 +67,6 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
     return String.format("%s%s%s", channelName, Config.CHANNEL_NAME_DELIMITER, currencyPair);
   }
 
-  @Override
-  public String getSubscriptionUniqueId(String channelName, Object... args) {
-    final CurrencyPair currencyPair =
-        (args.length > 0 && args[0] instanceof CurrencyPair) ? ((CurrencyPair) args[0]) : null;
-
-    String uniqueChannelName = getSubscriptionUniqueId(channelName, args);
-
-    // Example channel name key: spot.order_book-BTC/USDT
-    if (!channels.containsKey(uniqueChannelName) && !subscriptions.containsKey(uniqueChannelName)) {
-
-      // subscribe
-      Observable<GateioWsNotification> observable = super.subscribeChannel(channelName, args);
-
-      // cache channel subscribtion
-      subscriptions.put(uniqueChannelName, observable);
-    }
-
-    return subscriptions.get(uniqueChannelName);
-  }
-
   /**
    * Returns a JSON String containing the subscription message.
    *
@@ -117,8 +97,8 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
     switch (channelName) {
 
       // channels require only currency pair in payload
-      case Config.SPOT_TICKERS_CHANNEL:
-      case Config.SPOT_TRADES_CHANNEL:
+      case Config.CHANNEL_SPOT_TICKERS:
+      case Config.CHANNEL_SPOT_TRADES:
         {
           CurrencyPair currencyPair = (CurrencyPair) ArrayUtils.get(args, 0);
           Objects.requireNonNull(currencyPair);
@@ -128,7 +108,7 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
         }
 
       // channel requires currency pair, level, interval in payload
-      case Config.SPOT_ORDERBOOK_CHANNEL:
+      case Config.CHANNEL_SPOT_ORDER_BOOK:
         {
           CurrencyPair currencyPair = (CurrencyPair) ArrayUtils.get(args, 0);
           Integer orderBookLevel = (Integer) ArrayUtils.get(args, 1);
@@ -241,10 +221,6 @@ public class GateioStreamingService extends NettyStreamingService<GateioWsNotifi
       if (notification instanceof GateioMultipleUserTradeNotification) {
         GateioMultipleUserTradeNotification multipleNotification =
             (GateioMultipleUserTradeNotification) notification;
-        multipleNotification.toSingleNotifications().forEach(this::handleMessage);
-      } else if (notification instanceof GateioMultipleSpotBalanceNotification) {
-        GateioMultipleSpotBalanceNotification multipleNotification =
-            (GateioMultipleSpotBalanceNotification) notification;
         multipleNotification.toSingleNotifications().forEach(this::handleMessage);
       } else {
         handleMessage(notification);

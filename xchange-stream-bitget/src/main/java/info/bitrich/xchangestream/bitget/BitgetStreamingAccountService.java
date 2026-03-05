@@ -5,7 +5,7 @@ import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.InstType;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsAccountNotification;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsPositionNotification;
 import info.bitrich.xchangestream.core.StreamingAccountService;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.dto.account.FundingRecord;

@@ -468,14 +468,12 @@ public class KucoinAdapters {
             ? OpenPosition.Type.LONG
             : OpenPosition.Type.SHORT;
 
-    return new OpenPosition(
-        instrument,
-        type,
-        order.getSize(),
-        order.getPrice(),
-        null,
-        null
-    );
+    return OpenPosition.builder()
+        .instrument(instrument)
+        .type(type)
+        .size(order.getSize())
+        .price(order.getPrice())
+        .build();
   }
 
   private static final class PriceAndSize {

@@ -2,14 +2,10 @@ package info.bitrich.xchangestream.gateio;
 
 import info.bitrich.xchangestream.core.StreamingAccountService;
 import info.bitrich.xchangestream.gateio.config.Config;
-import info.bitrich.xchangestream.gateio.dto.response.balance.GateioSingleSpotBalanceNotification;
-import io.reactivex.rxjava3.core.Observable;
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.dto.account.Balance;
 import info.bitrich.xchangestream.gateio.dto.response.GateioFuturePositionsNotification;
 import info.bitrich.xchangestream.gateio.dto.response.balance.GateioFuturesBalancesNotification;
 import info.bitrich.xchangestream.gateio.dto.response.balance.GateioSpotBalancesNotification;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.OpenPosition;
@@ -39,17 +35,6 @@ public class GateioStreamingAccountService implements StreamingAccountService {
   }
 
   @Override
-  public Observable<Balance> getBalanceChanges(Currency currency, Object... args) {
-    return service
-        .subscribeChannel(Config.SPOT_BALANCES_CHANNEL)
-        .map(GateioSingleSpotBalanceNotification.class::cast)
-        .filter(
-            notification ->
-                (currency == null) || (notification.getResult().getCurrency().equals(currency)))
-        .map(GateioStreamingAdapters::toBalance);
-  }
-
-  @Override
   public Observable<FundingRecord> getSpotLedgerChanges(Instrument instrument, Object... args) {
     return service.subscribeChannel(Config.CHANNEL_SPOT_BALANCES, instrument, Config.PRODUCT_SPOT)
         .cast(GateioSpotBalancesNotification.class)
@@ -72,4 +57,5 @@ public class GateioStreamingAccountService implements StreamingAccountService {
         .cast(GateioFuturesBalancesNotification.class)
         .flatMapIterable(GateioFuturesBalancesNotification::getResult)
         .map(GateioStreamingAdapters::toBalance);
+  }
 }

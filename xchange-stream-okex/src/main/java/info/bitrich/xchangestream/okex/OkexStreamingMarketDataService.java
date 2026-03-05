@@ -61,8 +61,6 @@ public class OkexStreamingMarketDataService implements StreamingMarketDataServic
   private final ObjectMapper mapper = StreamingObjectMapperHelper.getObjectMapper();
   private final Map<Instrument, PublishSubject<List<OrderBookUpdate>>> orderBookUpdatesSubscriptions;
   private final Map<String, OrderBook> orderBookMap = new HashMap<>();
-  private final Map<Instrument, PublishSubject<List<OrderBookUpdate>>>
-      orderBookUpdatesSubscriptions;
 
   public OkexStreamingMarketDataService(
       OkexStreamingService service, ExchangeMetaData exchangeMetaData) {

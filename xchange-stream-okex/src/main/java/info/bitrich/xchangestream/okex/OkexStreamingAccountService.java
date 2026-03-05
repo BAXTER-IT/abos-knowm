@@ -10,7 +10,7 @@ import info.bitrich.xchangestream.okex.dto.OkexStreamDto;
 import info.bitrich.xchangestream.okex.dto.accont.OkexWsLedgerDto;
 import info.bitrich.xchangestream.okex.dto.enums.OkexEventType;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import java.util.List;
 import java.util.Objects;
 import org.knowm.xchange.dto.account.FundingRecord;

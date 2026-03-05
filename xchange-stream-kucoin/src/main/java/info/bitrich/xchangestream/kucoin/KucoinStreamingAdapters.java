@@ -61,7 +61,7 @@ public class KucoinStreamingAdapters {
       return null;
     }
 
-    return new OpenPosition.Builder()
+    return OpenPosition.builder()
         .instrument(KucoinStreamingAdapters.adaptFuturesSymbol(in.getSymbol()))
         .type(adaptType(in))
         .size(in.getCurrentQuantity() == null ? null : in.getCurrentQuantity().abs())

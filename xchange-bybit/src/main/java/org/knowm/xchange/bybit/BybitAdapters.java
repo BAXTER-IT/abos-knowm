@@ -695,7 +695,7 @@ public class BybitAdapters {
       return null;
     }
 
-    return new OpenPosition.Builder()
+    return OpenPosition.builder()
         .instrument(BybitAdapters.adaptInstrument(in.getSymbol(), in.getCategory()))
         .type(adaptType(in.getSide()))
         .size(in.getSize())

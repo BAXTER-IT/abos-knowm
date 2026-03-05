@@ -179,7 +179,7 @@ public class BitgetStreamingAdapters {
       return null;
     }
 
-    return new OpenPosition.Builder()
+    return OpenPosition.builder()
         .instrument(BitgetAdapters.toCurrencyPair(in.getInstrumentId()))
         .type(adaptType(in.getHoldSide()))
         .size(in.getTotalSize())

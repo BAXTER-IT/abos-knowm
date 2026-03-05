@@ -26,7 +26,7 @@ import lombok.Getter;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
-import org.knowm.xchange.okex.dto.OkexInstType;
+import org.knowm.xchange.okex.dto.enums.OkexInstrumentType;
 import org.knowm.xchange.service.BaseParamsDigest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,8 @@ public class OkexPrivateStreamingService extends JsonNettyStreamingService {
   public static final String USER_POSITION_CHANGES = "positions";
   private static final String LOGIN_SIGN_METHOD = "GET";
   private static final String LOGIN_SIGN_REQUEST_PATH = "/users/self/verify";
-  @Getter private volatile boolean loginDone = false;
+  @Getter
+  private volatile boolean loginDone = false;
   private final Observable<Long> pingPongSrc = Observable.interval(15, 15, TimeUnit.SECONDS);
   private Disposable pingPongSubscription;
   private final ExchangeSpecification exchangeSpecification;
@@ -106,12 +107,18 @@ public class OkexPrivateStreamingService extends JsonNettyStreamingService {
 
   private OkexSubscribeMessage.SubscriptionTopic getTopic(String channelName) {
     if (channelName.contains(USER_ORDER_CHANGES)) {
-      return new OkexSubscribeMessage.SubscriptionTopic(
-          USER_ORDER_CHANGES, OkexInstType.ANY, null, channelName.replace(USER_ORDER_CHANGES, ""));
+      return OkexSubscribeMessage.SubscriptionTopic.builder()
+          .channel(USER_ORDER_CHANGES)
+          .instType(OkexInstrumentType.ANY)
+          .instId(channelName.replace(USER_ORDER_CHANGES, ""))
+          .build();
     } else {
       if ((channelName.contains(USER_POSITION_CHANGES))) {
-        return new OkexSubscribeMessage.SubscriptionTopic(
-            USER_POSITION_CHANGES, OkexInstType.ANY, null, channelName.replace(USER_POSITION_CHANGES, ""));
+        return OkexSubscribeMessage.SubscriptionTopic.builder()
+            .channel(USER_POSITION_CHANGES)
+            .instType(OkexInstrumentType.ANY)
+            .instId(channelName.replace(USER_POSITION_CHANGES, ""))
+            .build();
       } else {
         throw new NotYetImplementedForExchangeException(
             "ChannelName: "

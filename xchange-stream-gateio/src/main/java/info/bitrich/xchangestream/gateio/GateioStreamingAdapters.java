@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.Order.OrderType;
+import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
@@ -79,18 +80,6 @@ public class GateioStreamingAdapters {
         .build();
   }
 
-  public Balance toBalance(GateioSingleSpotBalanceNotification notification) {
-    BalancePayload balancePayload = notification.getResult();
-
-    return new Balance.Builder()
-        .currency(balancePayload.getCurrency())
-        .total(balancePayload.getTotal())
-        .available(balancePayload.getAvailable())
-        .frozen(balancePayload.getFreeze())
-        .timestamp(Date.from(balancePayload.getTimeMs()))
-        .build();
-  }
-
   public OrderBook toOrderBook(GateioOrderBookNotification notification) {
     OrderBookPayload orderBookPayload = notification.getResult();
 
@@ -126,7 +115,7 @@ public class GateioStreamingAdapters {
       return null;
     }
 
-    return new OpenPosition.Builder()
+    return OpenPosition.builder()
         .instrument(GateioAdapters.toFuturesContract(in.getContract()))
         .type(null) // side/direction is not present in this payload
         .size(in.getSize())

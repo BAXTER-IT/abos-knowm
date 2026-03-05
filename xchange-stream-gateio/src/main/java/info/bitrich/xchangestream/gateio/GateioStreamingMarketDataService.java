@@ -36,7 +36,7 @@ public class GateioStreamingMarketDataService implements StreamingMarketDataServ
     Duration updateSpeed = (Duration) ArrayUtils.get(args, 1, UPDATE_INTERVAL_DEFAULT);
     return service
         .subscribeChannel(
-            Config.SPOT_ORDERBOOK_CHANNEL, new Object[] {currencyPair, orderBookLevel, updateSpeed})
+            Config.CHANNEL_SPOT_ORDER_BOOK, new Object[] {currencyPair, orderBookLevel, updateSpeed})
         .map(GateioOrderBookNotification.class::cast)
         .map(GateioStreamingAdapters::toOrderBook);
   }
