@@ -13,22 +13,33 @@ import lombok.Data;
 @Data
 public final class Config {
 
-  public static final String V4_URL = "wss://api.gateio.ws/ws/v4/";
+  public static final String WS_URL_V4_SPOT = "wss://api.gateio.ws/ws/v4/";
+  public static final String WS_URL_V4_PERPETUAL_FUTURES_BTC = "wss://fx-ws.gateio.ws/v4/ws/btc";
+  public static final String WS_URL_V4_PERPETUAL_FUTURES_USDT = "wss://fx-ws.gateio.ws/v4/ws/usdt";
+  public static final String WS_URL_V4_DELIVERY_FUTURES_BTC = "wss://fx-ws.gateio.ws/v4/ws/delivery/btc";
+  public static final String WS_URL_V4_DELIVERY_FUTURES_USDT = "wss://fx-ws.gateio.ws/v4/ws/delivery/usdt";
 
-  public static final String SPOT_ORDERBOOK_CHANNEL = "spot.order_book";
-  public static final String SPOT_TRADES_CHANNEL = "spot.trades";
-  public static final String SPOT_TICKERS_CHANNEL = "spot.tickers";
-  public static final String SPOT_BALANCES_CHANNEL = "spot.balances";
-  public static final String SPOT_USER_TRADES_CHANNEL = "spot.usertrades";
-  public static final List<String> PRIVATE_CHANNELS =
-      Arrays.asList(SPOT_BALANCES_CHANNEL, SPOT_USER_TRADES_CHANNEL);
+  public static final String PRODUCT_SPOT = "spot";
+  public static final String PRODUCT_PERPETUAL_FUTURES = "futures.perpetual";
+  public static final String PRODUCT_DELIVERY_FUTURES = "futures.delivery";
+
+  public static final String CHANNEL_SPOT_ORDER_BOOK = "spot.order_book";
+  public static final String CHANNEL_SPOT_TRADES = "spot.trades";
+  public static final String CHANNEL_SPOT_TICKERS = "spot.tickers";
+  public static final String CHANNEL_SPOT_BALANCES = "spot.balances";
+  public static final String CHANNEL_SPOT_USER_TRADES = "spot.usertrades";
+  public static final String CHANNEL_FUTURES_PING = "futures.ping";
+  public static final String CHANNEL_FUTURES_PONG = "futures.pong";
+  public static final String CHANNEL_FUTURES_POSITIONS = "futures.positions";
+  public static final String CHANNEL_FUTURES_BALANCES = "futures.balances";
+
+  public static final List<String> PRIVATE_CHANNELS = Arrays.asList(CHANNEL_SPOT_BALANCES,
+      CHANNEL_SPOT_USER_TRADES, CHANNEL_FUTURES_POSITIONS, CHANNEL_FUTURES_BALANCES);
 
   public static final String CHANNEL_NAME_DELIMITER = "-";
-
+  private static Config instance = new Config();
   private ObjectMapper objectMapper;
   private Clock clock;
-
-  private static Config instance = new Config();
 
   private Config() {
     clock = Clock.systemDefaultZone();

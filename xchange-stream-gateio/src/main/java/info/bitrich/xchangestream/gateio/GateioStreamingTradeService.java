@@ -18,7 +18,7 @@ public class GateioStreamingTradeService implements StreamingTradeService {
   @Override
   public Observable<UserTrade> getUserTrades(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(Config.SPOT_USER_TRADES_CHANNEL, currencyPair)
+        .subscribeChannel(Config.CHANNEL_SPOT_USER_TRADES, currencyPair)
         .map(GateioSingleUserTradeNotification.class::cast)
         .map(GateioStreamingAdapters::toUserTrade);
   }

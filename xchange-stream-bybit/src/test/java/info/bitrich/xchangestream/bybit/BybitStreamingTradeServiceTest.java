@@ -1,7 +1,7 @@
 package info.bitrich.xchangestream.bybit;
 
 import static info.bitrich.xchangestream.bybit.BybitStreamingTradeService.EXECUTION_CHANNEL;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.knowm.xchange.Exchange.USE_SANDBOX;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;

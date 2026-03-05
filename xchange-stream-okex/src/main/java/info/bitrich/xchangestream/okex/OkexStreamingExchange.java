@@ -137,16 +137,6 @@ public class OkexStreamingExchange extends OkexExchange implements StreamingExch
     throw new NotYetImplementedForExchangeException("useCompressedMessage");
   }
 
-  /**
-   * Enables the user to listen on channel inactive events and react appropriately.
-   *
-   * @param channelInactiveHandler a WebSocketMessageHandler instance.
-   */
-  public void setChannelInactiveHandler(
-      WebSocketClientHandler.WebSocketMessageHandler channelInactiveHandler) {
-    streamingService.setChannelInactiveHandler(channelInactiveHandler);
-  }
-
   @Override
   public Observable<Throwable> reconnectFailure() {
     return streamingService.subscribeReconnectFailure();

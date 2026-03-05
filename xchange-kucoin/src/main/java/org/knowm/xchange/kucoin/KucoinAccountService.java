@@ -16,15 +16,19 @@ import org.knowm.xchange.dto.account.AddressWithTag;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
+import org.knowm.xchange.dto.account.OpenPosition;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.kucoin.dto.KucoinException;
 import org.knowm.xchange.kucoin.dto.request.ApplyWithdrawApiRequest;
 import org.knowm.xchange.kucoin.dto.request.CreateDepositAddressApiRequest;
+import org.knowm.xchange.dto.account.Wallet.Builder;
 import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
 import org.knowm.xchange.kucoin.dto.response.DepositAddressResponse;
 import org.knowm.xchange.kucoin.service.params.KucoinWithdrawFundsParams;
+import org.knowm.xchange.kucoin.dto.response.OrderResponse;
 import org.knowm.xchange.kucoin.dto.response.Pagination;
 import org.knowm.xchange.kucoin.dto.response.SubAccountsResponse;
+import org.knowm.xchange.kucoin.dto.response.SymbolsWithActiveOrder;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.HistoryParamsFundingType;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrency;
@@ -64,6 +68,16 @@ public class KucoinAccountService extends KucoinAccountServiceRaw implements Acc
     } catch (KucoinException e) {
       throw KucoinErrorAdapter.adapt(e);
     }
+  }
+
+  private List<OpenPosition> getActivePositions() throws IOException {
+    List<OpenPosition> openPositions = new ArrayList<>();
+    SymbolsWithActiveOrder symbolsWithActiveOrder = getKucoinSymbolsWithActiveOrder();
+    for (String symbol : symbolsWithActiveOrder.getSymbols()) {
+      List<OrderResponse> kucoinActiveOrders = getKucoinActiveOrders(symbol);
+      openPositions.addAll(KucoinAdapters.adaptOpenPositions(kucoinActiveOrders));
+    }
+    return openPositions;
   }
 
   public List<SubAccountsResponse> getSubAccountsInfo() throws IOException {

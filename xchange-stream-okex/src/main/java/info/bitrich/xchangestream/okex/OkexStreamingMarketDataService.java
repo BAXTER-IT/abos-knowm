@@ -18,6 +18,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.knowm.xchange.dto.marketdata.FundingRate;
 import org.knowm.xchange.dto.marketdata.OrderBook;
@@ -25,10 +31,21 @@ import org.knowm.xchange.dto.marketdata.OrderBookUpdate;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
+import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.marketdata.FundingRate;
+import org.knowm.xchange.dto.marketdata.OrderBook;
+import org.knowm.xchange.dto.marketdata.OrderBookUpdate;
+import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.okex.OkexAdapters;
 import org.knowm.xchange.okex.dto.marketdata.OkexFundingRate;
 import org.knowm.xchange.okex.dto.marketdata.OkexOrderbook;
+import org.knowm.xchange.okex.dto.marketdata.OkexTicker;
+import org.knowm.xchange.okex.dto.marketdata.OkexTrade;
+import org.knowm.xchange.okex.dto.marketdata.OkexFundingRate;
+import org.knowm.xchange.okex.dto.marketdata.OkexOrderbook;
+import org.knowm.xchange.okex.dto.marketdata.OkexPublicOrder;
 import org.knowm.xchange.okex.dto.marketdata.OkexTicker;
 import org.knowm.xchange.okex.dto.marketdata.OkexTrade;
 import org.slf4j.Logger;
@@ -42,8 +59,8 @@ public class OkexStreamingMarketDataService implements StreamingMarketDataServic
   private final ExchangeMetaData exchangeMetaData;
 
   private final ObjectMapper mapper = StreamingObjectMapperHelper.getObjectMapper();
-  private final Map<Instrument, PublishSubject<List<OrderBookUpdate>>>
-      orderBookUpdatesSubscriptions;
+  private final Map<Instrument, PublishSubject<List<OrderBookUpdate>>> orderBookUpdatesSubscriptions;
+  private final Map<String, OrderBook> orderBookMap = new HashMap<>();
 
   public OkexStreamingMarketDataService(
       OkexStreamingService service, ExchangeMetaData exchangeMetaData) {
@@ -51,8 +68,6 @@ public class OkexStreamingMarketDataService implements StreamingMarketDataServic
     this.exchangeMetaData = exchangeMetaData;
     this.orderBookUpdatesSubscriptions = new ConcurrentHashMap<>();
   }
-
-  private final Map<String, OrderBook> orderBookMap = new HashMap<>();
 
   @Override
   public Observable<Ticker> getTicker(Instrument instrument, Object... args) {

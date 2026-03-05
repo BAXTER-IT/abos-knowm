@@ -1,7 +1,7 @@
 package info.bitrich.xchangestream.bitget;
 
 import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.ChannelType;
-import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.MarketType;
+import info.bitrich.xchangestream.bitget.dto.common.BitgetChannel.InstType;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetTickerNotification;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsOrderBookSnapshotNotification;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
@@ -40,7 +40,7 @@ public class BitgetStreamingMarketDataService implements StreamingMarketDataServ
     }
 
     return service
-        .subscribeChannel(null, channelType, MarketType.SPOT, currencyPair)
+        .subscribeChannel(null, channelType, InstType.SPOT, currencyPair)
         .map(BitgetWsOrderBookSnapshotNotification.class::cast)
         .map(notification -> BitgetStreamingAdapters.toOrderBook(notification, currencyPair));
   }
@@ -48,7 +48,7 @@ public class BitgetStreamingMarketDataService implements StreamingMarketDataServ
   @Override
   public Observable<Ticker> getTicker(CurrencyPair currencyPair, Object... args) {
     return service
-        .subscribeChannel(null, ChannelType.TICKER, MarketType.SPOT, currencyPair)
+        .subscribeChannel(null, ChannelType.TICKER, InstType.SPOT, currencyPair)
         .map(BitgetTickerNotification.class::cast)
         .map(BitgetStreamingAdapters::toTicker);
   }

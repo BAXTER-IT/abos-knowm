@@ -12,9 +12,8 @@ import org.knowm.xchange.instrument.Instrument;
 public class BybitStreamingTradeService implements StreamingTradeService {
 
   static final String EXECUTION_CHANNEL = "execution";
-  BybitStreamingService streamingService;
-
   private final ObjectMapper objectMapper = StreamingObjectMapperHelper.getObjectMapper();
+  BybitStreamingService streamingService;
 
   public BybitStreamingTradeService(BybitStreamingService streamingService) {
     this.streamingService = streamingService;

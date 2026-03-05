@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,7 +71,9 @@ import org.knowm.xchange.okex.dto.trade.OkexOrderFlags;
 import org.knowm.xchange.okex.dto.trade.OkexOrderRequest;
 import org.knowm.xchange.okex.dto.trade.OkexOrderType;
 
-/** Author: Max Gao (gaamox@tutanota.com) Created: 08-06-2021 */
+/**
+ * Author: Max Gao (gaamox@tutanota.com) Created: 08-06-2021
+ */
 public class OkexAdapters {
 
   private static final String TRADING_WALLET_ID = "trading";
@@ -179,7 +180,8 @@ public class OkexAdapters {
               .id(okexOrder.getOrderId())
               .timestamp(new Date(Long.parseLong(okexOrder.getUpdateTime())))
               .limitPrice(
-                  okexOrder.getLastFilledPrice().isEmpty() || okexOrder.getLastFilledPrice().equals("0")
+                  okexOrder.getLastFilledPrice().isEmpty() || okexOrder.getLastFilledPrice()
+                      .equals("0")
                       ? new BigDecimal(okexOrder.getPrice())
                       : new BigDecimal(okexOrder.getLastFilledPrice()))
               .averagePrice(new BigDecimal(okexOrder.getAverageFilledPrice()))
@@ -253,9 +255,9 @@ public class OkexAdapters {
     InstrumentMetaData metaData = exchangeMetaData.getInstruments().get(order.getInstrument());
     return (order.getInstrument() instanceof FuturesContract)
         ? order
-            .getOriginalAmount()
-            .divide(metaData.getContractValue(),20, RoundingMode.HALF_DOWN)
-            .stripTrailingZeros().toPlainString()
+        .getOriginalAmount()
+        .divide(metaData.getContractValue(), 20, RoundingMode.HALF_DOWN)
+        .stripTrailingZeros().toPlainString()
         : order.getOriginalAmount().toString();
   }
 
@@ -289,7 +291,7 @@ public class OkexAdapters {
             (order.hasFlag(OkexOrderFlags.POST_ONLY))
                 ? OkexOrderType.post_only.name()
                 : (order.hasFlag(OkexOrderFlags.OPTIMAL_LIMIT_IOC)
-                        && order.getInstrument() instanceof FuturesContract)
+                    && order.getInstrument() instanceof FuturesContract)
                     ? OkexOrderType.optimal_limit_ioc.name()
                     : OkexOrderType.limit.name())
         .amount(convertVolumeToContractSize(order, exchangeMetaData))
@@ -298,7 +300,7 @@ public class OkexAdapters {
   }
 
   private static String getSide(Order order) {
-    String side= "";
+    String side = "";
     switch (order.getType()) {
       case BID:
         side = "buy";
@@ -408,7 +410,7 @@ public class OkexAdapters {
         // .vwap(null)
         .volume(
             (okexTicker.getInstrumentType().equals("SWAP")
-                    || okexTicker.getInstrumentType().equals("FUTURES"))
+                || okexTicker.getInstrumentType().equals("FUTURES"))
                 ? okexTicker.getVolumeCurrency24h()
                 : okexTicker.getVolume24h())
         .quoteVolume(quoteVolume)
@@ -505,26 +507,26 @@ public class OkexAdapters {
               .minimumAmount(
                   (instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))
                       ? convertContractSizeToVolume(
-                          new BigDecimal(instrument.getMinSize()),
-                          pair,
-                          new BigDecimal(instrument.getContractValue()))
+                      new BigDecimal(instrument.getMinSize()),
+                      pair,
+                      new BigDecimal(instrument.getContractValue()))
                       : new BigDecimal(instrument.getMinSize()))
               .volumeScale(
                   (instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))
                       ? convertContractSizeToVolume(
-                              new BigDecimal(instrument.getMinSize()),
-                              pair,
-                              new BigDecimal(instrument.getContractValue()))
-                          .scale()
+                      new BigDecimal(instrument.getMinSize()),
+                      pair,
+                      new BigDecimal(instrument.getContractValue()))
+                      .scale()
                       : Math.max(numberOfDecimals(new BigDecimal(instrument.getMinSize())), 0))
               .amountStepSize(
                   BigDecimal.ONE.movePointLeft(
                       (instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))
                           ? convertContractSizeToVolume(
-                                  new BigDecimal(instrument.getLotSize()),
-                                  pair,
-                                  new BigDecimal(instrument.getContractValue()))
-                              .scale()
+                          new BigDecimal(instrument.getLotSize()),
+                          pair,
+                          new BigDecimal(instrument.getContractValue()))
+                          .scale()
                           : Math.max(numberOfDecimals(new BigDecimal(instrument.getLotSize())), 0)))
               .contractValue(
                   (instrument.getInstrumentType().equals(OkexInstType.SWAP.name()))
@@ -561,13 +563,13 @@ public class OkexAdapters {
     if (!okexWalletBalanceList.isEmpty()) {
       OkexWalletBalance okexWalletBalance = okexWalletBalanceList.get(0);
       balances =
-          Arrays.stream(okexWalletBalance.getDetails())
+          okexWalletBalance.getDetails().stream()
               .map(
                   detail ->
                       new Balance.Builder()
                           .currency(new Currency(detail.getCurrency()))
-                          .total(new BigDecimal(detail.getCashBalance()))
-                          .available(checkForEmpty(detail.getAvailableBalance()))
+                          .total(detail.getCashBalance())
+                          .available(detail.getAvailableBalance())
                           .timestamp(new Date())
                           .build())
               .collect(Collectors.toList());
@@ -639,26 +641,37 @@ public class OkexAdapters {
                     .type(adaptOpenPositionType(okexPosition))
                     .size(
                         okexPosition
-                            .getPosition()
+                            .getPositionSize()
                             .abs()
                             .multiply(
                                 exchangeMetaData
                                     .getInstruments()
                                     .get(adaptOkexInstrumentId(okexPosition.getInstrumentId()))
                                     .getContractValue()))
-                    .unRealisedPnl(okexPosition.getUnrealizedPnL())
+                    .unRealisedPnl(okexPosition.getUnrealizedProfitAndLoss())
                     .build()));
     return new OpenPositions(openPositions);
   }
 
+  public static OpenPosition adaptOpenPosition(OkexPosition okexPosition, ExchangeMetaData exchangeMetaData) {
+    return OpenPosition.builder()
+        .instrument(adaptOkexInstrumentId(okexPosition.getInstrumentId()))
+        .liquidationPrice(okexPosition.getLiquidationPrice())
+        .price(okexPosition.getAverageOpenPrice())
+        .type(adaptOpenPositionType(okexPosition))
+        .size(okexPosition.getPositionSize().abs().multiply(exchangeMetaData.getInstruments().get(adaptOkexInstrumentId(okexPosition.getInstrumentId())).getContractValue()))
+        .unRealisedPnl(okexPosition.getUnrealizedProfitAndLoss())
+        .build();
+  }
+
   public static Type adaptOpenPositionType(OkexPosition okexPosition) {
     switch (okexPosition.getPositionSide()) {
-      case "long":
+      case LONG:
         return Type.LONG;
-      case "short":
+      case SHORT:
         return Type.SHORT;
-      case "net":
-        return (okexPosition.getPosition().compareTo(BigDecimal.ZERO) >= 0)
+      case NET:
+        return (okexPosition.getPositionSize().compareTo(BigDecimal.ZERO) >= 0)
             ? Type.LONG
             : Type.SHORT;
       default:
@@ -702,7 +715,7 @@ public class OkexAdapters {
         .currentLeverage(
             (totalPositionValueInUsd.compareTo(BigDecimal.ZERO) != 0)
                 ? totalPositionValueInUsd.divide(
-                    accountPositionRiskData.get(0).getAdjustEquity(), 3, RoundingMode.HALF_EVEN)
+                accountPositionRiskData.get(0).getAdjustEquity(), 3, RoundingMode.HALF_EVEN)
                 : BigDecimal.ZERO)
         .features(new HashSet<>(Collections.singletonList(WalletFeature.FUTURES_TRADING)))
         .build();
@@ -729,10 +742,11 @@ public class OkexAdapters {
         return new Fee(
             new BigDecimal(okexTradeFee.getMakerUSDC()).negate(),
             new BigDecimal(okexTradeFee.getTakerUSDC()).negate());
-      } else
+      } else {
         return new Fee(
             new BigDecimal(okexTradeFee.getMaker()).negate(),
             new BigDecimal(okexTradeFee.getTaker()).negate());
+      }
     }
   }
 

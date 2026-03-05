@@ -3,6 +3,7 @@ package info.bitrich.xchangestream.service.netty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.time.Duration;
 import org.slf4j.Logger;
@@ -49,9 +50,16 @@ public abstract class JsonNettyStreamingService extends NettyStreamingService<Js
     if (processArrayMessageSeparately() && jsonNode.isArray()) {
       // In case of array - handle every message separately.
       for (JsonNode node : jsonNode) {
-        handleMessage(node);
+        ObjectNode mutable = node.isObject()
+            ? (ObjectNode) node
+            : node.deepCopy();
+
+        // close to raw, but Jackson can format, reorder, aggregate, strip comments etc
+        mutable.put("rawJson", node.toString());
+        handleMessage(mutable);
       }
     } else {
+      ((ObjectNode) jsonNode).put("rawJson", message); // this is raw raw
       handleMessage(jsonNode);
     }
   }

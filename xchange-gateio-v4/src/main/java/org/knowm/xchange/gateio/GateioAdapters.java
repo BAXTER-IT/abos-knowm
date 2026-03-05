@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.derivative.FuturesContract;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderStatus;
 import org.knowm.xchange.dto.Order.OrderType;
@@ -398,5 +399,33 @@ public class GateioAdapters {
       default:
         throw new IllegalArgumentException("Can't map " + type);
     }
+  }
+
+  public static CurrencyPair toSpot(String in) {
+    String[] parts = splitContract(in);
+    if (parts == null) {
+      return null;
+    }
+    return new CurrencyPair(parts[0], parts[1]);
+  }
+
+  public static FuturesContract toFuturesContract(String in) {
+    String[] parts = splitContract(in);
+    if (parts == null) {
+      return null;
+    }
+    String prompt = parts.length < 3 ? "PERP" : parts[2];
+    return new FuturesContract(new CurrencyPair(parts[0], parts[1]), prompt);
+  }
+
+  private static String[] splitContract(String in) {
+    if (in == null || in.isEmpty()) {
+      return null;
+    }
+    String[] parts = in.split("_");
+    if (parts.length < 2) {
+      return null;
+    }
+    return parts;
   }
 }

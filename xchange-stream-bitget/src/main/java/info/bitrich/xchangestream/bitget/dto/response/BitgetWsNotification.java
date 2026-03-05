@@ -28,6 +28,8 @@ import lombok.extern.jackson.Jacksonized;
   @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books5"),
   @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books15"),
   @Type(value = BitgetWsUserTradeNotification.class, name = "fill"),
+  @Type(value = BitgetWsPositionNotification.class, name = "positions"),
+  @Type(value = BitgetWsAccountNotification.class, name = "account"),
 })
 @Data
 @SuperBuilder(toBuilder = true)
