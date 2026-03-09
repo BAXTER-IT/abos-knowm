@@ -34,4 +34,16 @@ public class KucoinStreamingTradeService implements StreamingTradeService {
         .map(node -> mapper.treeToValue(node, KucoinWebSocketOrderEvent.class))
         .filter(order -> currencyPair == null || currencyPair.equals(order.data.getCurrencyPair()));
   }
+
+  public Observable<Order> getFuturesOrderChanges(CurrencyPair currencyPair, Object... args) {
+    return getRawFuturesOrderChanges(currencyPair).map(KucoinStreamingAdapters::adaptOrder);
+  }
+
+  public Observable<KucoinWebSocketOrderEvent> getRawFuturesOrderChanges(CurrencyPair currencyPair) {
+    return service
+        .subscribeChannel("/contractMarket/tradeOrders")
+        .doOnError(ex -> logger.warn("encountered error while subscribing to futures order changes", ex))
+        .map(node -> mapper.treeToValue(node, KucoinWebSocketOrderEvent.class))
+        .filter(order -> currencyPair == null || currencyPair.equals(order.data.getCurrencyPair()));
+  }
 }
