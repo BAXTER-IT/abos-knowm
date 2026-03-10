@@ -11,5 +11,5 @@ public class Constants {
   public static final String METHOD_UNSUBSCRIBE = "unsubscribe";
   public static final String METHOD_PING = "public/ping";
   public static final String CHANNEL_TRADE_HISTORY = "account.trade_history";
-
+  public static final String CHANNEL_TRANSACTION_HISTORY = "account.transaction_history";
 }
