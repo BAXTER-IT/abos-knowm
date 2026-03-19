@@ -6,6 +6,7 @@ import org.knowm.xchange.client.ResilienceRegistries;
 import org.knowm.xchange.kucoin.service.AccountAPI;
 import org.knowm.xchange.kucoin.service.DepositAPI;
 import org.knowm.xchange.kucoin.service.FillAPI;
+import org.knowm.xchange.kucoin.service.FundingHistoryAPI;
 import org.knowm.xchange.kucoin.service.HistOrdersAPI;
 import org.knowm.xchange.kucoin.service.HistoryAPI;
 import org.knowm.xchange.kucoin.service.KucoinApiException;
@@ -34,6 +35,7 @@ public class KucoinBaseService extends BaseResilientExchangeService<KucoinExchan
   protected final HistOrdersAPI histOrdersApi;
   protected final WebsocketAPI websocketAPI;
   protected final TradingFeeAPI tradingFeeAPI;
+  protected final FundingHistoryAPI fundingHistoryAPI;
 
   protected final KucoinAuthenticated kucoinAuthenticated;
 
@@ -56,6 +58,7 @@ public class KucoinBaseService extends BaseResilientExchangeService<KucoinExchan
     this.histOrdersApi = service(exchange, HistOrdersAPI.class);
     this.websocketAPI = service(exchange, WebsocketAPI.class);
     this.tradingFeeAPI = service(exchange, TradingFeeAPI.class);
+    this.fundingHistoryAPI = service(exchange, FundingHistoryAPI.class);
     kucoinAuthenticated = service(exchange, KucoinAuthenticated.class);
 
     this.digest = KucoinDigest.createInstance(exchange.getExchangeSpecification().getSecretKey());
