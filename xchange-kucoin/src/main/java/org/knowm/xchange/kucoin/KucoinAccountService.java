@@ -98,8 +98,8 @@ public class KucoinAccountService extends KucoinAccountServiceRaw implements Acc
     return new KucoinTradeHistoryParams();
   }
 
-  public List<FundingEntry> getLedgerFundingHistory(String symbol) throws IOException {
-      return getFundingLedger(symbol).getDataList();
+  public List<FundingEntry> getLedgerFundingHistory(String symbol, Long startAt, Long endAt) throws IOException {
+      return getFundingLedger(symbol, startAt, endAt).getDataList();
   }
 
   @Override

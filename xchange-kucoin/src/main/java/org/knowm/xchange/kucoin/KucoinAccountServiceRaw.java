@@ -238,10 +238,10 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
         .getData();
   }
 
-  public FundingHistoryResponse getFundingLedger(String symbol) throws IOException {
+  public FundingHistoryResponse getFundingLedger(String symbol, Long startAt, Long endAt) throws IOException {
     return decorateApiCall(
         () ->
-            fundingHistoryAPI.getFundingHistory(apiKey, digest, nonceFactory, passphrase, "2", symbol, null, null, 1500))
+            fundingHistoryAPI.getFundingHistory(apiKey, digest, nonceFactory, passphrase, "2", symbol, startAt, endAt, 1500))
         .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
         .call()
         .getData();
