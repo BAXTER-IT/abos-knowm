@@ -3,6 +3,7 @@ package info.bitrich.xchangestream.kucoin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.kucoin.dto.KucoinWebSocketOrderEvent;
+import info.bitrich.xchangestream.kucoin.dto.account.KucoinWsPositionsEvent;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.rxjava3.core.Observable;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -45,5 +46,12 @@ public class KucoinStreamingTradeService implements StreamingTradeService {
         .doOnError(ex -> logger.warn("encountered error while subscribing to futures order changes", ex))
         .map(node -> mapper.treeToValue(node, KucoinWebSocketOrderEvent.class))
         .filter(order -> currencyPair == null || currencyPair.equals(order.data.getCurrencyPair()));
+  }
+
+  public Observable<KucoinWsPositionsEvent> getRawPositionChanges(String symbol) {
+    return service
+        .subscribeChannel("/contract/position:" + symbol)
+        .doOnError(ex -> logger.warn("encountered error while subscribing to position changes", ex))
+        .map(node -> mapper.treeToValue(node, KucoinWsPositionsEvent.class));
   }
 }
