@@ -21,6 +21,7 @@ import org.knowm.xchange.instrument.Instrument;
 public class KucoinStreamingAccountService implements StreamingAccountService {
 
   public static final String SUBJECT_POSITION_CHANGE = "position.change";
+  public static final String SUBJECT_POSITION_SETTLEMENT = "position.settlement";
   public static final String SUBJECT_SPOT_BALANCE = "account.balance";
   public static final String SUBJECT_FUTURES_BALANCE = "walletBalance.change";
 
@@ -34,6 +35,13 @@ public class KucoinStreamingAccountService implements StreamingAccountService {
         .filter(jsonNode -> SUBJECT_POSITION_CHANGE.equals(jsonNode.path("subject").asText(null)))
         .map(jsonNode -> mapper.convertValue(jsonNode, KucoinWsPositionsEvent.class))
         .map(event -> KucoinStreamingAdapters.adaptOpenPosition(event.getData()));
+  }
+
+  public Observable<KucoinWsPositionsEvent> getSymbolPositionChanges(String symbol) {
+    return  service
+        .subscribeChannel("/contract/position:" + symbol)
+        .filter(jsonNode -> SUBJECT_POSITION_SETTLEMENT.equals(jsonNode.path("subject").asText(null)))
+        .map(node -> mapper.convertValue(node, KucoinWsPositionsEvent.class));
   }
 
   @Override

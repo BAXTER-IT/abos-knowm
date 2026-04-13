@@ -19,6 +19,7 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
   private KucoinStreamingService privateStreamingService;
   private KucoinStreamingMarketDataService streamingMarketDataService;
   private KucoinStreamingTradeService streamingTradeService;
+  private KucoinStreamingAccountService streamingAccountService;
 
   private final List<NettyStreamingService<?>> services = new ArrayList<>();
   private Runnable onApiCall;
@@ -91,6 +92,7 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
 
                 services.add(privateStreamingService);
                 streamingTradeService = new KucoinStreamingTradeService(privateStreamingService);
+                streamingAccountService = new KucoinStreamingAccountService(privateStreamingService);
               });
     }
 
@@ -139,6 +141,11 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
   @Override
   public KucoinStreamingMarketDataService getStreamingMarketDataService() {
     return streamingMarketDataService;
+  }
+
+  @Override
+  public KucoinStreamingAccountService getStreamingAccountService() {
+    return streamingAccountService;
   }
 
   @Override
