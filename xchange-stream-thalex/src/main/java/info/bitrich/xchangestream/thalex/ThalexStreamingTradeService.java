@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.thalex.ThalexAdapters;
 import org.knowm.xchange.thalex.config.ThalexJacksonObjectMapperFactory;
+import org.knowm.xchange.thalex.dto.account.ThalexPortfolioDto;
 import org.knowm.xchange.thalex.dto.account.ThalexTransactionDto;
 import org.knowm.xchange.thalex.dto.trade.ThalexTradeDto;
 
@@ -46,6 +47,17 @@ public class ThalexStreamingTradeService implements StreamingTradeService {
             s ->
                 objectMapper.convertValue(s,
                     new TypeReference<ThalexNotification<List<ThalexTransactionDto>>>() {
+                    }))
+        .flatMapIterable(ThalexNotification::getNotification);
+  }
+
+  public Observable<ThalexPortfolioDto> getUserPortfolio() {
+    return streamingService
+        .subscribeChannel(Constants.CHANNEL_PORTFOLIO)
+        .map(
+            s ->
+                objectMapper.convertValue(s,
+                    new TypeReference<ThalexNotification<List<ThalexPortfolioDto>>>() {
                     }))
         .flatMapIterable(ThalexNotification::getNotification);
   }

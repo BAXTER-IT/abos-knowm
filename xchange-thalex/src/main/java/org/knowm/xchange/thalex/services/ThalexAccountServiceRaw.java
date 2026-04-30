@@ -5,6 +5,7 @@ import java.util.List;
 import org.knowm.xchange.thalex.ThalexExchange;
 import org.knowm.xchange.thalex.dto.account.ThalexAccountSummaryDto;
 import org.knowm.xchange.thalex.dto.account.ThalexCryptoDeposits;
+import org.knowm.xchange.thalex.dto.account.ThalexDailyMarkHistoryResult;
 import org.knowm.xchange.thalex.dto.account.ThalexPortfolioDto;
 import org.knowm.xchange.thalex.dto.account.ThalexTransactionsDto;
 import org.knowm.xchange.thalex.dto.account.ThalexWithdrawal;
@@ -39,5 +40,9 @@ public class ThalexAccountServiceRaw extends ThalexBaseService {
 
   protected List<ThalexWithdrawal> getThalexCryptoWithdrawals() throws IOException {
     return thalexAuthenticated.cryptoWithdrawals(thalexDigest).getResult();
+  }
+
+  protected ThalexDailyMarkHistoryResult getThalexDailyMarkHistoryRaw(Integer limit, Long from, Long to) throws IOException {
+    return thalexAuthenticated.dailyMarkHistory(thalexDigest,  limit, from, to).getResult();
   }
 }

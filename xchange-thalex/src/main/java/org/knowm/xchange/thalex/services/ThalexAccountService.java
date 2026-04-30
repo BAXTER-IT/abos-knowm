@@ -15,6 +15,8 @@ import org.knowm.xchange.thalex.ThalexAdapters;
 import org.knowm.xchange.thalex.ThalexExchange;
 import org.knowm.xchange.thalex.dto.account.ThalexAccountSummaryDto;
 import org.knowm.xchange.thalex.dto.account.ThalexCryptoDeposits;
+import org.knowm.xchange.thalex.dto.account.ThalexDailyMarkDto;
+import org.knowm.xchange.thalex.dto.account.ThalexDailyMarkHistoryResult;
 import org.knowm.xchange.thalex.dto.account.ThalexDeposit;
 import org.knowm.xchange.thalex.dto.account.ThalexPortfolioDto;
 import org.knowm.xchange.thalex.dto.account.ThalexTransactionDto;
@@ -100,5 +102,10 @@ public class ThalexAccountService extends ThalexAccountServiceRaw implements Acc
   List<FundingRecord> getFundingRecords(List<ThalexDeposit> deposits) {
     return deposits.stream()
         .map(ThalexAdapters::toFundingRecord).collect(Collectors.toList());
+  }
+
+  public List<ThalexDailyMarkDto> getThalexDailyMarkHistory(Integer limit, Long from, Long to) throws IOException {
+    ThalexDailyMarkHistoryResult response = getThalexDailyMarkHistoryRaw(limit, from, to);
+    return response.getDailyMarks();
   }
 }

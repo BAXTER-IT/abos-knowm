@@ -1,16 +1,17 @@
 package org.knowm.xchange.thalex;
 
-import java.io.IOException;
-import java.util.List;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.List;
 import org.knowm.xchange.thalex.dto.ThalexResponse;
 import org.knowm.xchange.thalex.dto.account.ThalexAccountSummaryDto;
 import org.knowm.xchange.thalex.dto.account.ThalexCryptoDeposits;
+import org.knowm.xchange.thalex.dto.account.ThalexDailyMarkHistoryResult;
 import org.knowm.xchange.thalex.dto.account.ThalexPortfolioDto;
 import org.knowm.xchange.thalex.dto.account.ThalexTransactionsDto;
 import org.knowm.xchange.thalex.dto.account.ThalexWithdrawal;
@@ -64,5 +65,14 @@ public interface ThalexAuthenticated {
   @Path("crypto_withdrawals")
   ThalexResponse<List<ThalexWithdrawal>> cryptoWithdrawals(
       @HeaderParam("Authorization") ParamsDigest signer)
+      throws IOException, ThalexException;
+
+  @GET
+  @Path("daily_mark_history")
+  ThalexResponse<ThalexDailyMarkHistoryResult> dailyMarkHistory(
+      @HeaderParam("Authorization") ParamsDigest signer,
+      @QueryParam("limit") Integer limit,
+      @QueryParam("time_low") Long from,
+      @QueryParam("time_high") Long to)
       throws IOException, ThalexException;
 }
