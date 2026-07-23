@@ -20,9 +20,11 @@ public class DeribitStreamingExchange extends DeribitExchange implements Streami
 
   @Override
   public Completable connect(ProductSubscription... args) {
-    publicStreamingService = new DeribitStreamingService(Config.V2_WS_URL);
+    String wsUrl = getWsUrl();
 
-    privateStreamingService = new DeribitPrivateStreamingService(Config.V2_WS_URL, exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
+    publicStreamingService = new DeribitStreamingService(wsUrl);
+
+    privateStreamingService = new DeribitPrivateStreamingService(wsUrl, exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
     privateStreamingService.connect().blockingAwait();
 
     applyStreamingSpecification(exchangeSpecification, publicStreamingService);
@@ -31,6 +33,22 @@ public class DeribitStreamingExchange extends DeribitExchange implements Streami
     streamingTradeService = new DeribitStreamingTradeService(privateStreamingService);
 
     return publicStreamingService.connect();
+  }
+
+  /**
+   * The WebSocket address to connect to: the exchange specification's override or WS endpoint when
+   * either is set, otherwise the hardcoded production address.
+   */
+  String getWsUrl() {
+    String override = exchangeSpecification.getOverrideWebsocketApiUri();
+    if (override != null && !override.isBlank()) {
+      return override;
+    }
+    String wsEndpoint = exchangeSpecification.getWsEndpoint();
+    if (wsEndpoint != null && !wsEndpoint.isBlank()) {
+      return wsEndpoint;
+    }
+    return Config.V2_WS_URL;
   }
 
   @Override
