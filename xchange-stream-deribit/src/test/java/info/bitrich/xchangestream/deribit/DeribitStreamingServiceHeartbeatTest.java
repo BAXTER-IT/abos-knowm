@@ -76,4 +76,33 @@ class DeribitStreamingServiceHeartbeatTest {
     assertTrue(service.sent.isEmpty());
     assertEquals(1, service.handled.size());
   }
+
+  /** Sends nowhere but keeps the real handleMessage, so routing guards are exercised. */
+  private static class SendlessService extends DeribitStreamingService {
+    SendlessService() {
+      super("ws://127.0.0.1:9100/test");
+    }
+
+    @Override
+    public void sendMessage(String message) {
+      // dropped: no socket in these tests
+    }
+  }
+
+  @Test
+  void aRefusalIsLoggedAndDropped_neverAnExceptionThatKillsTheSocket() {
+    SendlessService service = new SendlessService();
+
+    service.messageHandler(
+        "{\"jsonrpc\":\"2.0\",\"id\":8848,\"error\":{\"code\":13009,\"message\":\"unauthorized\"},\"testnet\":false}");
+    // No assertion beyond "no exception": an escaped exception here closes the socket and
+    // starts the reconnect loop this connector exists to avoid.
+  }
+
+  @Test
+  void aChannelLessNotificationIsDropped_neverAnExceptionThatKillsTheSocket() {
+    SendlessService service = new SendlessService();
+
+    service.messageHandler("{\"jsonrpc\":\"2.0\",\"method\":\"subscription\",\"params\":{\"data\":[1]}}");
+  }
 }

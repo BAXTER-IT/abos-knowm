@@ -75,6 +75,12 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
     if (message instanceof DeribitEventNotification) {
       return;
     }
+    // No channel means nothing downstream can route it, and the channel lookup cannot take
+    // null. Drop the frame instead of letting an exception kill the socket.
+    if (message.getParams() == null || message.getParams().getChannel() == null) {
+      log.warn("Dropping a Deribit frame with no channel: {}", message);
+      return;
+    }
     super.handleMessage(message);
   }
 
@@ -87,8 +93,7 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
     try {
       JsonNode jsonNode = objectMapper.readTree(message);
 
-      // Heartbeats are answered here at the raw layer and never reach a channel: the server
-      // only keeps the connection when a test_request is answered with a public/test.
+      // Answered at the raw layer; a heartbeat never reaches a channel.
       if ("heartbeat".equals(jsonNode.path("method").asText())) {
         if ("test_request".equals(jsonNode.path("params").path("type").asText())) {
           ObjectNode reply = objectMapper.createObjectNode();
@@ -97,6 +102,13 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
           reply.putObject("params");
           sendMessage(reply.toString());
         }
+        return;
+      }
+
+      // A refusal ({"error":...}) carries no params and must not reach the channel lookup:
+      // an exception escaping from there closes the socket and loops reconnects.
+      if (jsonNode.has("error")) {
+        log.warn("Deribit refused a request: {}", jsonNode.get("error"));
         return;
       }
 
