@@ -10,6 +10,7 @@ import info.bitrich.xchangestream.deribit.dto.request.DeribitWsRequest.Params;
 import info.bitrich.xchangestream.deribit.dto.response.DeribitEventNotification;
 import info.bitrich.xchangestream.deribit.dto.response.DeribitWsNotification;
 import info.bitrich.xchangestream.service.netty.NettyStreamingService;
+import io.reactivex.rxjava3.core.Completable;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeribitStreamingService extends NettyStreamingService<DeribitWsNotification> {
 
+  /** Deribit accepts 10-300s; 30s matches the rate distributor's proven setting. */
+  static final int HEARTBEAT_INTERVAL_SECONDS = 30;
+
   protected final ObjectMapper objectMapper = Config.getInstance().getObjectMapper();
 
   public DeribitStreamingService(String apiUri) {
     super(apiUri, Integer.MAX_VALUE);
+  }
+
+  /**
+   * Arms Deribit's application heartbeat after every completed open (first connect and every
+   * auto-reconnect). Protocol-level ping frames do not count as activity for Deribit's heartbeat
+   * mechanism, so without this the server drops the connection after the heartbeat timeout.
+   */
+  @Override
+  protected Completable openConnection() {
+    return super.openConnection().doOnComplete(this::enableHeartbeat);
+  }
+
+  void enableHeartbeat() {
+    ObjectNode request = objectMapper.createObjectNode();
+    request.put("jsonrpc", "2.0");
+    request.put("method", "public/set_heartbeat");
+    request.putObject("params").put("interval", HEARTBEAT_INTERVAL_SECONDS);
+    sendMessage(request.toString());
   }
 
   @Override
@@ -64,6 +86,19 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
     // Parse incoming message to JSON
     try {
       JsonNode jsonNode = objectMapper.readTree(message);
+
+      // Heartbeats are answered here at the raw layer and never reach a channel: the server
+      // only keeps the connection when a test_request is answered with a public/test.
+      if ("heartbeat".equals(jsonNode.path("method").asText())) {
+        if ("test_request".equals(jsonNode.path("params").path("type").asText())) {
+          ObjectNode reply = objectMapper.createObjectNode();
+          reply.put("jsonrpc", "2.0");
+          reply.put("method", "public/test");
+          reply.putObject("params");
+          sendMessage(reply.toString());
+        }
+        return;
+      }
 
       // try to parse event
       if (jsonNode.has("result")) {
