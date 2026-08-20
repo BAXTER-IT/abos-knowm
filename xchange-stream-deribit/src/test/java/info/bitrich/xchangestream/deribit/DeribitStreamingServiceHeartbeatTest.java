@@ -8,11 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-/**
- * Deribit's server keeps a connection only when its heartbeat test_request is answered with a
- * public/test JSON message — protocol-level ping frames do not count (venue guidance, 2026-08-20
- * traffic complaint). These tests pin the raw-layer heartbeat handling.
- */
+/** Pins the raw-layer handling of Deribit's heartbeat and refusal frames. */
 class DeribitStreamingServiceHeartbeatTest {
 
   /** Captures outgoing messages and parsed notifications instead of using a socket. */

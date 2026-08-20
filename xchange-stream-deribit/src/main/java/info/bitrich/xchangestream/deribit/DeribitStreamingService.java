@@ -18,19 +18,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeribitStreamingService extends NettyStreamingService<DeribitWsNotification> {
 
-  /** Deribit accepts 10-300s; 30s matches the rate distributor's proven setting. */
+  /** Deribit accepts 10-300 seconds (venue guidance on the 2026-08-20 traffic complaint). */
   static final int HEARTBEAT_INTERVAL_SECONDS = 30;
 
   protected final ObjectMapper objectMapper = Config.getInstance().getObjectMapper();
 
   public DeribitStreamingService(String apiUri) {
-    super(apiUri, Integer.MAX_VALUE);
+    // Read-idle sits above the heartbeat cadence: with heartbeats flowing a healthy socket is
+    // never idle, so the protocol ping frames Deribit ignores are no longer sent.
+    super(apiUri, Integer.MAX_VALUE, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_RETRY_DURATION,
+        HEARTBEAT_INTERVAL_SECONDS * 2);
   }
 
   /**
-   * Arms Deribit's application heartbeat after every completed open (first connect and every
-   * auto-reconnect). Protocol-level ping frames do not count as activity for Deribit's heartbeat
-   * mechanism, so without this the server drops the connection after the heartbeat timeout.
+   * Arms Deribit's application heartbeat after every completed open — the first connect and
+   * every auto-reconnect. Deribit drops a silent connection: protocol-level ping frames do not
+   * count as activity, only this JSON exchange keeps the socket alive and surfaces a dead one
+   * as a close.
    */
   @Override
   protected Completable openConnection() {
