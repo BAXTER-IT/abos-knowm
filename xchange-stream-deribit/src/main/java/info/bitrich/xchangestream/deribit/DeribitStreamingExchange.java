@@ -2,7 +2,6 @@ package info.bitrich.xchangestream.deribit;
 
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
-import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.deribit.config.Config;
 import io.reactivex.rxjava3.core.Completable;
@@ -12,27 +11,25 @@ import org.knowm.xchange.deribit.v2.DeribitExchange;
 @Getter
 public class DeribitStreamingExchange extends DeribitExchange implements StreamingExchange {
 
-  private DeribitStreamingService publicStreamingService;
   private DeribitPrivateStreamingService privateStreamingService;
-
-  private StreamingMarketDataService streamingMarketDataService;
   private StreamingTradeService streamingTradeService;
 
+  /**
+   * Opens the private (execution-report) socket only. Deribit market data is deliberately not
+   * served by this connector — the rate distributor owns its own market-data websocket — so no
+   * public socket is opened here, and {@link #disconnect()} closes exactly what was opened.
+   */
   @Override
   public Completable connect(ProductSubscription... args) {
-    String wsUrl = getWsUrl();
-
-    publicStreamingService = new DeribitStreamingService(wsUrl);
-
-    privateStreamingService = new DeribitPrivateStreamingService(wsUrl, exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
-    privateStreamingService.connect().blockingAwait();
-
-    applyStreamingSpecification(exchangeSpecification, publicStreamingService);
-
-    streamingMarketDataService = new DeribitStreamingMarketDataService(publicStreamingService);
+    privateStreamingService = createPrivateStreamingService(getWsUrl());
+    applyStreamingSpecification(exchangeSpecification, privateStreamingService);
     streamingTradeService = new DeribitStreamingTradeService(privateStreamingService);
+    return privateStreamingService.connect();
+  }
 
-    return publicStreamingService.connect();
+  /** Test seam: lets a test substitute a recording private service. */
+  DeribitPrivateStreamingService createPrivateStreamingService(String wsUrl) {
+    return new DeribitPrivateStreamingService(wsUrl, exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
   }
 
   /**
@@ -53,20 +50,19 @@ public class DeribitStreamingExchange extends DeribitExchange implements Streami
 
   @Override
   public Completable disconnect() {
-    DeribitStreamingService service = publicStreamingService;
-    publicStreamingService = null;
-    streamingMarketDataService = null;
+    DeribitPrivateStreamingService service = privateStreamingService;
+    privateStreamingService = null;
     streamingTradeService = null;
-    return service.disconnect();
+    return service == null ? Completable.complete() : service.disconnect();
   }
 
   @Override
   public boolean isAlive() {
-    return publicStreamingService != null && publicStreamingService.isSocketOpen();
+    return privateStreamingService != null && privateStreamingService.isSocketOpen();
   }
 
   @Override
   public void useCompressedMessages(boolean compressedMessages) {
-    publicStreamingService.useCompressedMessages(compressedMessages);
+    privateStreamingService.useCompressedMessages(compressedMessages);
   }
 }
