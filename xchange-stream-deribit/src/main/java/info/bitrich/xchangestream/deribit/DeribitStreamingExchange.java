@@ -16,8 +16,7 @@ public class DeribitStreamingExchange extends DeribitExchange implements Streami
 
   /**
    * Opens the private (execution-report) socket only. Deribit market data is deliberately not
-   * served by this connector — the rate distributor owns its own market-data websocket — so no
-   * public socket is opened here, and {@link #disconnect()} closes exactly what was opened.
+   * served by this connector — it is consumed elsewhere in the stack, never from here.
    */
   @Override
   public Completable connect(ProductSubscription... args) {
@@ -50,10 +49,13 @@ public class DeribitStreamingExchange extends DeribitExchange implements Streami
 
   @Override
   public Completable disconnect() {
-    DeribitPrivateStreamingService service = privateStreamingService;
-    privateStreamingService = null;
-    streamingTradeService = null;
-    return service == null ? Completable.complete() : service.disconnect();
+    // Deferred so the socket is forgotten only when the close actually runs, not at call time.
+    return Completable.defer(() -> {
+      DeribitPrivateStreamingService service = privateStreamingService;
+      privateStreamingService = null;
+      streamingTradeService = null;
+      return service == null ? Completable.complete() : service.disconnect();
+    });
   }
 
   @Override
