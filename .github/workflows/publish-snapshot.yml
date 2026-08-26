@@ -80,3 +80,5 @@ jobs:
           fi
           mvn clean deploy --no-transfer-progress --batch-mode \
             --settings /tmp/publish-settings.xml -Dfmt.skip=true $ARGS
+
+# (registration nudge: file re-pushed so the workflows API indexes it)
