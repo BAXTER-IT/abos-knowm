@@ -1,0 +1,82 @@
+# Publish any branch's SNAPSHOT artifacts to Nexus, on demand.
+#
+# Why this exists: the push-triggered publish (maven.yml) only fires on `develop`,
+# but ABOS consumes 6.1.0-SNAPSHOT, which lives on `feature/phase1` — so the branch
+# that matters cannot publish itself, and every publish has been someone's laptop
+# and personal Maven settings. This makes it a button.
+#
+# Credentials: the same repo secrets the push workflow uses. NOTE the server-id
+# mismatch this workflow papers over deliberately: the branch poms deploy to id
+# `nexus-snapshot-repository` / `nexus-stable-repository`, while the committed
+# etc/settings.xml only credentials `sonatype-nexus-snapshots` (upstream's id).
+# A settings file mapping the BAXTER ids is generated here instead of editing the
+# committed one, which upstream-tracking branches share with knowm/XChange.
+name: Publish snapshot from a branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch (or ref) to publish, e.g. feature/phase1"
+        required: true
+        default: "feature/phase1"
+      modules:
+        description: "Comma-separated modules (-pl, built with -am). Empty = whole reactor."
+        required: false
+        default: ""
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Refuse to publish a non-SNAPSHOT version
+        run: |
+          V=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec 2>/dev/null || true)
+          echo "reactor version: $V"
+          case "$V" in
+            *-SNAPSHOT) ;;
+            *) echo "::error::$V is not a SNAPSHOT — releases do not go through this workflow"; exit 1 ;;
+          esac
+
+      - name: Write settings for the BAXTER Nexus server ids
+        run: |
+          cat > /tmp/publish-settings.xml <<'SETTINGS'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>nexus-snapshot-repository</id>
+                <username>${env.CI_DEPLOY_USERNAME}</username>
+                <password>${env.CI_DEPLOY_PASSWORD}</password>
+              </server>
+              <server>
+                <id>nexus-stable-repository</id>
+                <username>${env.CI_DEPLOY_USERNAME}</username>
+                <password>${env.CI_DEPLOY_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
+
+      - name: Deploy
+        env:
+          CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+          CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.modules }}" ]; then
+            ARGS="-pl ${{ inputs.modules }} -am"
+          fi
+          mvn clean deploy --no-transfer-progress --batch-mode \
+            --settings /tmp/publish-settings.xml -Dfmt.skip=true $ARGS
