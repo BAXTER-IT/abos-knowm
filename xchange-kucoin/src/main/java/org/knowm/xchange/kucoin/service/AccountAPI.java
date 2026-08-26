@@ -18,6 +18,7 @@ import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
 import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
 import org.knowm.xchange.kucoin.dto.response.AccountLedgersResponse;
 import org.knowm.xchange.kucoin.dto.response.AccountResponse;
+import org.knowm.xchange.kucoin.dto.response.FuturesAccountOverviewResponse;
 import org.knowm.xchange.kucoin.dto.response.InternalTransferResponse;
 import org.knowm.xchange.kucoin.dto.response.KucoinResponse;
 import org.knowm.xchange.kucoin.dto.response.Pagination;
@@ -51,6 +52,29 @@ public interface AccountAPI {
       @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
       @QueryParam("currency") String currency,
       @QueryParam("type") String type)
+      throws IOException, KucoinException;
+
+  /**
+   * Get the futures wallet for a single currency.
+   *
+   * <p>Futures host only: this endpoint returns 404 on the spot host, as
+   * {@code /api/v1/accounts} does on the futures host. The exchange's base URI must
+   * point at the futures host before calling this.
+   *
+   * @param currency The code of the currency, e.g. USDT.
+   * @return The futures wallet.
+   * @throws IOException on socket errors.
+   * @throws KucoinApiException when errors are returned from the exchange.
+   */
+  @GET
+  @Path("v1/account-overview")
+  KucoinResponse<FuturesAccountOverviewResponse> getFuturesAccountOverview(
+      @HeaderParam(APIConstants.API_HEADER_KEY) String apiKey,
+      @HeaderParam(APIConstants.API_HEADER_SIGN) ParamsDigest signature,
+      @HeaderParam(APIConstants.API_HEADER_TIMESTAMP) SynchronizedValueFactory<Long> nonce,
+      @HeaderParam(APIConstants.API_HEADER_PASSPHRASE) String apiPassphrase,
+      @HeaderParam(APIConstants.API_HEADER_KEY_VERSION) String apiKeyVersion,
+      @QueryParam("currency") String currency)
       throws IOException, KucoinException;
 
   @POST

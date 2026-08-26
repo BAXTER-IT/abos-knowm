@@ -12,6 +12,7 @@ import org.knowm.xchange.kucoin.dto.request.CreateDepositAddressApiRequest;
 import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
 import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
 import org.knowm.xchange.kucoin.dto.response.AccountLedgersResponse;
+import org.knowm.xchange.kucoin.dto.response.FuturesAccountOverviewResponse;
 import org.knowm.xchange.kucoin.dto.response.ApplyWithdrawResponse;
 import org.knowm.xchange.kucoin.dto.response.DepositAddressResponse;
 import org.knowm.xchange.kucoin.dto.response.DepositResponse;
@@ -41,6 +42,26 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
         .call()
         .getData();
   }
+  /**
+   * The futures wallet for a single currency.
+   *
+   * <p>The {@code /contractAccount/wallet} websocket channel only emits on change,
+   * so a caller needs this to establish a starting balance and to re-synchronise
+   * after a reconnection. Requires an exchange whose base URI points at the futures
+   * host — see {@link AccountAPI#getFuturesAccountOverview}.
+   */
+  public FuturesAccountOverviewResponse getKucoinFuturesAccountOverview(String currency)
+      throws IOException {
+    return decorateApiCall(
+            () ->
+                accountApi.getFuturesAccountOverview(
+                    apiKey, digest, nonceFactory, passphrase, "2", currency))
+        .withRetry(retry("futuresAccountOverview"))
+        .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+        .call()
+        .getData();
+  }
+
   public Pagination<SubAccountsResponse> getKucoinSubAccounts(Integer pageSize, Integer currentPage)
       throws IOException {
     checkAuthenticated();
