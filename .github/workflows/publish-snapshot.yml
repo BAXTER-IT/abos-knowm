@@ -27,7 +27,7 @@ on:
 
 jobs:
   publish:
-    runs-on: [ self-hosted, abos-build ]
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -51,15 +51,39 @@ jobs:
           esac
 
       - name: Deploy
-        # No --settings: the abos-build runner's machine-level Maven settings hold
-        # the deploy credential for nexus-snapshot-repository / nexus-stable-repository
-        # (the same mechanism ABOS's EAR publish uses). The repo secrets named
-        # CI_DEPLOY_* were tried first and 401'd — they do not hold Nexus rights.
+        # Credential lineage, each variant established by a run:
+        #   CI_DEPLOY_* repo secrets -> 401 (no Nexus rights);
+        #   abos-build fleet -> queued forever (org runners exclude this public repo).
+        # This uses the org-wide Nexus identity the other repos' CI uses: user
+        # `github` with the NEXUS_PASSWORD secret, in a settings file generated for
+        # the server ids the branch poms deploy to. If that secret does not reach
+        # this repository either, the guard below fails loudly with the exact fix.
         env:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: |
+          if [ -z "$NEXUS_PASSWORD" ]; then
+            echo "::error::NEXUS_PASSWORD is empty here — the org secret is not shared with this repository. Share it (or add a repo secret of that name) and re-run."
+            exit 1
+          fi
+          cat > /tmp/publish-settings.xml <<'SETTINGS'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>nexus-snapshot-repository</id>
+                <username>github</username>
+                <password>${env.NEXUS_PASSWORD}</password>
+              </server>
+              <server>
+                <id>nexus-stable-repository</id>
+                <username>github</username>
+                <password>${env.NEXUS_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
           ARGS=""
           if [ -n "${{ inputs.modules }}" ]; then
             ARGS="-pl ${{ inputs.modules }} -am"
           fi
-          mvn clean deploy --no-transfer-progress --batch-mode -Dfmt.skip=true $ARGS
+          mvn clean deploy --no-transfer-progress --batch-mode \
+            --settings /tmp/publish-settings.xml -Dfmt.skip=true $ARGS
