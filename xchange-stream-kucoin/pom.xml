@@ -33,5 +33,12 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- This module's first tests. assertj comes from the parent's shared set. -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

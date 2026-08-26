@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.derivative.FuturesContract;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
@@ -110,6 +111,62 @@ public class KucoinStreamingAdapters {
 
     throw new IllegalArgumentException(
         "Cannot determine base/quote for KuCoin futures symbol: " + symbol);
+  }
+
+  /**
+   * A spot balance frame to a {@link Balance}: the total, available and held amounts
+   * as they stand after the change.
+   *
+   * <p>Not the delta. {@code availableChange} states how much moved and is the right
+   * input for a {@link FundingRecord}; it is the wrong input for a balance.
+   *
+   * <p>A reported zero is preserved as zero rather than collapsed to null, so a
+   * caller can distinguish a drained account from an absent reading.
+   */
+  public static Balance adaptBalance(KucoinWsSpotBalanceData in) {
+    if (in == null) {
+      return null;
+    }
+
+    Balance.Builder builder =
+        Balance.builder()
+            .currency(in.getCurrency())
+            .total(in.getTotal())
+            .available(in.getAvailable())
+            .frozen(in.getHold());
+    if (in.getTime() != null) {
+      builder.timestamp(new Date(in.getTime()));
+    }
+    return builder.build();
+  }
+
+  /**
+   * A futures wallet frame to a {@link Balance}, taking the wallet balance as the
+   * total.
+   *
+   * <p>Not {@code equity}, which includes unrealised profit and loss on open
+   * positions and so varies with the market while no funds are transferred.
+   *
+   * <p>{@link Balance} has no room for the rest of the frame — the cross and
+   * isolated margin breakdown, the maximum withdrawable, and the {@code version}
+   * counter. Callers needing those should consume
+   * {@code KucoinStreamingAccountService#getRawFuturesWalletChanges} instead.
+   */
+  public static Balance adaptBalance(KucoinWsFuturesBalanceData in) {
+    if (in == null) {
+      return null;
+    }
+
+    Balance.Builder builder =
+        Balance.builder()
+            .currency(in.getCurrency())
+            .total(in.getWalletBalance())
+            .available(in.getAvailableBalance())
+            .frozen(in.getHoldBalance());
+    if (in.getTimestamp() != null) {
+      builder.timestamp(new Date(in.getTimestamp()));
+    }
+    return builder.build();
   }
 
   public static FundingRecord adaptFundingRecord(KucoinWsSpotBalanceData in) {

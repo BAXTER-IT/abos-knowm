@@ -1,0 +1,27 @@
+{
+  "channelType": "private",
+  "data": {
+    "availableBalance": "50",
+    "availableMargin": "50",
+    "crossOrderMargin": "0",
+    "crossPosMargin": "0",
+    "crossUnPnl": "0",
+    "currency": "USDT",
+    "equity": "50",
+    "holdBalance": "0",
+    "isolatedFundingFeeMargin": "0",
+    "isolatedOrderMargin": "0",
+    "isolatedPosMargin": "0",
+    "isolatedUnPnl": "0",
+    "maxWithdrawAmount": "50",
+    "timestamp": "1787754633355",
+    "totalCrossMargin": "50",
+    "version": "18",
+    "walletBalance": "50"
+  },
+  "id": "6a8ef889c8c65100012e6701",
+  "subject": "walletBalance.change",
+  "topic": "/contractAccount/wallet",
+  "type": "message",
+  "userId": "6a745823608d400001570a53"
+}
