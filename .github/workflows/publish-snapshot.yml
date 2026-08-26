@@ -27,7 +27,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, abos-build ]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -50,35 +50,16 @@ jobs:
             *) echo "::error::$V is not a SNAPSHOT — releases do not go through this workflow"; exit 1 ;;
           esac
 
-      - name: Write settings for the BAXTER Nexus server ids
-        run: |
-          cat > /tmp/publish-settings.xml <<'SETTINGS'
-          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
-            <servers>
-              <server>
-                <id>nexus-snapshot-repository</id>
-                <username>${env.CI_DEPLOY_USERNAME}</username>
-                <password>${env.CI_DEPLOY_PASSWORD}</password>
-              </server>
-              <server>
-                <id>nexus-stable-repository</id>
-                <username>${env.CI_DEPLOY_USERNAME}</username>
-                <password>${env.CI_DEPLOY_PASSWORD}</password>
-              </server>
-            </servers>
-          </settings>
-          SETTINGS
-
       - name: Deploy
+        # No --settings: the abos-build runner's machine-level Maven settings hold
+        # the deploy credential for nexus-snapshot-repository / nexus-stable-repository
+        # (the same mechanism ABOS's EAR publish uses). The repo secrets named
+        # CI_DEPLOY_* were tried first and 401'd — they do not hold Nexus rights.
         env:
-          CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-          CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: |
           ARGS=""
           if [ -n "${{ inputs.modules }}" ]; then
             ARGS="-pl ${{ inputs.modules }} -am"
           fi
-          mvn clean deploy --no-transfer-progress --batch-mode \
-            --settings /tmp/publish-settings.xml -Dfmt.skip=true $ARGS
-
-# (registration nudge: file re-pushed so the workflows API indexes it)
+          mvn clean deploy --no-transfer-progress --batch-mode -Dfmt.skip=true $ARGS
