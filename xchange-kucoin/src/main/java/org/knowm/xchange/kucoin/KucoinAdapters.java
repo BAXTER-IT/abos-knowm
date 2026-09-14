@@ -340,9 +340,11 @@ public class KucoinAdapters {
 
   public static UserTrade adaptUserTrade(TradeResponse trade) {
     return UserTrade.builder()
-        .instrument(adaptCurrencyPair(trade.getSymbol()))
+        // A futures contract (XBTUSDTM) is not a BASE-QUOTE pair; its name stays on rawJson.
+        .instrument(trade.getSymbol().contains("-") ? adaptCurrencyPair(trade.getSymbol()) : null)
         .feeAmount(trade.getFee())
-        .feeCurrency(Currency.getInstance(trade.getFeeCurrency()))
+        .feeCurrency(
+            trade.getFeeCurrency() == null ? null : Currency.getInstance(trade.getFeeCurrency()))
         .id(trade.getTradeId())
         .orderId(trade.getOrderId())
         .originalAmount(trade.getSize())
@@ -350,6 +352,7 @@ public class KucoinAdapters {
         .timestamp(trade.getTradeCreatedAt())
         .type(adaptSide(trade.getSide()))
         .marketParticipant(toMarketParticipant(trade.getLiquidity()))
+        .rawJson(trade.getRawJson())
         .build();
   }
 
