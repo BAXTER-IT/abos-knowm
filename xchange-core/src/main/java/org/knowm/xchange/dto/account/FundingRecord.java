@@ -8,7 +8,9 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.knowm.xchange.currency.Currency;
 
 /**
@@ -456,6 +458,8 @@ public final class FundingRecord implements Serializable {
     }
   }
 
+  @Setter
+  @Accessors(chain = true)
   public static final class Builder {
 
     private String address;
@@ -470,6 +474,11 @@ public final class FundingRecord implements Serializable {
     private Status status;
     private BigDecimal balance;
     private BigDecimal fee;
+    private String fromWallet;
+    private String toWallet;
+    private String fromSubAccount;
+    private String toSubAccount;
+    private String rawJson;
 
     public static Builder from(FundingRecord record) {
       return new Builder()
@@ -487,66 +496,6 @@ public final class FundingRecord implements Serializable {
           .setFee(record.fee);
     }
 
-    public Builder setAddress(String address) {
-      this.address = address;
-      return this;
-    }
-
-    public Builder setAddressTag(String addressTag) {
-      this.addressTag = addressTag;
-      return this;
-    }
-
-    public Builder setDate(Date date) {
-      this.date = date;
-      return this;
-    }
-
-    public Builder setCurrency(Currency currency) {
-      this.currency = currency;
-      return this;
-    }
-
-    public Builder setAmount(BigDecimal amount) {
-      this.amount = amount;
-      return this;
-    }
-
-    public Builder setInternalId(String internalId) {
-      this.internalId = internalId;
-      return this;
-    }
-
-    public Builder setBlockchainTransactionHash(String blockchainTransactionHash) {
-      this.blockchainTransactionHash = blockchainTransactionHash;
-      return this;
-    }
-
-    public Builder setDescription(String description) {
-      this.description = description;
-      return this;
-    }
-
-    public Builder setType(Type type) {
-      this.type = type;
-      return this;
-    }
-
-    public Builder setStatus(Status status) {
-      this.status = status;
-      return this;
-    }
-
-    public Builder setBalance(BigDecimal balance) {
-      this.balance = balance;
-      return this;
-    }
-
-    public Builder setFee(BigDecimal fee) {
-      this.fee = fee;
-      return this;
-    }
-
     public FundingRecord build() {
       return new FundingRecord(
           address,
@@ -560,7 +509,12 @@ public final class FundingRecord implements Serializable {
           status,
           balance,
           fee,
-          description);
+          description,
+          fromWallet,
+          toWallet,
+          fromSubAccount,
+          toSubAccount,
+          rawJson);
     }
   }
 }
