@@ -168,8 +168,9 @@ public class DeribitTradeServiceRaw extends DeribitBaseService {
       Date startTimestamp,
       Date endTimestamp,
       Integer count,
-      Boolean includeOld,
-      String sorting)
+      String sorting,
+      Boolean historical,
+      Integer subaccountId)
       throws IOException {
     return deribitAuthenticated
         .getUserTradesByCurrencyAndTime(
@@ -178,8 +179,9 @@ public class DeribitTradeServiceRaw extends DeribitBaseService {
             startTimestamp.getTime(),
             endTimestamp.getTime(),
             count,
-            includeOld,
             sorting,
+            historical,
+            subaccountId,
             deribitDigest)
         .getResult();
   }

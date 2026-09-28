@@ -1,0 +1,46 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/v2/private/get_user_trades_by_currency_and_time",
+    "queryParameters": {
+      "currency": { "equalTo": "BTC" },
+      "kind": { "equalTo": "option" },
+      "start_timestamp": { "equalTo": "1789689600000" },
+      "end_timestamp": { "equalTo": "1790294400000" },
+      "count": { "equalTo": "1000" },
+      "sorting": { "equalTo": "asc" },
+      "historical": { "equalTo": "true" },
+      "include_old": { "absent": true },
+      "subaccount_id": { "absent": true }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "jsonrpc": "2.0",
+      "result": {
+        "trades": [
+          {
+            "trade_id": "BTC-400000001",
+            "trade_seq": 1,
+            "timestamp": 1789740000000,
+            "instrument_name": "BTC-25DEC26-70000-P",
+            "order_id": "BTC-70000000001",
+            "order_type": "limit",
+            "direction": "buy",
+            "price": 0.021,
+            "amount": 0.1,
+            "index_price": 115000.0,
+            "fee": 0.00003,
+            "fee_currency": "BTC",
+            "tick_direction": 0,
+            "self_trade": false
+          }
+        ],
+        "has_more": false
+      },
+      "testnet": false
+    }
+  }
+}
