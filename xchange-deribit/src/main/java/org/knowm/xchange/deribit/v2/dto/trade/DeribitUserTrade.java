@@ -23,6 +23,10 @@ public class DeribitUserTrade {
    */
   private BigDecimal amount;
 
+  /** Trade size in contract units (optional, may be absent in historical trades) */
+  @JsonProperty("contracts")
+  private BigDecimal contracts;
+
   /** direction, buy or sell */
   @JsonProperty("direction")
   @JsonDeserialize(converter = StringToOrderTypeConverter.class)
