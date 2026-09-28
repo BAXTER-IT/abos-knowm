@@ -161,5 +161,39 @@ class DeribitTradeServiceTest extends DeribitExchangeWiremock {
     assertThat(actual.isHasMore()).isFalse();
   }
 
+  @Test
+  void the_old_seven_argument_form_reads_the_recent_store_and_sends_no_include_old() throws IOException {
+    // the mock only answers the exact endpoint with historical, include_old and subaccount_id all absent
+    @SuppressWarnings("deprecation")
+    DeribitUserTrades actual =
+        ((DeribitTradeServiceRaw) tradeService)
+            .getUserTradesByCurrencyAndTime(
+                "BTC",
+                Kind.OPTIONS,
+                Date.from(Instant.parse("2026-09-18T00:00:00Z")),
+                Date.from(Instant.parse("2026-09-25T00:00:00Z")),
+                1000,
+                true,
+                "asc");
+
+    assertThat(actual.getTrades()).hasSize(1);
+    assertThat(actual.getTrades().get(0).getTradeId()).isEqualTo("BTC-400000002");
+  }
+
+  @Test
+  void trade_history_with_a_time_window_reads_the_recent_store() throws IOException {
+    UserTrades actual =
+        tradeService.getTradeHistory(
+            DeribitTradeHistoryParams.builder()
+                .currency(Currency.BTC)
+                .startTime(Date.from(Instant.parse("2026-09-18T00:00:00Z")))
+                .endTime(Date.from(Instant.parse("2026-09-25T00:00:00Z")))
+                .includeOld(true)
+                .build());
+
+    assertThat(actual.getUserTrades()).hasSize(1);
+    assertThat(actual.getUserTrades().get(0).getId()).isEqualTo("BTC-400000002");
+  }
+
 
 }

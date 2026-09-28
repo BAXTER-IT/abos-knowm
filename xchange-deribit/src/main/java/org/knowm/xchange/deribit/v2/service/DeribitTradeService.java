@@ -283,8 +283,10 @@ public class DeribitTradeService extends DeribitTradeServiceRaw implements Trade
             super.getUserTradesByInstrumentAndTime(
                 instrumentName, startTime, endTime, limit, includeOld, sorting);
       } else if (currency != null) {
-        // Deribit dropped include_old, so it is ignored here; historical=true would skip trades
-        // not yet in the historical store, so this path reads the recent store
+        // Deribit dropped include_old, so it is ignored here. This path reads the recent store,
+        // which keeps only the last 24 hours; historical=true would read the older trades but skip
+        // the ones not yet indexed. A caller who needs a longer window reads both through the raw
+        // service.
         deribitUserTrades =
             super.getUserTradesByCurrencyAndTime(
                 currency, kind, startTime, endTime, limit, sorting, null, null);
