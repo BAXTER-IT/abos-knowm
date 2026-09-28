@@ -259,19 +259,25 @@ public interface DeribitAuthenticated {
    * Retrieves the latest user trades that have occurred for instruments in a specific currency
    * symbol and within given time range.
    *
+   * @param historical optional, false (default) reads the recent store, which keeps a trade for 24
+   *     hours; true reads the historical store, which keeps every trade for good, each showing up
+   *     there after a short delay, so a complete window needs both reads
+   * @param subaccountId optional, a main account's key may read one of its subaccounts (needs the
+   *     key's mainaccount scope)
    * @see <a
-   *     href="https://docs.deribit.com/#private-get_user_trades_by_currency_and_time">docs.deribit.com</a>
+   *     href="https://docs.deribit.com/api-reference/trading/private-get_user_trades_by_currency_and_time">docs.deribit.com</a>
    */
   @GET
-  @Path("get_user_trades_by_currency")
+  @Path("get_user_trades_by_currency_and_time")
   DeribitResponse<DeribitUserTrades> getUserTradesByCurrencyAndTime(
       @QueryParam("currency") String currency,
       @QueryParam("kind") Kind kind,
       @QueryParam("start_timestamp") long startTimestamp,
       @QueryParam("end_timestamp") long endTimestamp,
       @QueryParam("count") Integer count,
-      @QueryParam("include_old") Boolean includeOld,
       @QueryParam("sorting") String sorting,
+      @QueryParam("historical") Boolean historical,
+      @QueryParam("subaccount_id") Integer subaccountId,
       @HeaderParam("Authorization") ParamsDigest auth)
       throws DeribitException, IOException;
 

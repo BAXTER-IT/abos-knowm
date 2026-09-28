@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.deribit.DeribitExchangeWiremock;
+import org.knowm.xchange.deribit.v2.dto.Kind;
+import org.knowm.xchange.deribit.v2.dto.trade.DeribitUserTrades;
 import org.knowm.xchange.derivative.FuturesContract;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderStatus;
@@ -137,6 +139,60 @@ class DeribitTradeServiceTest extends DeribitExchangeWiremock {
             .feeCurrency(Currency.USDC)
             .build();
     assertThat(userTrades.getUserTrades()).first().usingRecursiveComparison().isEqualTo(expected);
+  }
+
+  @Test
+  void trade_history_by_currency_and_time_reads_the_historical_store() throws IOException {
+    // the mock only answers the exact endpoint with historical=true and no include_old
+    DeribitUserTrades actual =
+        ((DeribitTradeServiceRaw) tradeService)
+            .getUserTradesByCurrencyAndTime(
+                "BTC",
+                Kind.OPTIONS,
+                Date.from(Instant.parse("2026-09-18T00:00:00Z")),
+                Date.from(Instant.parse("2026-09-25T00:00:00Z")),
+                1000,
+                "asc",
+                true,
+                null);
+
+    assertThat(actual.getTrades()).hasSize(1);
+    assertThat(actual.getTrades().get(0).getTradeId()).isEqualTo("BTC-400000001");
+    assertThat(actual.isHasMore()).isFalse();
+  }
+
+  @Test
+  void the_old_seven_argument_form_reads_the_recent_store_and_sends_no_include_old() throws IOException {
+    // the mock only answers the exact endpoint with historical, include_old and subaccount_id all absent
+    @SuppressWarnings("deprecation")
+    DeribitUserTrades actual =
+        ((DeribitTradeServiceRaw) tradeService)
+            .getUserTradesByCurrencyAndTime(
+                "BTC",
+                Kind.OPTIONS,
+                Date.from(Instant.parse("2026-09-18T00:00:00Z")),
+                Date.from(Instant.parse("2026-09-25T00:00:00Z")),
+                1000,
+                true,
+                "asc");
+
+    assertThat(actual.getTrades()).hasSize(1);
+    assertThat(actual.getTrades().get(0).getTradeId()).isEqualTo("BTC-400000002");
+  }
+
+  @Test
+  void trade_history_with_a_time_window_reads_the_recent_store() throws IOException {
+    UserTrades actual =
+        tradeService.getTradeHistory(
+            DeribitTradeHistoryParams.builder()
+                .currency(Currency.BTC)
+                .startTime(Date.from(Instant.parse("2026-09-18T00:00:00Z")))
+                .endTime(Date.from(Instant.parse("2026-09-25T00:00:00Z")))
+                .includeOld(true)
+                .build());
+
+    assertThat(actual.getUserTrades()).hasSize(1);
+    assertThat(actual.getUserTrades().get(0).getId()).isEqualTo("BTC-400000002");
   }
 
 
