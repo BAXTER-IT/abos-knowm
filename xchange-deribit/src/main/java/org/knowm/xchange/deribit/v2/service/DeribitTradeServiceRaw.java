@@ -162,6 +162,25 @@ public class DeribitTradeServiceRaw extends DeribitBaseService {
         .getResult();
   }
 
+  /**
+   * @deprecated Deribit dropped {@code include_old}; this form reads the recent store only (trades
+   *     of the last 24 hours). Use the eight-argument form and choose the store with {@code
+   *     historical}. Kept so callers built against the old form still compile.
+   */
+  @Deprecated
+  public DeribitUserTrades getUserTradesByCurrencyAndTime(
+      String currency,
+      Kind kind,
+      Date startTimestamp,
+      Date endTimestamp,
+      Integer count,
+      Boolean includeOld,
+      String sorting)
+      throws IOException {
+    return getUserTradesByCurrencyAndTime(
+        currency, kind, startTimestamp, endTimestamp, count, sorting, null, null);
+  }
+
   public DeribitUserTrades getUserTradesByCurrencyAndTime(
       String currency,
       Kind kind,

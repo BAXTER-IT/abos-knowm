@@ -260,8 +260,10 @@ public interface DeribitAuthenticated {
    * symbol and within given time range.
    *
    * @param historical optional, false (default) reads the recent store, which keeps a trade for 24
-   *     hours; true reads the historical store, which keeps every trade after a short indexing delay
-   * @param subaccountId optional, a main account's key may read one of its subaccounts
+   *     hours; true reads the historical store, which keeps every trade for good, each showing up
+   *     there after a short delay, so a complete window needs both reads
+   * @param subaccountId optional, a main account's key may read one of its subaccounts (needs the
+   *     key's mainaccount scope)
    * @see <a
    *     href="https://docs.deribit.com/api-reference/trading/private-get_user_trades_by_currency_and_time">docs.deribit.com</a>
    */
