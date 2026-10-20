@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.reactivex.rxjava3.core.Completable;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -60,5 +61,23 @@ class KucoinStreamingExchangeConnectLimitTest {
     verify(service, never()).setAutoReconnect(false);
     exchange.disconnect().blockingAwait();
     verify(service).disconnect();
+  }
+
+  @Test
+  void aRealServiceThatNeverConnected_closesWithoutCrashing() {
+    KucoinStreamingService service = new KucoinStreamingService("wss://127.0.0.1:1/endpoint", 18_000, false);
+
+    assertThat(service.disconnect().blockingAwait(5, TimeUnit.SECONDS)).isTrue();
+  }
+
+  @Test
+  void aRealConnectThatIsRefused_failsWithTheConnectError_andLeavesNothingBehind() {
+    KucoinStreamingService service = new KucoinStreamingService("wss://127.0.0.1:1/endpoint", 18_000, false);
+
+    assertThatThrownBy(() -> exchange.connectService(service, "public", 5_000))
+        .hasRootCauseInstanceOf(java.net.ConnectException.class);
+
+    assertThat(exchange.isAlive()).isFalse();
+    assertThat(service.isSocketOpen()).isFalse();
   }
 }

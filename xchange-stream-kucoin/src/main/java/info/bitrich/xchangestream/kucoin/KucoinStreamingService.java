@@ -56,7 +56,10 @@ public class KucoinStreamingService extends JsonNettyStreamingService {
 
   @Override
   public Completable disconnect() {
-    pingPongSubscription.dispose();
+    // ABOS hub #908: the ping timer exists only after a successful connect; a failed one is closed too.
+    if (pingPongSubscription != null) {
+      pingPongSubscription.dispose();
+    }
     return super.disconnect();
   }
 

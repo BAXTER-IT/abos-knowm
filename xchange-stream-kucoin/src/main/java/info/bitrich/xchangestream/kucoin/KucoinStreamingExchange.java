@@ -92,10 +92,10 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
   }
 
   /**
-   * ABOS hub #908: dials one websocket within a time limit. The service is recorded before dialling so
-   * {@link #disconnect()} can always reach it; on a failure or a timeout its auto-redial is switched off,
-   * it is closed and dropped, and the failure is thrown, so a failed attempt never lingers redialling
-   * with its own threads.
+   * ABOS hub #908: connects one websocket within a time limit. The service is recorded first, so
+   * {@link #disconnect()} can always reach it. On a failure or a timeout its automatic reconnect is
+   * switched off, it is closed and dropped, and the error is thrown, so a failed attempt never keeps
+   * reconnecting on its own threads.
    */
   void connectService(KucoinStreamingService service, String which, long limitMs) {
     services.add(service);
@@ -106,6 +106,7 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
       }
     } catch (RuntimeException | Error e) {
       logger.warn("encountered error while connecting the {} websocket: {}", which, e.toString());
+      // Off before closing; the close also shuts the service's threads down, cancelling a queued redial.
       service.setAutoReconnect(false);
       services.remove(service);
       try {
