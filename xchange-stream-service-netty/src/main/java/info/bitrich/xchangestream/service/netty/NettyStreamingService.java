@@ -509,7 +509,8 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
     subjectIdle.onNext(1);
     quietIdleChecks = firstSinceLastMessage ? 1 : quietIdleChecks + 1;
     int silentSeconds = quietIdleChecks * idleTimeoutSeconds;
-    // Only once the websocket is open: an unanswered opening is the caller's connect limit to handle.
+    // Only once the websocket is open: this rule is about a line that went quiet, not about an
+    // opening that is never answered.
     if (open && quietCloseSeconds > 0 && silentSeconds >= quietCloseSeconds) {
       // ABOS hub #906: a connection that stops delivering without closing went unnoticed for about
       // 15 minutes. Closing it here runs the normal reconnect, which subscribes again.
