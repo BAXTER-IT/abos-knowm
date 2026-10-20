@@ -69,6 +69,19 @@ class DeribitQuietConnectionTest {
   }
 
   @Test
+  void aPlainHeartbeatArmsTheCheckToo() {
+    Service service = new Service();
+    EmbeddedChannel channel = service.channel();
+    service.enableHeartbeat();
+    service.messageHandler(
+        "{\"jsonrpc\":\"2.0\",\"method\":\"heartbeat\",\"params\":{\"type\":\"heartbeat\"}}");
+
+    silence(channel, 2); // 90 s
+
+    assertFalse(channel.isOpen());
+  }
+
+  @Test
   void withoutAnyHeartbeat_theConnectionIsNeverClosedByThisRule() {
     Service service = new Service();
     EmbeddedChannel channel = service.channel();

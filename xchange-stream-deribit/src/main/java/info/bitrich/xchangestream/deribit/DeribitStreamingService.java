@@ -105,8 +105,9 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
 
       // Answered at the raw layer; a heartbeat never reaches a channel.
       if ("heartbeat".equals(jsonNode.path("method").asText())) {
+        // ABOS hub #906: any heartbeat proves Deribit keeps this connection alive; arm the quiet check.
+        setQuietCloseSeconds(QUIET_CLOSE_SECONDS);
         if ("test_request".equals(jsonNode.path("params").path("type").asText())) {
-          setQuietCloseSeconds(QUIET_CLOSE_SECONDS);
           ObjectNode reply = objectMapper.createObjectNode();
           reply.put("jsonrpc", "2.0");
           reply.put("method", "public/test");
