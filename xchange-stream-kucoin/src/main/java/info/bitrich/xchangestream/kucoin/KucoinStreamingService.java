@@ -24,6 +24,9 @@ public class KucoinStreamingService extends JsonNettyStreamingService {
 
   public KucoinStreamingService(String apiUrl, int pingInterval, boolean privateChannel) {
     super(apiUrl);
+    // ABOS hub #906: KuCoin answers our ping (its interval comes from KuCoin, about 18 s); a minute,
+    // or three ping intervals if longer, of nothing means a dead line.
+    setQuietCloseSeconds(Math.max(60, 3 * pingInterval / 1000));
 
     this.privateChannel = privateChannel;
     pingPongSrc = Observable.interval(pingInterval, pingInterval, TimeUnit.MILLISECONDS);

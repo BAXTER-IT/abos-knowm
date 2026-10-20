@@ -31,6 +31,8 @@ public class ThalexStreamingService extends JsonNettyStreamingService {
 
   public ThalexStreamingService(String apiUrl, ExchangeSpecification exchangeSpecification) {
     super(apiUrl);
+    // ABOS hub #906: Thalex is pinged every 30 s; 90 s of nothing means a dead line.
+    setQuietCloseSeconds(90);
     this.exchangeSpecification = exchangeSpecification;
   }
 

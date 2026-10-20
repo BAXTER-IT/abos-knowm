@@ -90,6 +90,11 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
   private final Duration retryDuration;
   private final Duration connectionTimeout;
   private final int idleTimeoutSeconds;
+  // ABOS hub #906: close a connection after this many seconds with nothing received; 0 = never.
+  private int quietCloseSeconds;
+  // Idle checks in a row with nothing received. Only touched on the connection's event loop; the
+  // first idle check of each new connection resets it.
+  private int quietIdleChecks;
   private volatile NioEventLoopGroup eventLoopGroup;
   protected final Map<String, Subscription> channels = new ConcurrentHashMap<>();
   private boolean compressedMessages = false;
@@ -500,9 +505,40 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
     ctx.writeAndFlush(new PingWebSocketFrame());
   }
 
-  private void onIdle(ChannelHandlerContext ctx) {
+  private void onIdle(ChannelHandlerContext ctx, boolean firstSinceLastMessage, boolean open) {
     subjectIdle.onNext(1);
+    quietIdleChecks = firstSinceLastMessage ? 1 : quietIdleChecks + 1;
+    int silentSeconds = quietIdleChecks * idleTimeoutSeconds;
+    // Only once the websocket is open: this rule is about a line that went quiet, not about an
+    // opening that is never answered.
+    if (open && quietCloseSeconds > 0 && silentSeconds >= quietCloseSeconds) {
+      // ABOS hub #906: a connection that stops delivering without closing went unnoticed for about
+      // 15 minutes. Closing it here runs the normal reconnect, which subscribes again.
+      LOG.warn(
+          "{} websocket to {} received nothing for {} s; closing it",
+          getClass().getSimpleName(),
+          uri.getHost(),
+          silentSeconds);
+      quietIdleChecks = 0;
+      ctx.close();
+      return;
+    }
     handleIdle(ctx);
+  }
+
+  /**
+   * ABOS hub #906: closes the connection once nothing has been received for at least this many
+   * seconds, so the automatic reconnect (when on) takes over. Checked at each idle check, so the
+   * close comes at the first multiple of the idle time at or above this. Needs an idle time above
+   * 0. Set it above the exchange's own ping or heartbeat cadence. Off (0) unless an exchange sets
+   * it.
+   */
+  protected void setQuietCloseSeconds(int quietCloseSeconds) {
+    this.quietCloseSeconds = quietCloseSeconds;
+  }
+
+  protected int getIdleTimeoutSeconds() {
+    return idleTimeoutSeconds;
   }
 
   /**
@@ -583,7 +619,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
       }
       IdleStateEvent e = (IdleStateEvent) evt;
       if (e.state().equals(IdleState.READER_IDLE)) {
-        onIdle(ctx);
+        onIdle(ctx, e.isFirst(), handshaker.isHandshakeComplete());
       }
     }
   }
