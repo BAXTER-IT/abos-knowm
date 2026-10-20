@@ -7,8 +7,9 @@ import info.bitrich.xchangestream.service.netty.NettyStreamingService;
 import info.bitrich.xchangestream.util.Events;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.knowm.xchange.kucoin.KucoinExchange;
 import org.knowm.xchange.kucoin.dto.response.WebsocketResponse;
@@ -21,8 +22,15 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
   private KucoinStreamingTradeService streamingTradeService;
   private KucoinStreamingAccountService streamingAccountService;
 
-  private final List<NettyStreamingService<?>> services = new ArrayList<>();
+  private final List<NettyStreamingService<?>> services = new CopyOnWriteArrayList<>();
   private Runnable onApiCall;
+
+  /**
+   * ABOS hub #908: how long one websocket connect may take. Netty's own timeout covers only opening
+   * the socket, not the websocket handshake, so an unanswered handshake used to wait forever on the
+   * caller's thread (2026-10-16: one account had no fills for 4 h 20 min).
+   */
+  static final long CONNECT_LIMIT_MS = 30_000L;
 
   @Override
   protected void initServices() {
@@ -50,15 +58,7 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
                 publicStreamingService =
                     new KucoinStreamingService(url, instanceServer.getPingInterval(), false);
                 applyStreamingSpecification(getExchangeSpecification(), publicStreamingService);
-                publicStreamingService
-                    .connect()
-                    .doOnError(
-                        ex ->
-                            logger.warn(
-                                "encountered error while subscribing to public websocket", ex))
-                    .blockingAwait();
-
-                services.add(publicStreamingService);
+                connectService(publicStreamingService, "public", CONNECT_LIMIT_MS);
                 streamingMarketDataService =
                     new KucoinStreamingMarketDataService(
                         publicStreamingService, getMarketDataService(), onApiCall);
@@ -82,21 +82,41 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
                 privateStreamingService =
                     new KucoinStreamingService(url, instanceServer.getPingInterval(), true);
                 applyStreamingSpecification(getExchangeSpecification(), privateStreamingService);
-                privateStreamingService
-                    .connect()
-                    .doOnError(
-                        ex ->
-                            logger.warn(
-                                "encountered error while subscribing to private websocket", ex))
-                    .blockingAwait();
-
-                services.add(privateStreamingService);
+                connectService(privateStreamingService, "private", CONNECT_LIMIT_MS);
                 streamingTradeService = new KucoinStreamingTradeService(privateStreamingService);
                 streamingAccountService = new KucoinStreamingAccountService(privateStreamingService);
               });
     }
 
     return complete;
+  }
+
+  /**
+   * ABOS hub #908: dials one websocket within a time limit. The service is recorded before dialling so
+   * {@link #disconnect()} can always reach it; on a failure or a timeout its auto-redial is switched off,
+   * it is closed and dropped, and the failure is thrown, so a failed attempt never lingers redialling
+   * with its own threads.
+   */
+  void connectService(KucoinStreamingService service, String which, long limitMs) {
+    services.add(service);
+    try {
+      if (!service.connect().blockingAwait(limitMs, TimeUnit.MILLISECONDS)) {
+        throw new IllegalStateException(
+            "KuCoin " + which + " websocket did not connect within " + limitMs / 1000 + " s");
+      }
+    } catch (RuntimeException | Error e) {
+      logger.warn("encountered error while connecting the {} websocket: {}", which, e.toString());
+      service.setAutoReconnect(false);
+      services.remove(service);
+      try {
+        if (!service.disconnect().blockingAwait(limitMs, TimeUnit.MILLISECONDS)) {
+          logger.warn("closing the failed {} websocket did not finish within {} s", which, limitMs / 1000);
+        }
+      } catch (RuntimeException closeFailure) {
+        logger.warn("closing the failed {} websocket failed: {}", which, closeFailure.toString());
+      }
+      throw e;
+    }
   }
 
   @Override
