@@ -29,5 +29,12 @@
             <artifactId>xchange-stream-service-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+        <!-- This module's first tests (ABOS hub #906). assertj and mockito come from the parent's shared set. -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

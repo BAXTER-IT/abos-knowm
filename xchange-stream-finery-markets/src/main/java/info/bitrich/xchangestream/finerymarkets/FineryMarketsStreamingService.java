@@ -39,6 +39,8 @@ public class FineryMarketsStreamingService extends JsonNettyStreamingService {
 
   public FineryMarketsStreamingService(String apiUrl, ExchangeSpecification exchangeSpecification) {
     super(apiUrl);
+    // ABOS hub #906: Finery is pinged every 30 s; a minute of nothing means a dead line.
+    setQuietCloseSeconds(60);
     this.exchangeSpecification = exchangeSpecification;
   }
 

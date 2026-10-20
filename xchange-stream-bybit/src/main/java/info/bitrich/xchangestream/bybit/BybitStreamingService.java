@@ -38,6 +38,8 @@ public class BybitStreamingService extends JsonNettyStreamingService {
 
   public BybitStreamingService(String apiUrl, ExchangeSpecification exchangeSpecification) {
     super(apiUrl);
+    // ABOS hub #906: Bybit is pinged every 15 s; a minute of nothing means a dead line.
+    setQuietCloseSeconds(60);
     this.exchangeSpecification = exchangeSpecification;
   }
 

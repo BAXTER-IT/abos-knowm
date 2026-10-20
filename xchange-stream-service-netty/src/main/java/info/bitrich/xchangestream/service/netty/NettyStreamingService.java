@@ -90,6 +90,10 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
   private final Duration retryDuration;
   private final Duration connectionTimeout;
   private final int idleTimeoutSeconds;
+  // ABOS hub #906: close a connection after this many seconds with nothing received; 0 = never.
+  private int quietCloseSeconds;
+  // Idle checks in a row with nothing received; touched only on the connection's own thread.
+  private int quietIdleChecks;
   private volatile NioEventLoopGroup eventLoopGroup;
   protected final Map<String, Subscription> channels = new ConcurrentHashMap<>();
   private boolean compressedMessages = false;
@@ -500,9 +504,32 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
     ctx.writeAndFlush(new PingWebSocketFrame());
   }
 
-  private void onIdle(ChannelHandlerContext ctx) {
+  private void onIdle(ChannelHandlerContext ctx, boolean firstSinceLastMessage) {
     subjectIdle.onNext(1);
+    quietIdleChecks = firstSinceLastMessage ? 1 : quietIdleChecks + 1;
+    int silentSeconds = quietIdleChecks * idleTimeoutSeconds;
+    if (quietCloseSeconds > 0 && silentSeconds >= quietCloseSeconds && !isManualDisconnect.get()) {
+      // ABOS hub #906: a connection that stops delivering without closing went unnoticed for about
+      // 15 minutes. Closing it here runs the normal reconnect, which subscribes again.
+      LOG.warn(
+          "{} websocket to {} received nothing for {} s; closing it so it reconnects",
+          getClass().getSimpleName(),
+          uri.getHost(),
+          silentSeconds);
+      quietIdleChecks = 0;
+      ctx.close();
+      return;
+    }
     handleIdle(ctx);
+  }
+
+  /**
+   * ABOS hub #906: closes the connection after this many seconds with nothing received, so the
+   * normal reconnect takes over. Set it above the exchange's own ping or heartbeat cadence. Off
+   * (0) unless an exchange sets it.
+   */
+  protected void setQuietCloseSeconds(int quietCloseSeconds) {
+    this.quietCloseSeconds = quietCloseSeconds;
   }
 
   /**
@@ -583,7 +610,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
       }
       IdleStateEvent e = (IdleStateEvent) evt;
       if (e.state().equals(IdleState.READER_IDLE)) {
-        onIdle(ctx);
+        onIdle(ctx, e.isFirst());
       }
     }
   }

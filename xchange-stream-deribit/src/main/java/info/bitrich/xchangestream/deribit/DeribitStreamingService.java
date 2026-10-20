@@ -25,9 +25,11 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
 
   public DeribitStreamingService(String apiUri) {
     // Read-idle sits above the heartbeat cadence: with heartbeats flowing a healthy socket is
-    // never idle, so the protocol ping frames Deribit ignores are no longer sent.
+    // never idle, so the protocol ping frames Deribit ignores are no longer sent. 45 s (not 60 s)
+    // so the quiet check below can close at 90 s: at least two missed heartbeats (ABOS hub #906).
     super(apiUri, Integer.MAX_VALUE, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_RETRY_DURATION,
-        HEARTBEAT_INTERVAL_SECONDS * 2);
+        HEARTBEAT_INTERVAL_SECONDS * 3 / 2);
+    setQuietCloseSeconds(HEARTBEAT_INTERVAL_SECONDS * 3);
   }
 
   /**
