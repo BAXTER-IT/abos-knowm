@@ -2,6 +2,7 @@ package info.bitrich.xchangestream.service.netty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
@@ -23,8 +24,13 @@ class QuietConnectionCloseTest {
     }
 
     EmbeddedChannel channel() {
-      return new EmbeddedChannel(
-          getWebSocketClientHandler(mock(WebSocketClientHandshaker.class), message -> {}));
+      return channel(true);
+    }
+
+    EmbeddedChannel channel(boolean opened) {
+      WebSocketClientHandshaker handshaker = mock(WebSocketClientHandshaker.class);
+      when(handshaker.isHandshakeComplete()).thenReturn(opened);
+      return new EmbeddedChannel(getWebSocketClientHandler(handshaker, message -> {}));
     }
 
     @Override
@@ -86,12 +92,10 @@ class QuietConnectionCloseTest {
   }
 
   @Test
-  void aDeliberateDisconnectInProgress_isNotTurnedIntoAReconnect() {
-    Service service = new Service(60);
-    EmbeddedChannel channel = service.channel();
-    service.disconnect(); // marks the disconnect as deliberate; the close itself is not subscribed
+  void aConnectionStillOpening_isLeftToTheCallersConnectLimit() {
+    EmbeddedChannel channel = new Service(60).channel(false);
 
-    silence(channel, 4);
+    silence(channel, 8); // 2 minutes, the websocket never finished opening
 
     assertThat(channel.isOpen()).isTrue();
   }

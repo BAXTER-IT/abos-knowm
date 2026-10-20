@@ -20,16 +20,17 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
 
   /** Deribit accepts 10-300 seconds (venue guidance on the 2026-08-20 traffic complaint). */
   static final int HEARTBEAT_INTERVAL_SECONDS = 30;
+  /** ABOS hub #906: at least two missed heartbeats. */
+  static final int QUIET_CLOSE_SECONDS = HEARTBEAT_INTERVAL_SECONDS * 3;
 
   protected final ObjectMapper objectMapper = Config.getInstance().getObjectMapper();
 
   public DeribitStreamingService(String apiUri) {
     // Read-idle sits above the heartbeat cadence: with heartbeats flowing a healthy socket is
     // never idle, so the protocol ping frames Deribit ignores are no longer sent. 45 s (not 60 s)
-    // so the quiet check below can close at 90 s: at least two missed heartbeats (ABOS hub #906).
+    // so the quiet check can close at 90 s: at least two missed heartbeats (ABOS hub #906).
     super(apiUri, Integer.MAX_VALUE, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_RETRY_DURATION,
         HEARTBEAT_INTERVAL_SECONDS * 3 / 2);
-    setQuietCloseSeconds(HEARTBEAT_INTERVAL_SECONDS * 3);
   }
 
   /**
@@ -44,6 +45,9 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
   }
 
   void enableHeartbeat() {
+    // ABOS hub #906: the quiet check waits for this connection's first heartbeat. If Deribit
+    // refuses the heartbeat, a quiet account receives nothing, and closing it would only loop.
+    setQuietCloseSeconds(0);
     ObjectNode request = objectMapper.createObjectNode();
     request.put("jsonrpc", "2.0");
     request.put("method", "public/set_heartbeat");
@@ -102,6 +106,7 @@ public class DeribitStreamingService extends NettyStreamingService<DeribitWsNoti
       // Answered at the raw layer; a heartbeat never reaches a channel.
       if ("heartbeat".equals(jsonNode.path("method").asText())) {
         if ("test_request".equals(jsonNode.path("params").path("type").asText())) {
+          setQuietCloseSeconds(QUIET_CLOSE_SECONDS);
           ObjectNode reply = objectMapper.createObjectNode();
           reply.put("jsonrpc", "2.0");
           reply.put("method", "public/test");
