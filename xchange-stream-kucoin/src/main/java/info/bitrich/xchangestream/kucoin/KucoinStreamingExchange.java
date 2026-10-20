@@ -145,7 +145,8 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
 
   @Override
   public Observable<Throwable> reconnectFailure() {
-    return Observable.concat(
+    // merge, not concat: each service's stream never ends, so concat only ever showed the first one.
+    return Observable.merge(
         services.stream()
             .map(NettyStreamingService::subscribeReconnectFailure)
             .collect(Collectors.toList()));
@@ -153,7 +154,9 @@ public class KucoinStreamingExchange extends KucoinExchange implements Streaming
 
   @Override
   public Observable<Object> connectionSuccess() {
-    return Observable.concat(
+    // merge, not concat: each service's stream never ends, so concat only ever showed the first one
+    // (ABOS hub #907 reconciles after a reconnect of the private socket, which carries the fills).
+    return Observable.merge(
         services.stream()
             .map(NettyStreamingService::subscribeConnectionSuccess)
             .collect(Collectors.toList()));
